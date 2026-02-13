@@ -1,0 +1,55 @@
+/* Live space background — subtle, non-interactive, decorative only */
+
+/* Keep main content above the background so text stays in the right spot */
+.landing-container,
+.service-container {
+    position: relative;
+    z-index: 0;
+}
+
+.space-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.space-bg__gradient {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 120% 80% at 20% 20%, rgba(180, 160, 140, 0.2) 0%, transparent 50%),
+        radial-gradient(ellipse 100% 100% at 80% 80%, rgba(160, 150, 130, 0.15) 0%, transparent 45%),
+        radial-gradient(ellipse 80% 60% at 50% 90%, rgba(140, 130, 110, 0.18) 0%, transparent 40%),
+        linear-gradient(180deg, #f8f5f0 0%, #f0ebe3 25%, #ebe6de 50%, #f5f1eb 100%);
+    background-size: 100% 100%;
+    animation: space-gradient-drift 25s ease-in-out infinite;
+}
+
+.space-bg__stars {
+    position: absolute;
+    inset: 0;
+    opacity: 0.85;
+}
+
+.space-bg canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Dark theme override */
+[data-theme="dark"] .space-bg__gradient {
+    background:
+        radial-gradient(ellipse 120% 80% at 20% 20%, rgba(40, 60, 50, 0.3) 0%, transparent 50%),
+        radial-gradient(ellipse 100% 100% at 80% 80%, rgba(30, 50, 40, 0.25) 0%, transparent 45%),
+        radial-gradient(ellipse 80% 60% at 50% 90%, rgba(25, 45, 35, 0.28) 0%, transparent 40%),
+        linear-gradient(180deg, #0f1117 0%, #111520 25%, #131722 50%, #0f1117 100%);
+}
+
+@keyframes space-gradient-drift {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.96; }
+}

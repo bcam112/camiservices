@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Cami</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/backend-ui.css">
+    <script>
+        (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+</head>
+<body class="backend-ui">
+    <div class="backend-layout">
+        <!-- Sidebar -->
+        <aside class="backend-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="sidebar-logo">
+                    <span class="sidebar-logo-text">Cami</span>
+                    <span class="sidebar-logo-badge">Admin</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Admin</div>
+                    <a href="/admin" class="sidebar-link active">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/>
+                            <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        </svg>
+                        Overview
+                    </a>
+                    <a href="/platform" class="sidebar-link">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                        Control
+                    </a>
+                    <a href="/min" class="sidebar-link">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        M.I.N.
+                    </a>
+                    <a href="/human-plus/admin" class="sidebar-link">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                            <path d="M16 3l2 2-2 2M8 3L6 5l2 2"/>
+                        </svg>
+                        Human+
+                    </a>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Navigate</div>
+                    <a href="/dashboard" class="sidebar-link">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="/app" class="sidebar-link">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        Chat
+                    </a>
+                    <a href="/" class="sidebar-link">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                        Home
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary" id="btnLogout" style="width:100%;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    Sign Out
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main content -->
+        <main class="backend-main">
+            <header class="backend-header">
+                <div class="header-left">
+                    <div class="header-breadcrumb">
+                        <span class="header-breadcrumb-item">Cami</span>
+                        <span class="header-breadcrumb-sep">/</span>
+                        <span class="header-breadcrumb-item current">Admin</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input type="text" id="userSearch" placeholder="Search users by email...">
+                    </div>
+                    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
+                        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="btnRefresh">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"/>
+                            <polyline points="1 20 1 14 7 14"/>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+            </header>
+            
+            <div class="backend-content">
+                <!-- Loading state -->
+                <div id="adminLoading" class="empty-state">
+                    <div class="spinner" style="margin: 0 auto var(--space-4);"></div>
+                    <p class="text-muted">Loading admin dashboard...</p>
+                </div>
+                
+                <!-- Error state -->
+                <div id="adminError" class="alert alert-danger" style="display:none;"></div>
+                
+                <!-- Dashboard content -->
+                <div id="adminContent" style="display:none;">
+                    <!-- Last updated -->
+                    <div class="flex items-center justify-between mb-6">
+                        <h1 style="font-size: 1.5rem;">Platform Overview</h1>
+                        <span class="text-sm text-muted" id="lastUpdated">—</span>
+                    </div>
+                    
+                    <!-- KPI Grid -->
+                    <div class="grid grid-cols-4 mb-6" id="kpiGrid"></div>
+                    
+                    <!-- M.I.N. Section -->
+                    <div class="card mb-6">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">M.I.N. — Main Intuition Network</h3>
+                                <p class="card-subtitle">Wisdom network statistics</p>
+                            </div>
+                            <a href="/min" class="btn btn-secondary btn-sm">View M.I.N. →</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid grid-cols-4 gap-4" id="minGrid"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Human+ Section -->
+                    <div class="card mb-6">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Human+ Licensing</h3>
+                                <p class="card-subtitle">API customers and usage</p>
+                            </div>
+                            <a href="/human-plus/admin" class="btn btn-secondary btn-sm">Manage Customers →</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid grid-cols-4 gap-4" id="humanplusGrid">
+                                <div class="flex items-center gap-3 p-4" style="background: var(--surface-secondary); border-radius: var(--radius-md);">
+                                    <div class="font-semibold" style="font-size: 1.25rem;" id="hp-customers">—</div>
+                                    <div class="text-sm text-muted">Customers</div>
+                                </div>
+                                <div class="flex items-center gap-3 p-4" style="background: var(--surface-secondary); border-radius: var(--radius-md);">
+                                    <div class="font-semibold" style="font-size: 1.25rem;" id="hp-paid">—</div>
+                                    <div class="text-sm text-muted">Paid</div>
+                                </div>
+                                <div class="flex items-center gap-3 p-4" style="background: var(--surface-secondary); border-radius: var(--radius-md);">
+                                    <div class="font-semibold" style="font-size: 1.25rem;" id="hp-mrr">$0</div>
+                                    <div class="text-sm text-muted">MRR</div>
+                                </div>
+                                <div class="flex items-center gap-3 p-4" style="background: var(--surface-secondary); border-radius: var(--radius-md);">
+                                    <span class="badge badge-success" id="hp-status">Active</span>
+                                    <div class="text-sm text-muted">Status</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Database Health -->
+                    <div class="card mb-6">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Database Connections</h3>
+                                <p class="card-subtitle">Platform and M.I.N. database status</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid grid-cols-2 gap-4" id="dbHealthGrid">
+                                <div class="skeleton" style="height: 80px;"></div>
+                                <div class="skeleton" style="height: 80px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- System Health -->
+                    <div class="card mb-6">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">System Health</h3>
+                                <p class="card-subtitle">LLM providers and service status</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="healthStatus" class="mb-4"></div>
+                            <div class="grid grid-cols-auto gap-3" id="providerGrid"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Users by Plan -->
+                    <div class="card mb-6">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Users by Plan</h3>
+                                <p class="card-subtitle">Distribution of subscription plans</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="planBreakdown" class="flex gap-2 flex-wrap"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- User Management -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">User Management</h3>
+                                <p class="card-subtitle"><span id="resultCount">0</span> users</p>
+                            </div>
+                        </div>
+                        <div class="card-body" style="padding: 0;">
+                            <div class="table-container">
+                                <table class="table" id="accountsTable">
+                                    <thead>
+                                        <tr>
+                                            <th class="sortable" data-sort="email">Email</th>
+                                            <th class="sortable" data-sort="plan">Plan</th>
+                                            <th class="sortable" data-sort="is_admin">Admin</th>
+                                            <th class="sortable" data-sort="usage_this_month">Usage</th>
+                                            <th class="sortable" data-sort="key_count">Keys</th>
+                                            <th class="sortable" data-sort="convo_count">Convos</th>
+                                            <th class="sortable" data-sort="created_at">Joined</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="accountsBody"></tbody>
+                                </table>
+                            </div>
+                            <div id="accountsEmpty" class="empty-state" style="display:none; padding: var(--space-8);">
+                                <p class="text-muted">No accounts found.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- User Detail Drawer -->
+    <div class="drawer-backdrop" id="userDrawerBackdrop">
+        <div class="drawer" id="userDrawer">
+            <div class="drawer-header">
+                <div>
+                    <h2 id="drawerTitle" style="font-size: 1.125rem; font-weight: 600;">User</h2>
+                    <p class="text-sm text-muted" id="drawerSub"></p>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="drawerClose">Close</button>
+            </div>
+            <div class="drawer-body" id="drawerBody">
+                <div class="empty-state">
+                    <div class="spinner" style="margin: 0 auto;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="/static/js/supabase.min.js"></script>
+    <script>
+    if (typeof window.supabase === 'undefined') {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        s.crossOrigin = 'anonymous';
+        document.head.appendChild(s);
+    }
+    </script>
+    <script>
+(function() {
+    let sb = null, token = null;
+    let PLATFORM_BASE = '';
+    let refreshTimer = null;
+    let allAccounts = [];
+    let sortField = 'created_at';
+    let sortDir = -1;
+
+    // ─── Theme Toggle ─────────────────────────────────────────────────────────
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+        localStorage.setItem('cami-theme', isDark ? '' : 'dark');
+    });
+
+    // ─── Helpers ──────────────────────────────────────────────────────────────
+    function waitSB(cb, n) { n=n||0; if(typeof window.supabase!=='undefined') return cb(); if(n>50) return cb(); setTimeout(()=>waitSB(cb,n+1),100); }
+    function apiHeaders() { const h={'Content-Type':'application/json'}; if(token) h['Authorization']='Bearer '+token; return h; }
+    function esc(t) { return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    async function init() {
+        await new Promise(r => waitSB(r));
+        if (typeof window.supabase === 'undefined') { redirectLogin(); return; }
+
+        let config = {};
+        try { const r = await fetch('/api/config'); config = await r.json(); } catch {}
+        if (!config.supabase_url || !config.supabase_anon_key) { redirectLogin(); return; }
+
+        sb = window.supabase.createClient(config.supabase_url, config.supabase_anon_key);
+        const { data: { session } } = await sb.auth.getSession();
+        if (!session) { redirectLogin(); return; }
+        token = session.access_token;
+
+        sb.auth.onAuthStateChange(function(_event, newSession) {
+            if (newSession && newSession.access_token) token = newSession.access_token;
+        });
+
+        try {
+            await sb.auth.getUser();
+            const { data: { session: freshSession } } = await sb.auth.getSession();
+            if (freshSession && freshSession.access_token) token = freshSession.access_token;
+        } catch (_) {}
+
+        try {
+            let r = await fetch('/api/me', { headers: apiHeaders() });
+            if (!r.ok) {
+                await fetch('/api/me', { method: 'POST', headers: apiHeaders() });
+                r = await fetch('/api/me', { headers: apiHeaders() });
+            }
+            if (!r || !r.ok) { redirectLogin(); return; }
+            const me = await r.json();
+            // Admin detection: server-side controlled only
+            const isAdmin = me.is_admin === true || (me.plan || '').toLowerCase() === 'admin';
+            if (!isAdmin) { window.location.href = '/dashboard'; return; }
+        } catch { redirectLogin(); return; }
+
+        document.getElementById('adminLoading').style.display = 'none';
+        document.getElementById('adminContent').style.display = '';
+
+        await loadDashboard();
+        await loadDbHealth();
+        await loadHumanPlusStats();
+        refreshTimer = setInterval(loadDashboard, 60000);
+
+        // Event listeners
+        document.getElementById('btnRefresh').addEventListener('click', () => {
+            document.getElementById('adminError').style.display = 'none';
+            loadDashboard(); loadDbHealth(); loadHumanPlusStats();
+        });
+        document.getElementById('btnLogout').addEventListener('click', async () => {
+            if(sb) await sb.auth.signOut();
+            window.location.href = '/login';
+        });
+        document.getElementById('userSearch').addEventListener('input', () => renderFilteredAccounts());
+        
+        document.querySelectorAll('#accountsTable th.sortable').forEach(th => {
+            th.addEventListener('click', () => {
+                const field = th.getAttribute('data-sort');
+                if (sortField === field) sortDir *= -1;
+                else { sortField = field; sortDir = field === 'created_at' ? -1 : 1; }
+                renderFilteredAccounts();
+            });
+        });
+
+        document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+        document.getElementById('userDrawerBackdrop').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('userDrawerBackdrop')) closeDrawer();
+        });
+    }
+
+    function redirectLogin() { window.location.href = '/login?redirect=/admin'; }
+
+    // ─── Data Fetching ────────────────────────────────────────────────────────
+    async function _fetchWithRetry(url, opts, retries) {
+        retries = retries != null ? retries : 3;
+        for (var attempt = 0; attempt <= retries; attempt++) {
+            try {
+                if (sb) {
+                    try {
+                        var sess = (await sb.auth.getSession()).data.session;
+                        if (sess && sess.access_token) token = sess.access_token;
+                    } catch (_) {}
+                }
+                var r = await fetch(url, { headers: apiHeaders() });
+                if (r.ok) return r;
+                if ((r.status === 401 || r.status === 403) && attempt < retries) {
+                    await new Promise(function(resolve) { setTimeout(resolve, (attempt + 1) * 2000); });
+                    continue;
+                }
+                return r;
+            } catch (e) {
+                if (attempt < retries) {
+                    await new Promise(function(resolve) { setTimeout(resolve, (attempt + 1) * 2000); });
+                    continue;
+                }
+                throw e;
+            }
+        }
+    }
+
+    async function loadDashboard() {
+        var errEl = document.getElementById('adminError');
+        try {
+            const [dashRes, accountsRes] = await Promise.all([
+                _fetchWithRetry(PLATFORM_BASE + '/api/admin/dashboard'),
+                _fetchWithRetry(PLATFORM_BASE + '/api/admin/accounts'),
+            ]);
+
+            if (!dashRes || !dashRes.ok) {
+                var status = dashRes ? dashRes.status : 'network error';
+                errEl.textContent = 'Could not load dashboard (HTTP ' + status + ')';
+                errEl.style.display = '';
+                return;
+            }
+            errEl.style.display = 'none';
+
+            const dash = await dashRes.json();
+            const accounts = accountsRes && accountsRes.ok ? (await accountsRes.json()).accounts || [] : [];
+            allAccounts = accounts;
+
+            renderKPIs(dash);
+            renderMIN(dash.min || {});
+            renderHealth(dash.system || {});
+            renderPlanBreakdown(dash.users?.by_plan || {});
+            renderFilteredAccounts();
+
+            document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+        } catch (e) {
+            console.error('Dashboard load error', e);
+            errEl.textContent = 'Dashboard load failed: ' + (e.message || 'Network error');
+            errEl.style.display = '';
+        }
+    }
+
+    // ─── Render Functions ─────────────────────────────────────────────────────
+    function renderKPIs(d) {
+        const u = d.users || {};
+        const rev = d.revenue || {};
+        const usage = d.usage || {};
+        const convos = d.conversations || {};
+        const grid = document.getElementById('kpiGrid');
+        grid.innerHTML = `
+            <div class="stat-card">
+                <div class="stat-card-icon accent">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <div class="stat-card-label">Total Users</div>
+                <div class="stat-card-value">${(u.total || 0).toLocaleString()}</div>
+                <div class="stat-card-change positive">+${u.new_this_week || 0} this week</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon info">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <div class="stat-card-label">MRR Estimate</div>
+                <div class="stat-card-value">$${(rev.mrr_estimate || 0).toLocaleString()}</div>
+                <div class="stat-card-change">${rev.active_subscriptions || 0} active</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon warning">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                </div>
+                <div class="stat-card-label">API Calls</div>
+                <div class="stat-card-value">${(usage.total_this_month || 0).toLocaleString()}</div>
+                <div class="stat-card-change">This month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </div>
+                <div class="stat-card-label">Conversations</div>
+                <div class="stat-card-value">${(convos.total || 0).toLocaleString()}</div>
+                <div class="stat-card-change">${(convos.total_messages || 0).toLocaleString()} messages</div>
+            </div>
+        `;
+    }
+
+    function renderMIN(m) {
+        const grid = document.getElementById('minGrid');
+        const storageLabel = m.storage_type === 'postgresql' ? 'PostgreSQL' : (m.storage_type || 'Unknown');
+        const storageClass = m.storage_type === 'postgresql' ? 'badge-success' : 'badge-warning';
+        grid.innerHTML = `
+            <div class="flex items-center gap-3 p-4" style="background: var(--surface-secondary); border-radius: var(--radius-md);">
+                <div class="font-semibold" style="font-size: 1.25rem;">${(m.total_patterns || 0).toLocaleString()}</div>
+                <div class="text-sm text-muted">Patterns</div>
+            </div>
+            <div class="flex items-center gap-3 p-4" style="background: var(--surface-secondary); border-radius: var(--radius-md);">
+                <div class="font-semibold" style="font-size: 1.25rem;">${(m.total_queries || 0).toLocaleString()}</div>
+                <div class="text-sm text-muted">Queries</div>
+            </div>
+            <div class="flex items-center gap-3 p-4" style="background: var(--surface-secondary); border-radius: var(--radius-md);">
+                <div class="font-semibold" style="font-size: 1.25rem;">${(m.total_contributions || 0).toLocaleString()}</div>
+                <div class="text-sm text-muted">Contributions</div>
+            </div>
+            <div class="flex items-center gap-3 p-4" style="background: var(--surface-secondary); border-radius: var(--radius-md);">
+                <span class="badge ${storageClass}">${storageLabel}</span>
+                <div class="text-sm text-muted">Storage</div>
+            </div>
+        `;
+    }
+
+    function renderHealth(sys) {
+        const statusEl = document.getElementById('healthStatus');
+        const provGrid = document.getElementById('providerGrid');
+        const health = sys.health || {};
+        const llm = sys.llm_providers || {};
+
+        const overall = health.status || 'unknown';
+        const statusClass = overall === 'ok' ? 'success' : overall === 'critical' ? 'danger' : 'warning';
+        statusEl.innerHTML = `<div class="flex items-center gap-2"><span class="status-dot ${overall === 'ok' ? 'online' : 'error'}"></span><span class="font-medium">System: ${overall.toUpperCase()}</span></div>`;
+
+        const providers = llm.providers || {};
+        provGrid.innerHTML = '';
+        Object.entries(providers).forEach(([name, info]) => {
+            const ok = info.status === 'ok' || info.available;
+            provGrid.innerHTML += `
+                <div class="flex items-center gap-3 p-3" style="background: var(--surface-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+                    <span class="status-dot ${ok ? 'online' : 'error'}"></span>
+                    <span class="font-medium">${esc(name)}</span>
+                    <span class="badge ${ok ? 'badge-success' : 'badge-danger'}">${ok ? 'Available' : 'Down'}</span>
+                </div>
+            `;
+        });
+        
+        if (Object.keys(providers).length === 0) {
+            const checks = health.checks || {};
+            Object.entries(checks).forEach(([name, info]) => {
+                const ok = info.status === 'ok' || info.connected;
+                provGrid.innerHTML += `
+                    <div class="flex items-center gap-3 p-3" style="background: var(--surface-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+                        <span class="status-dot ${ok ? 'online' : 'error'}"></span>
+                        <span class="font-medium">${esc(name)}</span>
+                        <span class="badge ${ok ? 'badge-success' : 'badge-danger'}">${ok ? 'OK' : 'Down'}</span>
+                    </div>
+                `;
+            });
+        }
+    }
+
+    function renderPlanBreakdown(plans) {
+        const el = document.getElementById('planBreakdown');
+        const paidPlans = new Set(['customer_service','health','research','legal_intelligence','enterprise','admin', 'pro']);
+        el.innerHTML = Object.entries(plans).map(([plan, count]) => {
+            const cls = paidPlans.has(plan) ? 'badge-primary' : 'badge-default';
+            return `<span class="badge ${cls}">${esc(plan)}: ${count}</span>`;
+        }).join('');
+        if (Object.keys(plans).length === 0) {
+            el.innerHTML = '<span class="badge badge-default">No users yet</span>';
+        }
+    }
+
+    async function loadHumanPlusStats() {
+        // Try to load Human+ licensing stats
+        // This uses the admin secret stored in localStorage (set when visiting /human-plus/admin)
+        const adminSecret = localStorage.getItem('hp_admin_secret');
+        if (!adminSecret) {
+            document.getElementById('hp-customers').textContent = '—';
+            document.getElementById('hp-paid').textContent = '—';
+            document.getElementById('hp-mrr').textContent = '—';
+            document.getElementById('hp-status').textContent = 'Login needed';
+            document.getElementById('hp-status').className = 'badge badge-warning';
+            return;
+        }
+        
+        try {
+            const r = await fetch('/api/v1/licensing/admin/customers', {
+                headers: { 'X-Admin-Secret': adminSecret }
+            });
+            
+            if (r.ok) {
+                const data = await r.json();
+                const customers = data.customers || [];
+                const active = customers.filter(c => c.is_active).length;
+                const paid = customers.filter(c => ['startup', 'growth', 'enterprise'].includes(c.tier)).length;
+                const tierPrices = { startup: 500, growth: 2000, enterprise: 0 };
+                const mrr = customers.reduce((sum, c) => sum + (tierPrices[c.tier] || 0), 0);
+                
+                document.getElementById('hp-customers').textContent = active;
+                document.getElementById('hp-paid').textContent = paid;
+                document.getElementById('hp-mrr').textContent = '$' + mrr.toLocaleString();
+                document.getElementById('hp-status').textContent = 'Active';
+                document.getElementById('hp-status').className = 'badge badge-success';
+            } else {
+                document.getElementById('hp-status').textContent = 'Auth failed';
+                document.getElementById('hp-status').className = 'badge badge-danger';
+            }
+        } catch (e) {
+            console.error('Human+ stats error', e);
+        }
+    }
+
+    async function loadDbHealth() {
+        try {
+            const r = await _fetchWithRetry(PLATFORM_BASE + '/api/admin/db-health');
+            if (!r || !r.ok) return;
+            const d = await r.json();
+            const grid = document.getElementById('dbHealthGrid');
+            const pdb = d.platform_db || {};
+            const mdb = d.min_db || {};
+            grid.innerHTML = `
+                <div class="flex items-center gap-4 p-4" style="background: var(--surface-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+                    <span class="status-dot ${pdb.status === 'ok' ? 'online pulse' : 'error'}"></span>
+                    <div>
+                        <div class="font-semibold">Platform (Supabase)</div>
+                        <div class="text-sm text-muted">${pdb.profiles != null ? pdb.profiles + ' profiles' : (pdb.note || pdb.error || 'Unknown')}</div>
+                    </div>
+                    <span class="badge ${pdb.status === 'ok' ? 'badge-success' : 'badge-danger'}" style="margin-left: auto;">${esc(pdb.status || 'unknown')}</span>
+                </div>
+                <div class="flex items-center gap-4 p-4" style="background: var(--surface-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+                    <span class="status-dot ${mdb.status === 'ok' ? 'online pulse' : 'error'}"></span>
+                    <div>
+                        <div class="font-semibold">M.I.N. (Railway pgvector)</div>
+                        <div class="text-sm text-muted">${mdb.patterns != null ? mdb.patterns + ' patterns' : (mdb.note || mdb.error || 'Unknown')}</div>
+                    </div>
+                    <span class="badge ${mdb.status === 'ok' ? 'badge-success' : 'badge-danger'}" style="margin-left: auto;">${esc(mdb.status || 'unknown')}</span>
+                </div>
+            `;
+        } catch (e) { console.error('DB health error', e); }
+    }
+
+    // ─── Accounts Table ───────────────────────────────────────────────────────
+    function renderFilteredAccounts() {
+        const q = (document.getElementById('userSearch').value || '').trim().toLowerCase();
+        let filtered = allAccounts;
+        if (q) {
+            filtered = allAccounts.filter(a =>
+                (a.email || '').toLowerCase().includes(q) ||
+                (a.display_name || '').toLowerCase().includes(q) ||
+                (a.plan || '').toLowerCase().includes(q)
+            );
+        }
+
+        filtered.sort((a, b) => {
+            let va = a[sortField], vb = b[sortField];
+            if (va == null) va = '';
+            if (vb == null) vb = '';
+            if (typeof va === 'boolean') { va = va ? 1 : 0; vb = vb ? 1 : 0; }
+            if (typeof va === 'number') return (va - vb) * sortDir;
+            return String(va).localeCompare(String(vb)) * sortDir;
+        });
+
+        const body = document.getElementById('accountsBody');
+        const empty = document.getElementById('accountsEmpty');
+        const countEl = document.getElementById('resultCount');
+        body.innerHTML = '';
+
+        countEl.textContent = filtered.length + ' of ' + allAccounts.length;
+        if (!filtered.length) { empty.style.display = ''; return; }
+        empty.style.display = 'none';
+
+        const paidPlans = new Set(['customer_service','health','research','legal_intelligence','enterprise','admin', 'pro']);
+        filtered.forEach(a => {
+            const tr = document.createElement('tr');
+            tr.className = 'clickable';
+            const planCls = paidPlans.has(a.plan) ? 'badge-primary' : 'badge-default';
+            const date = a.created_at ? new Date(a.created_at).toLocaleDateString() : '—';
+            tr.innerHTML = `
+                <td><span class="font-medium">${esc(a.email || '—')}</span></td>
+                <td><span class="badge ${planCls}">${esc(a.plan || 'free')}</span></td>
+                <td>${a.is_admin ? '<span class="badge badge-warning">Admin</span>' : '<span class="text-muted">—</span>'}</td>
+                <td>${a.usage_this_month || 0}</td>
+                <td>${a.key_count || 0}</td>
+                <td>${a.convo_count || 0}</td>
+                <td class="text-muted">${date}</td>
+            `;
+            tr.addEventListener('click', () => openUserDrawer(a.id));
+            body.appendChild(tr);
+        });
+    }
+
+    // ─── User Drawer ──────────────────────────────────────────────────────────
+    function closeDrawer() {
+        document.getElementById('userDrawerBackdrop').classList.remove('open');
+    }
+
+    async function openUserDrawer(userId) {
+        const backdrop = document.getElementById('userDrawerBackdrop');
+        const body = document.getElementById('drawerBody');
+        document.getElementById('drawerTitle').textContent = 'Loading...';
+        document.getElementById('drawerSub').textContent = '';
+        body.innerHTML = '<div class="empty-state"><div class="spinner" style="margin: 0 auto;"></div></div>';
+        backdrop.classList.add('open');
+
+        try {
+            const r = await fetch(PLATFORM_BASE + '/api/admin/accounts/' + userId + '/detail', { headers: apiHeaders() });
+            if (!r.ok) { body.innerHTML = '<div class="alert alert-danger">Failed to load user (HTTP ' + r.status + ')</div>'; return; }
+            const data = await r.json();
+            renderDrawer(data, userId);
+        } catch (e) {
+            body.innerHTML = '<div class="alert alert-danger">Error: ' + esc(e.message) + '</div>';
+        }
+    }
+
+    function renderDrawer(data, userId) {
+        const p = data.profile || {};
+        document.getElementById('drawerTitle').textContent = p.email || 'Unknown';
+        document.getElementById('drawerSub').textContent = 'ID: ' + p.id;
+
+        const body = document.getElementById('drawerBody');
+        const paidPlans = new Set(['customer_service','health','research','legal_intelligence','enterprise','admin', 'pro']);
+        
+        let html = '';
+
+        // Profile section
+        html += `<div class="mb-6">
+            <div class="section-title mb-3">Profile</div>
+            <div class="flex flex-col gap-3">
+                <div class="flex justify-between"><span class="text-muted">Email</span><span class="font-medium">${esc(p.email || '—')}</span></div>
+                <div class="flex justify-between"><span class="text-muted">Display Name</span><span>${esc(p.display_name || '—')}</span></div>
+                <div class="flex justify-between"><span class="text-muted">Plan</span><span class="badge ${paidPlans.has(p.plan) ? 'badge-primary' : 'badge-default'}">${esc(p.plan || 'free')}</span></div>
+                <div class="flex justify-between"><span class="text-muted">Admin</span><span>${p.is_admin ? '<span class="badge badge-warning">Yes</span>' : 'No'}</span></div>
+                <div class="flex justify-between"><span class="text-muted">Joined</span><span>${p.created_at ? new Date(p.created_at).toLocaleString() : '—'}</span></div>
+            </div>
+            <div class="flex gap-2 mt-4 flex-wrap">
+                <button class="btn btn-secondary btn-sm" onclick="adminChangePlan('${userId}', '${esc(p.plan || 'free')}')">Change Plan</button>
+                ${!p.is_admin 
+                    ? `<button class="btn btn-secondary btn-sm" onclick="adminToggleAdmin('${userId}', true)">Grant Admin</button>` 
+                    : `<button class="btn btn-secondary btn-sm" onclick="adminToggleAdmin('${userId}', false)">Revoke Admin</button>`}
+                <button class="btn btn-outline-danger btn-sm" onclick="adminDeleteAccount('${userId}', '${esc(p.email || '')}')">Delete Account</button>
+            </div>
+        </div>`;
+
+        // API Keys section
+        html += `<div class="mb-6">
+            <div class="section-title mb-3">API Keys (${(data.keys || []).length})</div>`;
+        if (data.keys && data.keys.length) {
+            data.keys.forEach(k => {
+                html += `<div class="flex items-center justify-between p-3 mb-2" style="background: var(--surface-secondary); border-radius: var(--radius-md);">
+                    <div>
+                        <div class="font-medium">${esc(k.name || 'Default')}</div>
+                        <code class="text-xs text-muted">${esc(k.key_prefix)}...</code>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm" onclick="adminRevokeKey('${userId}', '${k.id}', '${esc(k.key_prefix)}')">Revoke</button>
+                </div>`;
+            });
+        } else {
+            html += '<p class="text-sm text-muted">No API keys.</p>';
+        }
+        html += '</div>';
+
+        // Usage section
+        html += `<div class="mb-6">
+            <div class="section-title mb-3">Usage This Month</div>`;
+        if (data.usage && data.usage.length && data.usage.some(u => u.count > 0)) {
+            data.usage.filter(u => u.count > 0).forEach(u => {
+                html += `<div class="flex justify-between p-2"><span class="text-sm">${esc(u.key_name || u.key_prefix)}</span><span class="font-medium">${u.count}</span></div>`;
+            });
+        } else {
+            html += '<p class="text-sm text-muted">No usage data.</p>';
+        }
+        html += '</div>';
+
+        // Conversations section
+        html += `<div>
+            <div class="section-title mb-3">Conversations (${(data.conversations || []).length})</div>`;
+        if (data.conversations && data.conversations.length) {
+            data.conversations.slice(0, 10).forEach(c => {
+                html += `<div class="p-3 mb-2" style="background: var(--surface-secondary); border-radius: var(--radius-md);">
+                    <div class="font-medium">${esc(c.title || 'Untitled')}</div>
+                    <div class="text-xs text-muted">${c.message_count || 0} messages · ${c.updated_at ? new Date(c.updated_at).toLocaleDateString() : '—'}</div>
+                </div>`;
+            });
+        } else {
+            html += '<p class="text-sm text-muted">No conversations.</p>';
+        }
+        html += '</div>';
+
+        body.innerHTML = html;
+    }
+
+    // ─── Admin Actions ────────────────────────────────────────────────────────
+    window.adminChangePlan = async function(userId, currentPlan) {
+        const plans = ['free','customer_service','health','research','legal_intelligence','enterprise','starter','professional','business','admin','pro'];
+        const newPlan = prompt('Change plan.\nCurrent: ' + currentPlan + '\n\nOptions:\n' + plans.join(', '));
+        if (!newPlan || newPlan === currentPlan) return;
+        if (!plans.includes(newPlan.trim().toLowerCase())) { alert('Invalid plan.'); return; }
+        try {
+            const r = await fetch(PLATFORM_BASE + '/api/admin/accounts/' + userId + '/plan', {
+                method: 'PUT', headers: apiHeaders(), body: JSON.stringify({ plan: newPlan.trim().toLowerCase() })
+            });
+            const d = await r.json();
+            if (r.ok) { alert('Plan updated.'); openUserDrawer(userId); loadDashboard(); }
+            else alert('Error: ' + (d.error || 'Unknown'));
+        } catch (e) { alert('Network error'); }
+    };
+
+    window.adminToggleAdmin = async function(userId, makeAdmin) {
+        if (!confirm(makeAdmin ? 'Grant admin access?' : 'Revoke admin access?')) return;
+        try {
+            const r = await fetch(PLATFORM_BASE + '/api/admin/accounts/' + userId + '/admin', {
+                method: 'PUT', headers: apiHeaders(), body: JSON.stringify({ is_admin: makeAdmin })
+            });
+            const d = await r.json();
+            if (r.ok) { alert(makeAdmin ? 'Admin granted.' : 'Admin revoked.'); openUserDrawer(userId); loadDashboard(); }
+            else alert('Error: ' + (d.error || 'Unknown'));
+        } catch (e) { alert('Network error'); }
+    };
+
+    window.adminRevokeKey = async function(userId, keyId, prefix) {
+        if (!confirm('Revoke API key ' + prefix + '...?')) return;
+        try {
+            const r = await fetch(PLATFORM_BASE + '/api/admin/accounts/' + userId + '/keys/' + keyId, {
+                method: 'DELETE', headers: apiHeaders()
+            });
+            if (r.ok) { alert('Key revoked.'); openUserDrawer(userId); loadDashboard(); }
+            else alert('Error');
+        } catch (e) { alert('Network error'); }
+    };
+
+    window.adminDeleteAccount = async function(userId, email) {
+        if (!confirm('DELETE account ' + email + '?\n\nThis cannot be undone.')) return;
+        try {
+            const r = await fetch(PLATFORM_BASE + '/api/admin/accounts/' + userId, { method: 'DELETE', headers: apiHeaders() });
+            if (r.ok) { alert('Account deleted.'); closeDrawer(); loadDashboard(); }
+            else alert('Error');
+        } catch (e) { alert('Network error'); }
+    };
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+})();
+    </script>
+</body>
+</html>

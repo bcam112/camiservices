@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Dashboard — Cami</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/backend-ui.css">
+    <style>
+        .snippet-box {
+            background: #1e1e2e;
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            line-height: 1.7;
+            color: #cdd6f4;
+            position: relative;
+            margin-top: var(--space-3);
+        }
+        [data-theme="dark"] .snippet-box { background: #11111b; }
+        .snippet-box .copy-btn {
+            position: absolute;
+            top: var(--space-2);
+            right: var(--space-2);
+            padding: var(--space-1) var(--space-3);
+            font-size: 0.6875rem;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #cdd6f4;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+        .snippet-box .copy-btn:hover { background: rgba(255,255,255,0.2); }
+        .file-drop {
+            border: 2px dashed var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: var(--space-8);
+            text-align: center;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .file-drop:hover, .file-drop.drag-over {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-subtle);
+        }
+        .file-drop input[type="file"] { display: none; }
+        .biz-chip {
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--border-default);
+            background: var(--surface-primary);
+            color: var(--text-primary);
+            transition: all var(--transition-fast);
+        }
+        .biz-chip:hover { border-color: var(--accent); }
+        .biz-chip.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+    </style>
+    <script>
+        (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+</head>
+<body class="backend-ui">
+    <div class="backend-layout">
+        <!-- Sidebar -->
+        <aside class="backend-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="sidebar-logo">
+                    <span class="sidebar-logo-text">Cami</span>
+                    <span class="sidebar-logo-badge">Business</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Business</div>
+                    <a href="/business" class="sidebar-link active">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/>
+                            <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        </svg>
+                        Overview
+                    </a>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Navigate</div>
+                    <a href="/dashboard" class="sidebar-link">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="/app" class="sidebar-link">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        Chat
+                    </a>
+                    <a href="/" class="sidebar-link">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                        Home
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary" id="btnLogout" style="width:100%;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    Sign Out
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main content -->
+        <main class="backend-main">
+            <header class="backend-header">
+                <div class="header-left">
+                    <div class="header-breadcrumb">
+                        <span class="header-breadcrumb-item">Cami</span>
+                        <span class="header-breadcrumb-sep">/</span>
+                        <span class="header-breadcrumb-item current">Business</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
+                        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+            
+            <div class="backend-content">
+                <!-- Loading state -->
+                <div id="pageLoading" class="empty-state">
+                    <div class="spinner" style="margin: 0 auto var(--space-4);"></div>
+                    <p class="text-muted">Loading business dashboard...</p>
+                </div>
+                
+                <!-- Dashboard content -->
+                <div id="pageContent" style="display:none;">
+                    <!-- Business selector -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 style="font-size: 1.5rem; margin-bottom: var(--space-1);">Your Businesses</h1>
+                            <p class="text-muted">Manage your Cami-powered business integrations</p>
+                        </div>
+                        <button class="btn btn-primary" id="btnCreateBiz">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            New Business
+                        </button>
+                    </div>
+                    
+                    <!-- Business chips -->
+                    <div class="flex gap-2 flex-wrap mb-6" id="bizSelect">
+                        <p class="text-muted">No businesses yet. Create one to get started.</p>
+                    </div>
+                    
+                    <!-- Create business form -->
+                    <div class="card mb-6" id="createBizForm" style="display:none;">
+                        <div class="card-header">
+                            <h3 class="card-title">Create Business</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label class="form-label">Business Name</label>
+                                    <input type="text" class="form-input" id="newBizName" placeholder="Acme Corp">
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label class="form-label">Service Type</label>
+                                    <select class="form-select" id="newBizType">
+                                        <option value="customer_service">Customer Service</option>
+                                        <option value="legal">Legal Intelligence</option>
+                                        <option value="clinical">Health / Clinical</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">System Prompt (optional)</label>
+                                <textarea class="form-textarea" id="newBizPrompt" placeholder="You are a helpful assistant for Acme Corp..."></textarea>
+                            </div>
+                            <div class="flex gap-3">
+                                <button class="btn btn-primary" id="btnSubmitBiz">Create</button>
+                                <button class="btn btn-secondary" id="btnCancelBiz">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Business dashboard (tabs) -->
+                    <div id="bizDashboard" style="display:none;">
+                        <div class="tabs" id="bizTabs">
+                            <button class="tab active" data-tab="integration">Integration</button>
+                            <button class="tab" data-tab="analytics">Analytics</button>
+                            <button class="tab" data-tab="knowledge">Knowledge Base</button>
+                            <button class="tab" data-tab="conversations">Conversations</button>
+                            <button class="tab" data-tab="settings">Settings</button>
+                        </div>
+                        
+                        <!-- Integration tab -->
+                        <div class="tab-panel active" id="tab-integration">
+                            <div class="alert alert-info mb-6" id="apiOnlyNotice" style="display:none;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="16" x2="12" y2="12"/>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                                </svg>
+                                <div>
+                                    <strong>API Integration</strong><br>
+                                    <span class="text-sm">Your service type uses API-only integration. The embeddable widget is for Customer Service only.</span>
+                                </div>
+                            </div>
+                            
+                            <div class="grid gap-6" style="grid-template-columns: 1fr 1fr;">
+                                <!-- Widget snippet -->
+                                <div class="card" id="widgetCard">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Embed Widget</h3>
+                                        <p class="card-subtitle">Add chat to any page</p>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="text-sm text-muted mb-3">Copy this snippet to embed Cami chat on your website.</p>
+                                        <div class="snippet-box" id="widgetSnippet">
+                                            <button class="copy-btn" onclick="copySnippet('widgetSnippet')">Copy</button>
+                                            <span style="color:#636e88;">&lt;!-- Cami Chat Widget --&gt;</span><br>
+                                            <span style="color:#c792ea;">&lt;script</span> <span style="color:#82aaff;">src</span>=<span style="color:#c3e88d;" id="snippetSrc">"https://usecami.com/static/widget.js"</span><br>
+                                            &nbsp;&nbsp;<span style="color:#82aaff;">data-key</span>=<span style="color:#c3e88d;" id="snippetKey">"your-key"</span><br>
+                                            &nbsp;&nbsp;<span style="color:#82aaff;">data-color</span>=<span style="color:#c3e88d;" id="snippetColor">"#5a7d64"</span><br>
+                                            &nbsp;&nbsp;<span style="color:#82aaff;">data-title</span>=<span style="color:#c3e88d;" id="snippetTitle">"Support"</span><span style="color:#c792ea;">&gt;&lt;/script&gt;</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- API endpoint -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">API Endpoint</h3>
+                                        <p class="card-subtitle">Backend integration</p>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="text-sm text-muted mb-3">Call this from your backend with a Bearer token.</p>
+                                        <div class="snippet-box" id="apiSnippet">
+                                            <button class="copy-btn" onclick="copySnippet('apiSnippet')">Copy</button>
+                                            <span style="color:#c792ea;">POST</span> <span id="apiEndpoint" style="color:#c3e88d;">/api/v1/chat</span><br>
+                                            <span style="color:#82aaff;">Authorization:</span> Bearer <span id="apiKeyDisplay">your-key</span><br>
+                                            <span style="color:#82aaff;">Content-Type:</span> application/json<br><br>
+                                            { "message": "Hello", "session_id": "unique" }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- API Keys -->
+                            <div class="card mt-6">
+                                <div class="card-header">
+                                    <div>
+                                        <h3 class="card-title">API Keys</h3>
+                                        <p class="card-subtitle">Manage your API keys for this business</p>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" id="btnCreateKey">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <line x1="12" y1="5" x2="12" y2="19"/>
+                                            <line x1="5" y1="12" x2="19" y2="12"/>
+                                        </svg>
+                                        Create Key
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div id="apiKeysList"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Analytics tab -->
+                        <div class="tab-panel" id="tab-analytics">
+                            <div class="grid grid-cols-4 gap-4 mb-6" id="analyticsStats">
+                                <div class="stat-card">
+                                    <div class="stat-card-label">Conversations</div>
+                                    <div class="stat-card-value" id="anConvos">—</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-card-label">Messages</div>
+                                    <div class="stat-card-value" id="anMsgs">—</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-card-label">Avg / Conv</div>
+                                    <div class="stat-card-value" id="anAvg">—</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-card-label">Service</div>
+                                    <div class="stat-card-value text-sm" id="anServiceType">—</div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Escalation Breakdown</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="progress mb-3" style="height: 12px;" id="anEscBar"></div>
+                                    <div class="flex gap-4 text-sm" id="anEscLegend">
+                                        <span class="text-muted">No data yet</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card mt-6">
+                                <div class="card-header">
+                                    <h3 class="card-title">Recent Activity</h3>
+                                </div>
+                                <div class="card-body" id="anRecentActivity">
+                                    <p class="text-muted text-sm">No recent activity.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Knowledge Base tab -->
+                        <div class="tab-panel" id="tab-knowledge">
+                            <div class="card mb-6">
+                                <div class="card-header">
+                                    <h3 class="card-title">Upload Knowledge</h3>
+                                    <p class="card-subtitle">Add documents for Cami to reference</p>
+                                </div>
+                                <div class="card-body">
+                                    <div class="file-drop mb-4" id="fileDrop">
+                                        <input type="file" id="fileInput" accept=".pdf,.txt,.md,.docx">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: var(--space-3);">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="17 8 12 3 7 8"/>
+                                            <line x1="12" y1="3" x2="12" y2="15"/>
+                                        </svg>
+                                        <p>Drop a file here or <strong>click to browse</strong></p>
+                                        <p class="text-xs mt-2">PDF, TXT, Markdown, DOCX</p>
+                                    </div>
+                                    
+                                    <p class="text-center text-sm text-muted mb-4">— or paste text directly —</p>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Title</label>
+                                        <input type="text" class="form-input" id="kbTitle" placeholder="FAQ, Return Policy, etc.">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Content</label>
+                                        <textarea class="form-textarea" id="kbContent" placeholder="Paste your text here..." style="min-height: 120px;"></textarea>
+                                    </div>
+                                    <button class="btn btn-primary" id="btnUploadKB">Upload to Knowledge Base</button>
+                                    <span id="kbUploadStatus" class="text-sm ml-3"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Knowledge Entries</h3>
+                                </div>
+                                <div class="card-body" id="kbList">
+                                    <p class="text-muted text-sm">No knowledge entries yet.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Conversations tab -->
+                        <div class="tab-panel" id="tab-conversations">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Recent Conversations</h3>
+                                </div>
+                                <div class="card-body" id="convList">
+                                    <p class="text-muted text-sm">No conversations yet.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Settings tab -->
+                        <div class="tab-panel" id="tab-settings">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Business Settings</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label">Business Name</label>
+                                        <input type="text" class="form-input" id="settingsName">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">System Prompt</label>
+                                        <textarea class="form-textarea" id="settingsPrompt"></textarea>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div class="form-group" style="margin-bottom:0;">
+                                            <label class="form-label">Widget Color</label>
+                                            <input type="color" class="form-input" id="settingsColor" value="#5a7d64" style="height: 42px; padding: 4px;">
+                                        </div>
+                                        <div class="form-group" style="margin-bottom:0;">
+                                            <label class="form-label">Widget Title</label>
+                                            <input type="text" class="form-input" id="settingsWidgetTitle" placeholder="Support">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Welcome Message</label>
+                                        <input type="text" class="form-input" id="settingsWelcome" placeholder="Hi! How can we help?">
+                                    </div>
+                                    <button class="btn btn-primary" id="btnSaveSettings">Save Settings</button>
+                                    <span id="settingsSaved" class="text-sm ml-3" style="color: var(--success); display:none;">Saved!</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="/static/js/supabase.min.js"></script>
+    <script>
+    if (typeof window.supabase === 'undefined') {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        s.crossOrigin = 'anonymous';
+        document.head.appendChild(s);
+    }
+    </script>
+    <script>
+(function() {
+    let sb = null, token = null, PLATFORM_BASE = '';
+    let businesses = [];
+    let currentBiz = null;
+    let currentBizKeys = [];
+
+    // ─── Theme Toggle ─────────────────────────────────────────────────────────
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+        localStorage.setItem('cami-theme', isDark ? '' : 'dark');
+    });
+
+    // ─── Helpers ──────────────────────────────────────────────────────────────
+    function waitSB(cb, n) { n=n||0; if(typeof window.supabase!=='undefined') return cb(); if(n>50) return cb(); setTimeout(()=>waitSB(cb,n+1),100); }
+    function apiHeaders() { var h={'Content-Type':'application/json'}; if(token) h['Authorization']='Bearer '+token; return h; }
+    function bizHeaders() {
+        var h = {'Content-Type':'application/json'};
+        if (currentBizKeys.length > 0) h['Authorization'] = 'Bearer ' + currentBizKeys[0]._full_key;
+        else if (token) h['Authorization'] = 'Bearer ' + token;
+        return h;
+    }
+    function esc(t) { return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    async function init() {
+        await new Promise(r => waitSB(r));
+        if (typeof window.supabase === 'undefined') { redirectLogin(); return; }
+        let config = {};
+        try { var r = await fetch('/api/config'); config = await r.json(); } catch {}
+        if (!config.supabase_url || !config.supabase_anon_key) { redirectLogin(); return; }
+        sb = window.supabase.createClient(config.supabase_url, config.supabase_anon_key);
+        var sess = await sb.auth.getSession();
+        if (!sess.data.session) { redirectLogin(); return; }
+        token = sess.data.session.access_token;
+
+        document.getElementById('pageLoading').style.display = 'none';
+        document.getElementById('pageContent').style.display = '';
+
+        await loadBusinesses();
+        bindUI();
+    }
+
+    function redirectLogin() { window.location.href = '/login?redirect=/business'; }
+
+    // ─── Business CRUD ────────────────────────────────────────────────────────
+    async function loadBusinesses() {
+        try {
+            var r = await fetch(PLATFORM_BASE + '/api/v1/businesses', { headers: apiHeaders() });
+            if (!r.ok) return;
+            var d = await r.json();
+            businesses = d.businesses || [];
+            renderBizSelect();
+            if (businesses.length > 0 && !currentBiz) selectBusiness(businesses[0]);
+        } catch(e) { console.warn('[Biz] load error', e); }
+    }
+
+    function renderBizSelect() {
+        var el = document.getElementById('bizSelect');
+        if (businesses.length === 0) {
+            el.innerHTML = '<p class="text-muted">No businesses yet. Create one to get started.</p>';
+            return;
+        }
+        el.innerHTML = '';
+        businesses.forEach(function(b) {
+            var chip = document.createElement('button');
+            chip.className = 'biz-chip' + (currentBiz && currentBiz.id === b.id ? ' active' : '');
+            chip.textContent = b.name + ' (' + (b.service_type || 'cs') + ')';
+            chip.onclick = function() { selectBusiness(b); };
+            el.appendChild(chip);
+        });
+    }
+
+    async function selectBusiness(biz) {
+        currentBiz = biz;
+        renderBizSelect();
+        document.getElementById('bizDashboard').style.display = '';
+
+        var isCS = !biz.service_type || biz.service_type === 'customer_service';
+        document.getElementById('widgetCard').style.display = isCS ? '' : 'none';
+        document.getElementById('apiOnlyNotice').style.display = isCS ? 'none' : '';
+
+        await loadApiKeys();
+        updateSnippet();
+        updateSettingsForm();
+        loadKnowledge();
+        loadConversations();
+        loadAnalytics();
+    }
+
+    async function createBusiness() {
+        var name = document.getElementById('newBizName').value.trim();
+        var stype = document.getElementById('newBizType').value;
+        var prompt = document.getElementById('newBizPrompt').value.trim();
+        if (!name) { alert('Business name is required.'); return; }
+        try {
+            var body = { name: name, service_type: stype };
+            if (prompt) body.system_prompt = prompt;
+            var r = await fetch(PLATFORM_BASE + '/api/v1/businesses', {
+                method: 'POST', headers: apiHeaders(), body: JSON.stringify(body)
+            });
+            if (!r.ok) { var d = await r.json(); alert(d.error || 'Error'); return; }
+            var biz = await r.json();
+            document.getElementById('createBizForm').style.display = 'none';
+            document.getElementById('newBizName').value = '';
+            document.getElementById('newBizPrompt').value = '';
+            await loadBusinesses();
+            selectBusiness(biz);
+        } catch(e) { alert('Network error'); }
+    }
+
+    // ─── API Keys ─────────────────────────────────────────────────────────────
+    async function loadApiKeys() {
+        currentBizKeys = [];
+        try {
+            var r = await fetch(PLATFORM_BASE + '/api/keys', { headers: apiHeaders() });
+            if (r.ok) {
+                var d = await r.json();
+                currentBizKeys = (d.keys || []).filter(k => k.business_id === currentBiz.id);
+            }
+        } catch {}
+        renderApiKeys();
+    }
+
+    function renderApiKeys() {
+        var el = document.getElementById('apiKeysList');
+        if (currentBizKeys.length === 0) {
+            el.innerHTML = '<p class="text-sm text-muted">No API keys yet.</p>';
+            return;
+        }
+        el.innerHTML = currentBizKeys.map(k => `
+            <div class="flex items-center justify-between p-3 mb-2" style="background: var(--surface-secondary); border-radius: var(--radius-md);">
+                <div class="flex items-center gap-3">
+                    <code class="text-sm">${esc(k.key_prefix)}...</code>
+                    <span class="text-sm text-muted">${esc(k.name || 'Default')}</span>
+                </div>
+                <span class="badge badge-success">Active</span>
+            </div>
+        `).join('');
+    }
+
+    async function createApiKey() {
+        try {
+            var r = await fetch(PLATFORM_BASE + '/api/keys', {
+                method: 'POST', headers: apiHeaders(),
+                body: JSON.stringify({ name: currentBiz.name + ' Key', business_id: currentBiz.id })
+            });
+            if (r.ok) {
+                var d = await r.json();
+                if (d.key) {
+                    alert('API Key created (save it now):\\n\\n' + d.key);
+                    d._full_key = d.key;
+                    currentBizKeys.push(d);
+                    renderApiKeys();
+                    updateSnippet();
+                }
+            } else {
+                var d = await r.json();
+                alert(d.error || 'Could not create key');
+            }
+        } catch { alert('Network error'); }
+    }
+
+    // ─── Widget Snippet ───────────────────────────────────────────────────────
+    function updateSnippet() {
+        var key = currentBizKeys.length > 0 ? (currentBizKeys[0].key_prefix || 'cami_xxx') + '...' : 'YOUR_KEY';
+        var wc = currentBiz.widget_config || {};
+        var color = wc.color || '#5a7d64';
+        var title = wc.title || currentBiz.name || 'Support';
+
+        document.getElementById('snippetSrc').textContent = '"https://usecami.com/static/widget.js"';
+        document.getElementById('snippetKey').textContent = '"' + key + '"';
+        document.getElementById('snippetColor').textContent = '"' + color + '"';
+        document.getElementById('snippetTitle').textContent = '"' + title + '"';
+
+        var endpoints = { customer_service: '/api/v1/chat', legal: '/api/v1/legal/research', clinical: '/api/v1/health/consult' };
+        document.getElementById('apiEndpoint').textContent = 'https://usecami.com' + (endpoints[currentBiz.service_type] || '/api/v1/chat');
+        document.getElementById('apiKeyDisplay').textContent = key;
+    }
+
+    // ─── Knowledge Base ───────────────────────────────────────────────────────
+    async function loadKnowledge() {
+        var el = document.getElementById('kbList');
+        if (currentBizKeys.length === 0) {
+            el.innerHTML = '<p class="text-sm text-muted">Create an API key first.</p>';
+            return;
+        }
+        try {
+            var r = await fetch(PLATFORM_BASE + '/api/v1/knowledge', { headers: bizHeaders() });
+            if (!r.ok) { el.innerHTML = '<p class="text-sm text-muted">Could not load.</p>'; return; }
+            var d = await r.json();
+            var items = d.items || [];
+            if (items.length === 0) { el.innerHTML = '<p class="text-sm text-muted">No entries yet.</p>'; return; }
+            
+            var grouped = {};
+            items.forEach(it => { var t = it.title || 'Untitled'; if (!grouped[t]) grouped[t] = []; grouped[t].push(it); });
+            
+            el.innerHTML = Object.keys(grouped).map(title => {
+                var chunks = grouped[title];
+                return `
+                    <div class="flex items-center justify-between p-3 mb-2" style="background: var(--surface-secondary); border-radius: var(--radius-md);">
+                        <div>
+                            <div class="font-medium">${esc(title)}</div>
+                            <div class="text-xs text-muted">${chunks.length} chunks</div>
+                        </div>
+                        <button class="btn btn-outline-danger btn-sm" onclick="deleteKnowledge('${esc(chunks[0].id)}','${esc(title)}')">Delete</button>
+                    </div>
+                `;
+            }).join('');
+        } catch { el.innerHTML = '<p class="text-sm text-muted">Error loading.</p>'; }
+    }
+
+    window.deleteKnowledge = async function(id, title) {
+        if (!confirm('Delete "' + title + '"?')) return;
+        try {
+            await fetch(PLATFORM_BASE + '/api/v1/knowledge/' + id, { method: 'DELETE', headers: bizHeaders() });
+            loadKnowledge();
+        } catch {}
+    };
+
+    async function uploadKnowledge() {
+        var title = document.getElementById('kbTitle').value.trim();
+        var content = document.getElementById('kbContent').value.trim();
+        var status = document.getElementById('kbUploadStatus');
+        if (!title || !content) { alert('Title and content required.'); return; }
+        if (currentBizKeys.length === 0) { alert('Create an API key first.'); return; }
+        status.textContent = 'Uploading...';
+        status.style.color = 'var(--text-muted)';
+        try {
+            var r = await fetch(PLATFORM_BASE + '/api/v1/knowledge/ingest', {
+                method: 'POST', headers: bizHeaders(),
+                body: JSON.stringify({ title, content })
+            });
+            if (r.ok) {
+                var d = await r.json();
+                status.textContent = 'Done! ' + (d.chunks_stored || 0) + ' chunks.';
+                status.style.color = 'var(--success)';
+                document.getElementById('kbTitle').value = '';
+                document.getElementById('kbContent').value = '';
+                loadKnowledge();
+            } else {
+                status.textContent = 'Error';
+                status.style.color = 'var(--danger)';
+            }
+        } catch { status.textContent = 'Network error'; status.style.color = 'var(--danger)'; }
+    }
+
+    // ─── Conversations ────────────────────────────────────────────────────────
+    async function loadConversations() {
+        var el = document.getElementById('convList');
+        if (!currentBiz) return;
+        try {
+            var r = await fetch(PLATFORM_BASE + '/api/v1/businesses/' + currentBiz.id + '/conversations', { headers: apiHeaders() });
+            if (!r.ok) { el.innerHTML = '<p class="text-sm text-muted">Could not load.</p>'; return; }
+            var d = await r.json();
+            var convos = d.conversations || [];
+            if (convos.length === 0) { el.innerHTML = '<p class="text-sm text-muted">No conversations yet.</p>'; return; }
+            
+            el.innerHTML = convos.slice(0, 30).map(c => `
+                <div class="p-3 mb-2" style="background: var(--surface-secondary); border-radius: var(--radius-md);">
+                    <div class="flex items-center justify-between mb-2">
+                        <code class="text-xs">${esc(c.session_id || c.id)}</code>
+                        <span class="text-xs text-muted">${c.message_count || 0} msgs</span>
+                    </div>
+                    <div class="text-xs text-muted">${c.updated_at ? new Date(c.updated_at).toLocaleString() : '—'}</div>
+                </div>
+            `).join('');
+        } catch { el.innerHTML = '<p class="text-sm text-muted">Error.</p>'; }
+    }
+
+    // ─── Analytics ────────────────────────────────────────────────────────────
+    async function loadAnalytics() {
+        if (!currentBiz) return;
+        var serviceNames = { customer_service: 'Customer Service', legal: 'Legal Intelligence', clinical: 'Health / Clinical' };
+        document.getElementById('anServiceType').textContent = serviceNames[currentBiz.service_type] || currentBiz.service_type || 'CS';
+        
+        try {
+            var r = await fetch(PLATFORM_BASE + '/api/v1/businesses/' + currentBiz.id + '/conversations', { headers: apiHeaders() });
+            if (!r.ok) return;
+            var d = await r.json();
+            var convos = d.conversations || [];
+            
+            var totalConvos = convos.length;
+            var totalMsgs = 0;
+            var escLow = 0, escMed = 0, escHigh = 0;
+            
+            convos.forEach(c => {
+                totalMsgs += c.message_count || 0;
+                var lvl = (c.escalation_level || 'low').toLowerCase();
+                if (lvl === 'high') escHigh++;
+                else if (lvl === 'medium') escMed++;
+                else escLow++;
+            });
+            
+            document.getElementById('anConvos').textContent = totalConvos.toLocaleString();
+            document.getElementById('anMsgs').textContent = totalMsgs.toLocaleString();
+            document.getElementById('anAvg').textContent = totalConvos > 0 ? (totalMsgs / totalConvos).toFixed(1) : '—';
+            
+            var escTotal = escLow + escMed + escHigh;
+            var bar = document.getElementById('anEscBar');
+            var legend = document.getElementById('anEscLegend');
+            
+            if (escTotal > 0) {
+                var pLow = Math.round(escLow / escTotal * 100);
+                var pMed = Math.round(escMed / escTotal * 100);
+                var pHigh = Math.round(escHigh / escTotal * 100);
+                bar.innerHTML = `
+                    <div style="width:${pLow}%;height:100%;background:var(--success);"></div>
+                    <div style="width:${pMed}%;height:100%;background:var(--warning);"></div>
+                    <div style="width:${pHigh}%;height:100%;background:var(--danger);"></div>
+                `;
+                legend.innerHTML = `
+                    <span class="flex items-center gap-1"><span class="status-dot online"></span>Low ${escLow}</span>
+                    <span class="flex items-center gap-1"><span class="status-dot warning"></span>Medium ${escMed}</span>
+                    <span class="flex items-center gap-1"><span class="status-dot error"></span>High ${escHigh}</span>
+                `;
+            }
+            
+            var actEl = document.getElementById('anRecentActivity');
+            if (convos.length === 0) {
+                actEl.innerHTML = '<p class="text-sm text-muted">No activity yet.</p>';
+            } else {
+                actEl.innerHTML = convos.slice(0, 8).map(c => `
+                    <div class="flex items-center justify-between p-3 mb-2" style="background: var(--surface-secondary); border-radius: var(--radius-md);">
+                        <div>
+                            <code class="text-xs">${esc(c.session_id || c.id.slice(0,8))}</code>
+                            <div class="text-xs text-muted">${c.message_count || 0} msgs</div>
+                        </div>
+                        <span class="badge badge-${c.escalation_level === 'high' ? 'danger' : c.escalation_level === 'medium' ? 'warning' : 'success'}">${c.escalation_level || 'low'}</span>
+                    </div>
+                `).join('');
+            }
+        } catch {}
+    }
+
+    // ─── Settings ─────────────────────────────────────────────────────────────
+    function updateSettingsForm() {
+        if (!currentBiz) return;
+        document.getElementById('settingsName').value = currentBiz.name || '';
+        document.getElementById('settingsPrompt').value = currentBiz.system_prompt || '';
+        var wc = currentBiz.widget_config || {};
+        document.getElementById('settingsColor').value = wc.color || '#5a7d64';
+        document.getElementById('settingsWidgetTitle').value = wc.title || '';
+        document.getElementById('settingsWelcome').value = wc.welcome || '';
+    }
+
+    async function saveSettings() {
+        if (!currentBiz) return;
+        var body = {
+            name: document.getElementById('settingsName').value.trim(),
+            system_prompt: document.getElementById('settingsPrompt').value.trim(),
+            widget_config: {
+                color: document.getElementById('settingsColor').value,
+                title: document.getElementById('settingsWidgetTitle').value.trim(),
+                welcome: document.getElementById('settingsWelcome').value.trim(),
+            }
+        };
+        try {
+            var r = await fetch(PLATFORM_BASE + '/api/v1/businesses/' + currentBiz.id, {
+                method: 'PUT', headers: apiHeaders(), body: JSON.stringify(body)
+            });
+            if (r.ok) {
+                document.getElementById('settingsSaved').style.display = 'inline';
+                setTimeout(() => { document.getElementById('settingsSaved').style.display = 'none'; }, 2000);
+                var d = await r.json();
+                if (d.business) currentBiz = d.business;
+                updateSnippet();
+                loadBusinesses();
+            } else {
+                var d = await r.json();
+                alert(d.error || 'Save failed');
+            }
+        } catch { alert('Network error'); }
+    }
+
+    // ─── UI Binding ───────────────────────────────────────────────────────────
+    function bindUI() {
+        // Tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Business
+        document.getElementById('btnCreateBiz').addEventListener('click', () => {
+            document.getElementById('createBizForm').style.display = '';
+        });
+        document.getElementById('btnCancelBiz').addEventListener('click', () => {
+            document.getElementById('createBizForm').style.display = 'none';
+        });
+        document.getElementById('btnSubmitBiz').addEventListener('click', createBusiness);
+
+        // API key
+        document.getElementById('btnCreateKey').addEventListener('click', createApiKey);
+
+        // Knowledge
+        document.getElementById('btnUploadKB').addEventListener('click', uploadKnowledge);
+
+        // File upload
+        var fileDrop = document.getElementById('fileDrop');
+        var fileInput = document.getElementById('fileInput');
+        fileDrop.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) handleFileUpload(fileInput.files[0]);
+        });
+        fileDrop.addEventListener('dragover', e => { e.preventDefault(); fileDrop.classList.add('drag-over'); });
+        fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('drag-over'));
+        fileDrop.addEventListener('drop', e => {
+            e.preventDefault();
+            fileDrop.classList.remove('drag-over');
+            if (e.dataTransfer.files.length) handleFileUpload(e.dataTransfer.files[0]);
+        });
+
+        // Settings
+        document.getElementById('btnSaveSettings').addEventListener('click', saveSettings);
+
+        // Logout
+        document.getElementById('btnLogout').addEventListener('click', async () => {
+            if (sb) await sb.auth.signOut();
+            window.location.href = '/login';
+        });
+    }
+
+    function handleFileUpload(file) {
+        if (!file) return;
+        var ext = file.name.split('.').pop().toLowerCase();
+        document.getElementById('kbTitle').value = file.name.replace(/\.[^/.]+$/, '');
+        if (ext === 'txt' || ext === 'md') {
+            var reader = new FileReader();
+            reader.onload = e => { document.getElementById('kbContent').value = e.target.result; };
+            reader.readAsText(file);
+        } else {
+            alert('For PDF/DOCX, use the server extraction endpoint.');
+        }
+    }
+
+    window.copySnippet = function(id) {
+        var el = document.getElementById(id);
+        var text = el.innerText.replace('Copy', '').trim();
+        navigator.clipboard.writeText(text).then(() => {
+            var btn = el.querySelector('.copy-btn');
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+        });
+    };
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+})();
+    </script>
+</body>
+</html>

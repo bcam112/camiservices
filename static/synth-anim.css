@@ -1,0 +1,410 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   Cami Synthesis Animations — SITE-WIDE
+   Ambient energy, light sweeps, and living motion across every page.
+   Aesthetic: synthesis — many inputs becoming one clear output.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Universal card glow sweep — light traces across card surfaces ──── */
+/* Targets ALL card-like elements across the entire site */
+.feature-card,
+.agent-card,
+.cs-diff-card,
+.cs-tier,
+.clinical-tier,
+.stat-card,
+.dash-card,
+.card,
+.chart-card,
+.auth-card,
+.task-card,
+.provider-card,
+.trial-wall-card,
+.min-cap-card,
+.min-stat-card,
+.min-step,
+.roadmap-phase,
+[class*="-card"],
+[class*="_card"] {
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before,
+.agent-card::before,
+.cs-diff-card::before,
+.cs-tier::before,
+.clinical-tier::before,
+.stat-card::before,
+.dash-card::before,
+.card::before,
+.chart-card::before,
+.auth-card::before,
+.task-card::before,
+.provider-card::before,
+.trial-wall-card::before,
+.min-cap-card::before,
+.min-stat-card::before,
+[class*="-card"]::before,
+[class*="_card"]::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+        from var(--glow-angle, 0deg),
+        transparent 0%,
+        rgba(90, 125, 100, 0.08) 10%,
+        transparent 20%
+    );
+    animation: card-glow-rotate 8s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+/* Activate glow on scroll-in or immediately for visible cards */
+.synth-visible::before,
+.synthesized .feature-card::before,
+.agent-card::before,
+.cs-diff-card::before,
+.cs-tier::before,
+.clinical-tier::before,
+.stat-card::before,
+.dash-card::before,
+.card::before,
+.chart-card::before,
+.auth-card::before,
+.task-card::before,
+.provider-card::before,
+.trial-wall-card::before,
+.min-cap-card::before,
+.min-stat-card::before,
+[class*="-card"]::before,
+[class*="_card"]::before {
+    opacity: 1;
+}
+
+/* Stagger the rotation start per card within grids */
+:nth-child(1 of .synth-visible)::before { animation-delay: 0s; }
+:nth-child(2 of .synth-visible)::before { animation-delay: -1.3s; }
+:nth-child(3 of .synth-visible)::before { animation-delay: -2.6s; }
+:nth-child(4 of .synth-visible)::before { animation-delay: -3.9s; }
+:nth-child(5 of .synth-visible)::before { animation-delay: -5.2s; }
+:nth-child(6 of .synth-visible)::before { animation-delay: -6.5s; }
+
+/* Simpler stagger for browsers that don't support "of S" */
+.feature-card:nth-child(1)::before, .agent-card:nth-child(1)::before { animation-delay: 0s; }
+.feature-card:nth-child(2)::before, .agent-card:nth-child(2)::before { animation-delay: -1.3s; }
+.feature-card:nth-child(3)::before, .agent-card:nth-child(3)::before { animation-delay: -2.6s; }
+.feature-card:nth-child(4)::before, .agent-card:nth-child(4)::before { animation-delay: -3.9s; }
+.feature-card:nth-child(5)::before, .agent-card:nth-child(5)::before { animation-delay: -5.2s; }
+.feature-card:nth-child(6)::before, .agent-card:nth-child(6)::before { animation-delay: -6.5s; }
+
+@keyframes card-glow-rotate {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* Keep card content above the glow */
+.feature-card > *,
+.agent-card > *,
+.cs-diff-card > *,
+.cs-tier > *,
+.clinical-tier > *,
+.stat-card > *,
+.dash-card > *,
+.card > *,
+.chart-card > *,
+.auth-card > *,
+.task-card > *,
+.provider-card > *,
+.trial-wall-card > *,
+.min-cap-card > *,
+.min-stat-card > *,
+[class*="-card"] > *,
+[class*="_card"] > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Border shimmer — accent light traces the card edge ─────────────── */
+.feature-card::after,
+.agent-card::after,
+.cs-diff-card::after,
+.cs-tier::after,
+.stat-card::after,
+.dash-card::after,
+.card::after,
+.chart-card::after,
+.auth-card::after,
+.min-cap-card::after,
+.min-stat-card::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: conic-gradient(
+        from var(--shimmer-angle, 0deg),
+        transparent 0%,
+        rgba(90, 125, 100, 0.35) 5%,
+        transparent 10%,
+        transparent 50%,
+        rgba(90, 125, 100, 0.2) 55%,
+        transparent 60%
+    );
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    padding: 1px;
+    animation: border-shimmer 6s linear infinite;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.synth-visible::after,
+.synthesized .feature-card::after,
+.agent-card::after,
+.cs-diff-card::after,
+.cs-tier::after,
+.stat-card::after,
+.dash-card::after,
+.card::after,
+.chart-card::after,
+.auth-card::after,
+.min-cap-card::after,
+.min-stat-card::after {
+    opacity: 1;
+}
+
+.feature-card:nth-child(1)::after { animation-delay: -0.5s; }
+.feature-card:nth-child(2)::after { animation-delay: -1.5s; }
+.feature-card:nth-child(3)::after { animation-delay: -2.5s; }
+.feature-card:nth-child(4)::after { animation-delay: -3.5s; }
+.feature-card:nth-child(5)::after { animation-delay: -4.5s; }
+.feature-card:nth-child(6)::after { animation-delay: -5.5s; }
+
+@keyframes border-shimmer {
+    from { --shimmer-angle: 0deg; transform: rotate(0deg); }
+    to   { --shimmer-angle: 360deg; transform: rotate(360deg); }
+}
+
+/* ── Connection circle pulse — central ring breathes ────────────────── */
+.connection-circle {
+    animation: circle-pulse 4s ease-in-out infinite, circle-glow 6s ease-in-out infinite;
+}
+
+@keyframes circle-pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50%      { transform: translate(-50%, -50%) scale(1.015); }
+}
+
+@keyframes circle-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(90, 125, 100, 0.08), 0 0 60px rgba(90, 125, 100, 0.04); }
+    50%      { box-shadow: 0 0 30px rgba(90, 125, 100, 0.15), 0 0 80px rgba(90, 125, 100, 0.08); }
+}
+
+/* ── Cami center logo breathe ───────────────────────────────────────── */
+.cami-center {
+    animation: center-breathe 5s ease-in-out infinite;
+}
+
+@keyframes center-breathe {
+    0%, 100% { filter: brightness(1) drop-shadow(0 0 8px rgba(90, 125, 100, 0.1)); }
+    50%      { filter: brightness(1.05) drop-shadow(0 0 16px rgba(90, 125, 100, 0.25)); }
+}
+
+/* ── Hero / heading glow — living text energy ──────────────────────── */
+.tagline,
+.synth-glow-text {
+    animation: tagline-glow 4s ease-in-out infinite;
+}
+
+@keyframes tagline-glow {
+    0%, 100% { text-shadow: 0 0 20px rgba(90, 125, 100, 0.0); }
+    50%      { text-shadow: 0 0 40px rgba(90, 125, 100, 0.15), 0 0 80px rgba(90, 125, 100, 0.05); }
+}
+
+/* ── Section entrance fade-up — universal scroll-in animation ──────── */
+.synth-fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.synth-fade-up.synth-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ── Card hover energy burst — universal hover glow ──────────────── */
+.feature-card:hover,
+.agent-card:hover,
+.cs-diff-card:hover,
+.cs-tier:hover,
+.stat-card:hover,
+.dash-card:hover,
+.card:hover,
+.chart-card:hover,
+.min-cap-card:hover,
+.min-stat-card:hover,
+[class*="-card"]:hover,
+[class*="_card"]:hover {
+    box-shadow:
+        0 4px 20px var(--shadow, rgba(0,0,0,0.06)),
+        0 0 20px rgba(90, 125, 100, 0.12),
+        0 0 40px rgba(90, 125, 100, 0.06);
+    transition: box-shadow 0.3s ease;
+}
+
+/* ── Card entrance flash — light burst on scroll-in ────────────────── */
+@keyframes card-entrance-flash {
+    0%   { box-shadow: 0 4px 20px var(--shadow, rgba(0,0,0,0.06)); }
+    30%  { box-shadow: 0 4px 20px var(--shadow, rgba(0,0,0,0.06)), 0 0 25px rgba(90, 125, 100, 0.2); }
+    100% { box-shadow: 0 4px 20px var(--shadow, rgba(0,0,0,0.06)); }
+}
+
+/* ── Floating accent dots — ambient energy particles ────────────────── */
+@keyframes float-particle {
+    0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+    15%  { opacity: 0.6; }
+    85%  { opacity: 0.6; }
+    100% { transform: translateY(-120px) translateX(30px) scale(0.3); opacity: 0; }
+}
+
+.synth-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.synth-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(90, 125, 100, 0.4);
+    animation: float-particle var(--duration, 6s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+}
+
+[data-theme="dark"] .synth-particle {
+    background: rgba(110, 180, 140, 0.35);
+}
+
+/* ── CTA button pulse — universal ──────────────────────────────────── */
+.cta-primary,
+.cs-cta-primary,
+[class*="cta-primary"],
+a.btn.primary,
+button.btn.primary {
+    animation: cta-pulse 3s ease-in-out infinite;
+}
+
+@keyframes cta-pulse {
+    0%, 100% { box-shadow: 0 4px 16px rgba(90, 125, 100, 0.25); }
+    50%      { box-shadow: 0 4px 24px rgba(90, 125, 100, 0.4), 0 0 40px rgba(90, 125, 100, 0.1); }
+}
+
+/* ── Subtle section divider glow ─────────────────────────────────────── */
+.synth-divider {
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(90, 125, 100, 0.3) 50%,
+        transparent 100%
+    );
+    margin: 48px auto;
+    max-width: 400px;
+    animation: divider-breathe 4s ease-in-out infinite;
+}
+
+@keyframes divider-breathe {
+    0%, 100% { opacity: 0.4; max-width: 400px; }
+    50%      { opacity: 0.8; max-width: 440px; }
+}
+
+/* ── Nav logo ambient glow ──────────────────────────────────────────── */
+.nav-logo .logo-text,
+.logo-text {
+    animation: logo-breathe 6s ease-in-out infinite;
+}
+
+@keyframes logo-breathe {
+    0%, 100% { text-shadow: 0 0 0px rgba(90, 125, 100, 0); }
+    50%      { text-shadow: 0 0 12px rgba(90, 125, 100, 0.15); }
+}
+
+/* ── Accent underline sweep for headings ─────────────────────────────── */
+.synth-underline {
+    position: relative;
+    display: inline-block;
+}
+
+.synth-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(90, 125, 100, 0.5),
+        transparent
+    );
+    animation: underline-sweep 4s ease-in-out infinite;
+}
+
+@keyframes underline-sweep {
+    0%, 100% { transform: translateX(-30%); opacity: 0.3; }
+    50%      { transform: translateX(30%); opacity: 0.8; }
+}
+
+/* ── Background energy gradient — subtle ambient pulse ──────────────── */
+.synth-bg-pulse {
+    position: relative;
+}
+
+.synth-bg-pulse::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        ellipse at 50% 50%,
+        rgba(90, 125, 100, 0.03) 0%,
+        transparent 70%
+    );
+    animation: bg-pulse 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes bg-pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.05); }
+}
+
+/* ── Respect reduced motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    .synth-fade-up {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}

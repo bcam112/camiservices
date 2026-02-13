@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://usecami.com/</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://usecami.com/try</loc><priority>0.9</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://usecami.com/login</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://usecami.com/dashboard</loc><priority>0.8</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://usecami.com/research</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://usecami.com/deep-research</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://usecami.com/health</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://usecami.com/legal-intelligence</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://usecami.com/customer-service</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://usecami.com/tutor</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://usecami.com/cami-money</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://usecami.com/roadmap</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://usecami.com/contact</loc><priority>0.5</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://usecami.com/privacy</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://usecami.com/terms</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://usecami.com/disclaimer</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>
+</urlset>

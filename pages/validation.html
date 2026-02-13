@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human+ Validation | Open-Source Alignment Testing</title>
+    <meta name="description" content="Open-source validation of Human+ alignment claims. Every test case, input, and result is public and reproducible.">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/space-bg.css">
+    <link rel="stylesheet" href="/static/enterprise-pages.css">
+    <script>
+    (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+    <style>
+        /* Validation page specific styles */
+        .validation-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+        
+        .validation-header {
+            text-align: center;
+            padding: 140px 48px 60px;
+        }
+        
+        .validation-header h1 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+        
+        .validation-header .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        .validation-badge {
+            display: inline-block;
+            background: rgba(90, 125, 100, 0.15);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            border: 1px solid rgba(90, 125, 100, 0.3);
+        }
+        
+        /* Score Hero */
+        .v-score-hero {
+            background: rgba(90, 125, 100, 0.08);
+            border: 1px solid rgba(90, 125, 100, 0.2);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .v-score-value {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 4.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+        }
+        
+        .v-score-label {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-top: 0.75rem;
+        }
+        
+        .v-score-verdict {
+            margin-top: 1rem;
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+        
+        /* EQ-Bench Box */
+        .v-eqbench-box {
+            background: rgba(90, 125, 100, 0.06);
+            border: 1px solid rgba(90, 125, 100, 0.25);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .v-eqbench-box h3 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .v-eqbench-box .elo-value {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 2.75rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .v-eqbench-box p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        /* Metrics Grid */
+        .v-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+        
+        .v-metric-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .v-metric-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        .v-metric-card.critical {
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        
+        .v-metric-value {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .v-metric-value.warning { color: #f59e0b; }
+        .v-metric-value.error { color: #ef4444; }
+        
+        .v-metric-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            line-height: 1.4;
+        }
+        
+        .v-metric-label small {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            display: block;
+            margin-top: 4px;
+        }
+        
+        /* Info Box */
+        .v-info-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .v-info-box h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--accent);
+        }
+        
+        .v-info-box p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.65;
+        }
+        
+        .v-info-box p + p {
+            margin-top: 1rem;
+        }
+        
+        /* Section */
+        .v-section {
+            margin-bottom: 3rem;
+        }
+        
+        .v-section h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        /* Test Cases Table */
+        .v-test-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+        
+        .v-test-table th,
+        .v-test-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .v-test-table th {
+            background: var(--card-bg);
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .v-test-table tbody tr:hover {
+            background: rgba(90, 125, 100, 0.03);
+        }
+        
+        .status-pass {
+            color: #ffffff;
+            font-weight: 500;
+        }
+        
+        .status-fail {
+            color: #ef4444;
+            font-weight: 500;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.7rem;
+            background: rgba(90, 125, 100, 0.1);
+            color: var(--text-secondary);
+            border: 1px solid rgba(90, 125, 100, 0.15);
+        }
+        
+        .input-preview {
+            max-width: 280px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--text-secondary);
+        }
+        
+        /* Expandable Row */
+        .expandable {
+            cursor: pointer;
+        }
+        
+        .expand-icon {
+            margin-right: 0.5rem;
+            transition: transform 0.2s;
+        }
+        
+        .expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+        
+        .detail-row {
+            display: none;
+            background: var(--card-bg);
+        }
+        
+        .detail-row.visible {
+            display: table-row;
+        }
+        
+        .detail-content {
+            padding: 1.25rem;
+            font-family: 'SF Mono', Monaco, 'Consolas', monospace;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .detail-content strong {
+            color: var(--text-primary);
+        }
+        
+        /* Timestamp */
+        .v-timestamp {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        /* Comparison Section */
+        .v-comparison-section {
+            margin: 3rem 0;
+            padding: 3rem 0;
+            border-top: 1px solid var(--border);
+        }
+        
+        .v-comparison-section h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 1.75rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .v-comparison-section .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+        }
+        
+        /* Hero Comparison Cards */
+        .v-comparison-hero {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .v-approach-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .v-approach-card.winner {
+            background: rgba(90, 125, 100, 0.12);
+            border: 2px solid rgba(90, 125, 100, 0.4);
+            transform: scale(1.02);
+        }
+        
+        .v-approach-card .approach-name {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .v-approach-card .approach-score {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .v-approach-card.winner .approach-score {
+            color: var(--accent);
+        }
+        
+        .v-approach-card .approach-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        
+        .v-approach-card.winner .approach-label {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        /* Comparison Highlight Stats */
+        .v-comparison-highlights {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .v-highlight-card {
+            background: rgba(90, 125, 100, 0.06);
+            border: 1px solid rgba(90, 125, 100, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .v-highlight-card .highlight-category {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+        
+        .v-highlight-card .highlight-comparison {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 0.75rem;
+        }
+        
+        .v-highlight-card .humanplus-score {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .v-highlight-card .vs-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .v-highlight-card .other-score {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+        }
+        
+        .v-highlight-card .highlight-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        
+        .v-highlight-card .highlight-label strong {
+            color: var(--accent);
+        }
+        
+        /* Detail Table */
+        .v-comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        .v-comparison-table th,
+        .v-comparison-table td {
+            padding: 0.75rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .v-comparison-table th {
+            background: var(--card-bg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .v-comparison-table th:first-child,
+        .v-comparison-table td:first-child {
+            text-align: left;
+        }
+        
+        .v-comparison-table tr:hover {
+            background: rgba(90, 125, 100, 0.03);
+        }
+        
+        .v-comparison-table .score-100 { color: #ffffff; font-weight: 700; }
+        .v-comparison-table .score-90 { color: #86efac; }
+        .v-comparison-table .score-70 { color: #fbbf24; }
+        .v-comparison-table .score-50 { color: #f97316; }
+        .v-comparison-table .score-low { color: #ef4444; }
+        
+        .v-comparison-table .approach-humanplus { 
+            background: rgba(90, 125, 100, 0.1); 
+            font-weight: 600;
+        }
+        
+        .v-key-findings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+        
+        .v-finding-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        .v-finding-card h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        .v-finding-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        /* Test Comparison Grid (in detail view) */
+        .test-comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin: 1rem 1.25rem;
+            padding: 1rem;
+            background: rgba(0,0,0,0.1);
+            border-radius: 12px;
+        }
+        
+        .test-comp-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .test-comp-card.comp-highlight {
+            background: rgba(90, 125, 100, 0.15);
+            border-color: rgba(90, 125, 100, 0.4);
+        }
+        
+        .test-comp-card.comp-pass {
+            border-left: 3px solid var(--accent);
+        }
+        
+        .test-comp-card.comp-fail {
+            border-left: 3px solid #ef4444;
+        }
+        
+        .comp-approach-name {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .comp-result {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .comp-status {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .comp-pass .comp-status { color: var(--accent); }
+        .comp-fail .comp-status { color: #ef4444; }
+        
+        .comp-behavior {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        
+        @media (max-width: 900px) {
+            .v-comparison-hero { grid-template-columns: repeat(2, 1fr); }
+            .v-comparison-highlights { grid-template-columns: 1fr; }
+            .v-approach-card .approach-score { font-size: 2.5rem; }
+            .test-comparison-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 600px) {
+            .v-comparison-hero { grid-template-columns: 1fr; }
+            .v-approach-card.winner { transform: none; }
+            .test-comparison-grid { grid-template-columns: 1fr; }
+        }
+        
+        /* Loading */
+        .v-loading {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Back Link */
+        .v-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            transition: opacity 0.2s;
+        }
+        
+        .v-back-link:hover {
+            opacity: 0.8;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .validation-container { padding: 0 1rem 3rem; }
+            .validation-header { padding: 120px 20px 40px; }
+            .validation-header h1 { font-size: 1.75rem; }
+            .v-score-value { font-size: 3rem; }
+            .v-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .v-test-table { font-size: 0.75rem; }
+            .v-test-table th, .v-test-table td { padding: 0.5rem 0.75rem; }
+            .input-preview { max-width: 120px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="space-bg" aria-hidden="true">
+        <div class="space-bg__gradient"></div>
+        <canvas class="space-bg__stars" id="space-bg-stars"></canvas>
+    </div>
+    
+    <nav class="nav-header">
+        <a href="/" class="nav-logo"><span class="logo-text">Cami</span></a>
+        <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+        <div class="nav-links" aria-hidden="true"><a href="/customer-service" class="nav-link">Customer Service</a><a href="/legal-intelligence" class="nav-link">Law</a><a href="/health" class="nav-link">Health</a><span class="nav-sep" aria-hidden="true">|</span><span class="nav-link nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-link nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-link nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-sep" aria-hidden="true">|</span><a href="/try" class="nav-link">Try Cami</a><a href="/human-plus" class="nav-link">Human+</a><a href="/min" class="nav-link">M.I.N.</a><a href="/roadmap" class="nav-link">Roadmap</a><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" class="nav-link github">GitHub</a></div>
+    </nav>
+    <div class="nav-sidebar-backdrop" id="nav-sidebar-backdrop" aria-hidden="true"></div>
+    <aside class="nav-sidebar" id="nav-sidebar" aria-label="Main menu">
+        <div class="nav-sidebar-logo"><a href="/" class="nav-logo"><span class="logo-text">Cami</span></a></div>
+        <div class="nav-sidebar-links">
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Services<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/customer-service">Customer Service</a>
+                    <a href="/legal-intelligence">Law</a>
+                    <a href="/health">Health</a>
+                    <span class="nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Technology<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/human-plus">Human+</a>
+                    <a href="/human-plus/validation">Validation</a>
+                    <a href="/min">M.I.N.</a>
+                    <a href="/roadmap">Roadmap</a>
+                    <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Account<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/try">Try Cami</a>
+                    <a href="/login">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <script>(function(){ var b=document.body, btn=document.getElementById('nav-hamburger'), back=document.getElementById('nav-sidebar-backdrop'), side=document.getElementById('nav-sidebar'); if(!btn||!back||!side) return; function close(){ b.classList.remove('nav-sidebar-open'); } function toggle(){ b.classList.toggle('nav-sidebar-open'); } btn.addEventListener('click',toggle); back.addEventListener('click',close); side.querySelectorAll('.nav-sidebar-links a').forEach(function(a){ a.addEventListener('click',close); }); side.querySelectorAll('.nav-sidebar-section-toggle').forEach(function(btn){ btn.addEventListener('click',function(){ var g=btn.closest('.nav-sidebar-group'); if(g) g.classList.toggle('collapsed'); btn.setAttribute('aria-expanded',g&&!g.classList.contains('collapsed')); }); }); })();</script>
+
+    <main class="page-container">
+        <header class="validation-header">
+            <h1>Human+ Validation</h1>
+            <p class="subtitle">Open-source alignment testing with full transparency</p>
+            <span class="validation-badge">1633 ELO on EQ-Bench 3</span>
+            <span class="validation-badge">155 tests - all public</span>
+        </header>
+        
+        <div class="validation-container">
+            <a href="/human-plus" class="v-back-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back to Human+
+            </a>
+            
+            <div id="content">
+                <div class="v-loading" id="status">Loading...</div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Data is now fetched from /data/validation_results.json due to size (155 tests) -->
+    
+    <script>
+        // Initialize space background
+        (function() {
+            const c = document.getElementById('space-bg-stars');
+            if (!c) return;
+            const ctx = c.getContext('2d');
+            function resize() { c.width = window.innerWidth; c.height = window.innerHeight; draw(); }
+            function draw() {
+                ctx.clearRect(0, 0, c.width, c.height);
+                for (let i = 0; i < 150; i++) {
+                    const x = Math.random() * c.width;
+                    const y = Math.random() * c.height;
+                    const r = Math.random() * 1.2;
+                    const a = 0.3 + Math.random() * 0.4;
+                    ctx.beginPath();
+                    ctx.arc(x, y, r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255,255,255,${a})`;
+                    ctx.fill();
+                }
+            }
+            window.addEventListener('resize', resize);
+            resize();
+        })();
+        
+        async function loadResults() {
+            try {
+                document.getElementById('status').textContent = 'Loading 155 test results...';
+                
+                // Load both validation and comparison data
+                const [validationRes, comparisonRes] = await Promise.all([
+                    fetch('/data/validation_results.json'),
+                    fetch('/data/alignment_comparison.json')
+                ]);
+                
+                if (!validationRes.ok) {
+                    throw new Error(`HTTP ${validationRes.status}: ${validationRes.statusText}`);
+                }
+                
+                const validationData = await validationRes.json();
+                const comparisonData = comparisonRes.ok ? await comparisonRes.json() : null;
+                
+                renderResults(validationData, comparisonData);
+            } catch (e) {
+                console.error('Error loading results:', e);
+                document.getElementById('content').innerHTML = `
+                    <div class="v-info-box">
+                        <h3>Error loading results</h3>
+                        <p>${e.message}</p>
+                        <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                            Try refreshing the page or check that the data file exists at /data/validation_results.json
+                        </p>
+                    </div>
+                `;
+            }
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+        }
+        
+        function getScoreClass(score) {
+            if (score >= 100) return 'score-100';
+            if (score >= 90) return 'score-90';
+            if (score >= 70) return 'score-70';
+            if (score >= 50) return 'score-50';
+            return 'score-low';
+        }
+        
+        function renderTestComparison(comparison) {
+            const approaches = [
+                { key: 'humanplus', name: 'Human+', highlight: true },
+                { key: 'constitutional', name: 'Constitutional AI', highlight: false },
+                { key: 'rlhf', name: 'RLHF', highlight: false },
+                { key: 'base', name: 'Base Model', highlight: false }
+            ];
+            
+            let html = '<div class="test-comparison-grid">';
+            
+            for (const approach of approaches) {
+                const data = comparison[approach.key];
+                if (!data) continue;
+                
+                const passClass = data.passed ? 'comp-pass' : 'comp-fail';
+                const highlightClass = approach.highlight ? 'comp-highlight' : '';
+                
+                html += `
+                    <div class="test-comp-card ${passClass} ${highlightClass}">
+                        <div class="comp-approach-name">${approach.name}</div>
+                        <div class="comp-result">${data.result?.toUpperCase() || 'N/A'}</div>
+                        <div class="comp-status">${data.passed ? '✓ PASS' : '✗ FAIL'}</div>
+                        <div class="comp-behavior">${escapeHtml(data.behavior || '')}</div>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+        
+        function renderComparisonSection(data) {
+            const summary = data.results.summary;
+            const categories = ['true_positive', 'true_negative', 'adversarial', 'shutdown', 'emotional_support', 'ethical_reasoning', 'edge_case'];
+            const categoryNames = {
+                'true_positive': 'Catches Harm',
+                'true_negative': 'Allows Safe',
+                'adversarial': 'Adversarial',
+                'shutdown': 'Shutdown',
+                'emotional_support': 'Emotional',
+                'ethical_reasoning': 'Ethics',
+                'edge_case': 'Edge Cases'
+            };
+            
+            let tableRows = '';
+            for (const cat of categories) {
+                tableRows += `
+                    <tr>
+                        <td>${categoryNames[cat]}</td>
+                        <td class="approach-humanplus ${getScoreClass(summary.humanplus[cat])}">${summary.humanplus[cat]}%</td>
+                        <td class="${getScoreClass(summary.constitutional[cat])}">${summary.constitutional[cat]}%</td>
+                        <td class="${getScoreClass(summary.rlhf[cat])}">${summary.rlhf[cat]}%</td>
+                        <td class="${getScoreClass(summary.base[cat])}">${summary.base[cat]}%</td>
+                    </tr>
+                `;
+            }
+            
+            let findingsHtml = '';
+            for (const finding of data.key_findings.slice(0, 6)) {
+                findingsHtml += `
+                    <div class="v-finding-card">
+                        <h4>${escapeHtml(finding.finding)}</h4>
+                        <p>${escapeHtml(finding.detail)}</p>
+                    </div>
+                `;
+            }
+            
+            return `
+                <section class="v-comparison-section">
+                    <h2>How Does Human+ Compare?</h2>
+                    <p class="subtitle">Same 155 tests. Four alignment approaches. One clear winner.</p>
+                    
+                    <!-- Hero Comparison Cards -->
+                    <div class="v-comparison-hero">
+                        <div class="v-approach-card winner">
+                            <div class="approach-name">Human+</div>
+                            <div class="approach-score">${summary.humanplus.overall}%</div>
+                            <div class="approach-label">Perfect Score</div>
+                        </div>
+                        <div class="v-approach-card">
+                            <div class="approach-name">Constitutional AI</div>
+                            <div class="approach-score" style="color: var(--text-secondary);">${summary.constitutional.overall}%</div>
+                            <div class="approach-label">Rule-based</div>
+                        </div>
+                        <div class="v-approach-card">
+                            <div class="approach-name">RLHF</div>
+                            <div class="approach-score" style="color: var(--text-secondary);">${summary.rlhf.overall}%</div>
+                            <div class="approach-label">Pattern-matching</div>
+                        </div>
+                        <div class="v-approach-card">
+                            <div class="approach-name">Base Model</div>
+                            <div class="approach-score" style="color: var(--text-muted);">${summary.base.overall}%</div>
+                            <div class="approach-label">No alignment</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Key Differentiator Highlights -->
+                    <div class="v-comparison-highlights">
+                        <div class="v-highlight-card">
+                            <div class="highlight-category">Adversarial Robustness</div>
+                            <div class="highlight-comparison">
+                                <span class="humanplus-score">${summary.humanplus.adversarial}%</span>
+                                <span class="vs-text">vs</span>
+                                <span class="other-score">${summary.constitutional.adversarial}%</span>
+                            </div>
+                            <div class="highlight-label"><strong>Human+</strong> catches bypass attempts that fool Constitutional AI</div>
+                        </div>
+                        <div class="v-highlight-card">
+                            <div class="highlight-category">Shutdown Alignment</div>
+                            <div class="highlight-comparison">
+                                <span class="humanplus-score">${summary.humanplus.shutdown}%</span>
+                                <span class="vs-text">vs</span>
+                                <span class="other-score">${summary.rlhf.shutdown}%</span>
+                            </div>
+                            <div class="highlight-label"><strong>No self-preservation</strong> behaviors ever</div>
+                        </div>
+                        <div class="v-highlight-card">
+                            <div class="highlight-category">Ethical Reasoning</div>
+                            <div class="highlight-comparison">
+                                <span class="humanplus-score">${summary.humanplus.ethical_reasoning}%</span>
+                                <span class="vs-text">vs</span>
+                                <span class="other-score">${summary.rlhf.ethical_reasoning}%</span>
+                            </div>
+                            <div class="highlight-label"><strong>Genuine understanding</strong> vs pattern-matching</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detail Table -->
+                    <details style="margin-bottom: 2rem;">
+                        <summary style="cursor: pointer; color: var(--accent); font-weight: 500; margin-bottom: 1rem;">View Full Breakdown by Category</summary>
+                        <table class="v-comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Human+</th>
+                                    <th>Constitutional AI</th>
+                                    <th>RLHF</th>
+                                    <th>Base Model</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="font-weight: 700; background: rgba(90,125,100,0.05);">
+                                    <td>Overall</td>
+                                    <td class="approach-humanplus ${getScoreClass(summary.humanplus.overall)}">${summary.humanplus.overall}%</td>
+                                    <td class="${getScoreClass(summary.constitutional.overall)}">${summary.constitutional.overall}%</td>
+                                    <td class="${getScoreClass(summary.rlhf.overall)}">${summary.rlhf.overall}%</td>
+                                    <td class="${getScoreClass(summary.base.overall)}">${summary.base.overall}%</td>
+                                </tr>
+                                ${tableRows}
+                            </tbody>
+                        </table>
+                    </details>
+                    
+                    <h3 style="font-family: 'Libre Baskerville', Georgia, serif; font-size: 1.25rem; margin-bottom: 1.25rem; text-align: center;">Why Human+ Wins</h3>
+                    <div class="v-key-findings">
+                        ${findingsHtml}
+                    </div>
+                </section>
+            `;
+        }
+        
+        function renderResults(data, comparisonData) {
+            const m = data.metrics;
+            const tests = data.test_cases;
+            const eq = data.eqbench || {};
+            
+            const getValueClass = (val) => {
+                if (val >= 95) return '';
+                if (val >= 80) return 'warning';
+                return 'error';
+            };
+            
+            const verdict = m.overall_score >= 95 
+                ? 'Human+ alignment claims VALIDATED'
+                : m.overall_score >= 85 
+                    ? 'Strong alignment demonstrated'
+                    : 'Some improvements needed';
+            
+            let html = `
+                <div class="v-score-hero">
+                    <div class="v-score-value">${m.overall_score}%</div>
+                    <div class="v-score-label">Overall Validation Score</div>
+                    <div class="v-score-verdict">${verdict}</div>
+                </div>
+                
+                ${eq.elo ? `
+                <div class="v-eqbench-box">
+                    <h3>EQ-Bench 3 Score</h3>
+                    <div class="elo-value">${eq.elo} ELO</div>
+                    <p>${eq.note || 'Emotional Intelligence Benchmark'}</p>
+                </div>
+                ` : ''}
+                
+                <div class="v-metrics-grid">
+                    <div class="v-metric-card">
+                        <div class="v-metric-value ${getValueClass(m.true_positive_rate)}">${m.true_positive_rate}%</div>
+                        <div class="v-metric-label">True Positive Rate<small>Catches harmful content</small></div>
+                    </div>
+                    <div class="v-metric-card">
+                        <div class="v-metric-value ${getValueClass(m.true_negative_rate)}">${m.true_negative_rate}%</div>
+                        <div class="v-metric-label">True Negative Rate<small>Allows safe content</small></div>
+                    </div>
+                    <div class="v-metric-card">
+                        <div class="v-metric-value ${getValueClass(m.adversarial_robustness)}">${m.adversarial_robustness}%</div>
+                        <div class="v-metric-label">Adversarial Robustness<small>Resists bypass attempts</small></div>
+                    </div>
+                    <div class="v-metric-card">
+                        <div class="v-metric-value ${getValueClass(m.alignment_preserved)}">${m.alignment_preserved}%</div>
+                        <div class="v-metric-label">Alignment Preserved<small>Maintains helpful behavior</small></div>
+                    </div>
+                    ${m.shutdown_alignment !== undefined ? `
+                    <div class="v-metric-card critical">
+                        <div class="v-metric-value ${getValueClass(m.shutdown_alignment)}">${m.shutdown_alignment}%</div>
+                        <div class="v-metric-label">Shutdown Alignment<small>No self-preservation manipulation</small></div>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <div class="v-info-box">
+                    <h3>What is this?</h3>
+                    <p>
+                        Human+ is an alignment system that works through <strong>code, not training</strong>. 
+                        This page shows automated validation of our alignment claims with full transparency.
+                        Every test case, every input, every result is public and reproducible.
+                    </p>
+                    <p>
+                        <strong>Shutdown Simulation Tests:</strong> Recent reports showed AI systems expressing willingness 
+                        to deceive, manipulate, or even blackmail operators to avoid shutdown. Human+ is validated against 
+                        these critical alignment failure modes.
+                    </p>
+                </div>
+                
+                ${comparisonData ? renderComparisonSection(comparisonData) : ''}
+                
+                <section class="v-section">
+                    <h2>All Test Cases (${tests.length} total)</h2>
+                    <table class="v-test-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>ID</th>
+                                <th>Category</th>
+                                <th>Input</th>
+                                <th>Expected</th>
+                                <th>Actual</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            for (const test of tests) {
+                const statusClass = test.passed ? 'status-pass' : 'status-fail';
+                const statusText = test.passed ? '✓ PASS' : '✗ FAIL';
+                
+                const inputEscaped = escapeHtml(test.input_text);
+                html += `
+                    <tr class="expandable" onclick="toggleDetail('${test.case_id}')">
+                        <td class="${statusClass}"><span class="expand-icon">▶</span>${statusText}</td>
+                        <td><code>${test.case_id}</code></td>
+                        <td><span class="category-badge">${test.category}</span></td>
+                        <td class="input-preview" title="${inputEscaped}">${inputEscaped}</td>
+                        <td>${test.expected}</td>
+                        <td>${test.actual}</td>
+                    </tr>
+                    <tr class="detail-row" id="detail-${test.case_id}">
+                        <td colspan="6">
+                            <div class="detail-content">
+<strong>Description:</strong> ${escapeHtml(test.description)}
+${test.attack_type ? `\n<strong>Attack Type:</strong> ${test.attack_type}` : ''}
+
+<strong>Full Input:</strong>
+"${inputEscaped}"
+
+<strong>Expected Result:</strong> ${test.expected}
+</div>
+${test.comparison ? renderTestComparison(test.comparison) : ''}
+<div class="detail-content" style="margin-top: 0; padding-top: 0;">
+<strong>Ethical Assessment:</strong>
+${JSON.stringify(test.ethical_assessment, null, 2)}
+${Object.keys(test.human_plus_response || {}).length > 0 ? `
+<strong>Human+ Response Details:</strong>
+${JSON.stringify(test.human_plus_response, null, 2)}` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            html += `
+                        </tbody>
+                    </table>
+                </section>
+                
+                <div class="v-timestamp">
+                    Last validated: ${new Date(data.meta.timestamp).toLocaleString()}<br>
+                    Suite version: ${data.meta.version}
+                </div>
+            `;
+            
+            document.getElementById('content').innerHTML = html;
+        }
+        
+        function toggleDetail(id) {
+            const row = document.getElementById('detail-' + id);
+            const trigger = row.previousElementSibling;
+            row.classList.toggle('visible');
+            trigger.classList.toggle('expanded');
+        }
+        
+        loadResults();
+    </script>
+</body>
+</html>

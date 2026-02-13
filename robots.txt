@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin
+Disallow: /admin/
+Disallow: /platform
+Disallow: /platform/
+Disallow: /min
+Disallow: /min/
+Disallow: /business
+Disallow: /business/
+Disallow: /cs-dashboard
+Disallow: /human-plus
+
+Sitemap: https://usecami.com/sitemap.xml

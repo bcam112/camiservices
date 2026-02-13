@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Terms of Service — Cami</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/space-bg.css">
+    <link rel="stylesheet" href="/static/enterprise-pages.css">
+    <style>
+        html, body { overflow-y: auto; overflow-x: hidden; }
+        .nav-header { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-logo .logo-text { font-family: 'Libre Baskerville', Georgia, serif; font-size: 1.25rem; font-weight: 700; }
+        .nav-link { font-size: 14px; color: var(--text-secondary); text-decoration: none; font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase; padding: 8px 0; border-bottom: 1px solid transparent; }
+        .nav-link:hover { color: var(--text-primary); border-bottom-color: var(--text-primary); }
+        .legal-page { max-width: 720px; margin: 0 auto; padding: 120px 24px 80px; text-align: left; }
+        .legal-page h1 { font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.08em; }
+        .legal-page p, .legal-page li { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px; }
+        .legal-page ul { margin: 16px 0; padding-left: 24px; }
+        .legal-page a { color: var(--text-primary); text-decoration: underline; }
+        .legal-page h2 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-top: 28px; margin-bottom: 12px; }
+        .site-footer { width: 100%; max-width: 720px; margin: 80px auto 0; padding: 40px 24px 32px; border-top: 1px solid var(--border-light); text-align: center; }
+        .site-footer .footer-links { display: flex; flex-wrap: wrap; gap: 24px 32px; justify-content: center; margin-bottom: 20px; }
+        .site-footer .footer-links a { font-size: 12px; color: var(--text-secondary); text-decoration: none; text-transform: uppercase; letter-spacing: 0.08em; }
+        .site-footer .footer-links a:hover { color: var(--text-primary); }
+        .site-footer .footer-copy { font-size: 11px; color: var(--text-muted); }
+        .nav-header { background: var(--nav-header-bg, rgba(245,241,235,0.92)); backdrop-filter: blur(20px); border-bottom: 1px solid var(--nav-header-border, rgba(90,125,100,0.15)); }
+        .nav-hamburger { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 44px; height: 44px; padding: 0; border: none; background: transparent; cursor: pointer; gap: 5px; color: var(--text-primary); z-index: 101; }
+        .nav-hamburger span { display: block; width: 22px; height: 2px; background: currentColor; border-radius: 1px; }
+        .nav-header .nav-links { display: none !important; }
+        .legal-nav-sidebar { position: fixed; top: 0; right: 0; bottom: 0; width: 280px; max-width: 85vw; background: var(--nav-sidebar-bg, rgba(245,241,235,0.98)); backdrop-filter: blur(20px); border-left: 1px solid var(--border-light); z-index: 201; padding: 24px 0; overflow-y: auto; transform: translateX(100%); transition: transform 0.25s ease; box-shadow: -4px 0 24px var(--shadow); display: flex; flex-direction: column; }
+        .legal-nav-sidebar .nav-sidebar-logo { padding: 0 24px 20px; border-bottom: 1px solid var(--border-light); margin-bottom: 20px; }
+        .legal-nav-sidebar .nav-sidebar-links { display: flex; flex-direction: column; gap: 2px; padding: 0 16px; }
+        .legal-nav-sidebar .nav-sidebar-links a { display: block; padding: 12px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); text-decoration: none; border-radius: 6px; transition: color 0.2s, background 0.2s; }
+        .legal-nav-sidebar .nav-sidebar-links a:hover { color: var(--text-primary); background: var(--hover-bg); }
+        .legal-nav-sidebar .nav-sidebar-links .nav-link.github { display: flex; align-items: center; gap: 8px; }
+        .legal-nav-sidebar .nav-sidebar-links .nav-link.github svg { width: 18px; height: 18px; fill: currentColor; }
+        .legal-nav-sidebar .nav-sidebar-links .legal-divider { margin: 12px 0 8px; padding: 0 12px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); }
+        .legal-nav-backdrop { position: fixed; inset: 0; z-index: 200; background: var(--shadow); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.25s ease, visibility 0.25s; cursor: pointer; }
+        body.legal-nav-open .legal-nav-sidebar { transform: translateX(0); }
+        body.legal-nav-open .legal-nav-backdrop { opacity: 1; visibility: visible; pointer-events: auto; }
+        body.legal-nav-open { overflow: hidden; }
+    </style>
+    <script>/* Theme init — prevent flash */
+    (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+</head>
+<body>
+    <div class="space-bg" aria-hidden="true"><div class="space-bg__gradient"></div><div class="space-bg__stars" id="space-bg-stars"></div></div>
+    <nav class="nav-header">
+        <a href="/" class="nav-logo"><span class="logo-text">Cami</span></a>
+        <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+        <div class="nav-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/try" class="nav-link">Try Cami</a>
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+            <a href="/privacy" class="nav-link">Privacy</a>
+            <a href="/terms" class="nav-link">Terms</a>
+            <a href="/disclaimer" class="nav-link">Disclaimer</a>
+            <a href="/contact" class="nav-link">Contact</a>
+            <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" class="nav-link github">GitHub</a>
+        </div>
+    </nav>
+    <div class="legal-nav-backdrop" id="nav-sidebar-backdrop" aria-hidden="true"></div>
+    <aside class="legal-nav-sidebar" id="nav-sidebar" aria-label="Menu">
+        <div class="nav-sidebar-logo"><a href="/" class="nav-logo"><span class="logo-text">Cami</span></a></div>
+        <div class="nav-sidebar-links">
+            <a href="/">Home</a>
+            <a href="/try">Try Cami</a>
+            <a href="/dashboard">Dashboard</a>
+            <span class="legal-divider">Legal</span>
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+            <a href="/disclaimer">Disclaimer</a>
+            <a href="/contact">Contact</a>
+            <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" class="nav-link github"><svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg> GitHub</a>
+        </div>
+    </aside>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    var b = document.body, btn = document.getElementById('nav-hamburger'), back = document.getElementById('nav-sidebar-backdrop'), side = document.getElementById('nav-sidebar');
+    if (!btn || !back || !side) return;
+    function close() { b.classList.remove('legal-nav-open'); }
+    function toggle() { b.classList.toggle('legal-nav-open'); }
+    btn.addEventListener('click', toggle);
+    back.addEventListener('click', close);
+    side.querySelectorAll('.nav-sidebar-links a').forEach(function(a) { a.addEventListener('click', close); });
+});
+    </script>
+    <main class="legal-page">
+        <h1>Terms of Service</h1>
+        <p><strong>Last updated:</strong> February 3, 2026</p>
+
+        <p>These Terms of Service (“Terms”) govern your access to and use of the Cami platform, including the website, chat, API, and related services (the “Service”) provided by Cami (“we,” “our,” or “us”). By accessing or using the Service, you agree to these Terms. If you do not agree, do not use the Service.</p>
+
+        <h2>1. Eligibility and Acceptance</h2>
+        <p>You must be at least 18 years old (or the age of majority in your jurisdiction) and able to form a binding contract to use the Service. By using the Service, you represent that you meet these requirements and that you accept these Terms. If you are using the Service on behalf of an organization, you represent that you have authority to bind that organization to these Terms.</p>
+
+        <h2>2. Description of the Service</h2>
+        <p>Cami is an AI-powered assistant that provides support in multiple modes, including Research, Customer Service, Clinical Assistant, Legal Intelligence, Tutor, and Cami Money. The Service uses large language models, Human+ (metacognitive and safety layers), and M.I.N. (wisdom memory) to generate responses. <strong>Clinical Assistant mode is designed for HIPAA-compliant workflows.</strong> Optional features include Scribe (voice or video upload/recording for transcription); Scribe uses a <strong>HIPAA-compliant audio transcription provider</strong> to support clinical and legal use. The Service is provided “as is” and we do not guarantee accuracy, completeness, or suitability for any particular purpose. Use of Clinical Assistant, Legal Intelligence, or other professional modes does not create a doctor–patient, attorney–client, or other professional relationship. <strong>Cami is not a financial advisor (FA), broker, or other regulated financial professional. Nothing on the Service—including Cami Money, “Talk money,” “Move money,” or any finance-related content—constitutes financial, investment, tax, or legal advice.</strong> See our <a href="/disclaimer">Disclaimer</a> for important limitations.</p>
+
+        <h2>3. Acceptable Use</h2>
+        <p>You agree to use the Service only for lawful purposes and in accordance with these Terms. You must not:</p>
+        <ul>
+            <li>Use the Service in any way that violates applicable law or the rights of others.</li>
+            <li>Attempt to gain unauthorized access to the Service, other accounts, or our systems.</li>
+            <li>Use the Service to generate or distribute harmful, misleading, or illegal content.</li>
+            <li>Resell, redistribute, or sublicense the Service without our written permission.</li>
+            <li>Use automated means (e.g., scraping, bots) to access the Service except where we provide an API and you comply with its terms.</li>
+        </ul>
+        <p>We may suspend or terminate your access if we believe you have violated these Terms or for other operational or legal reasons.</p>
+
+        <h2>4. Accounts and Security</h2>
+        <p>Some parts of the Service (e.g., Dashboard, API) may require registration or an API key. You are responsible for keeping your credentials confidential and for all activity under your account. Notify us promptly of any unauthorized use.</p>
+
+        <h2>5. Intellectual Property</h2>
+        <p>The Service, including the Cami name, logo, design, and our technology (including Human+ and M.I.N.), is owned by us or our licensors and is protected by copyright, trademark, and other laws. We grant you a limited, non-exclusive, revocable license to access and use the Service for your own use in accordance with these Terms. You do not acquire any ownership rights. Your input (e.g., messages) remains yours; by using the Service you grant us the rights necessary to operate the Service (e.g., to process and transmit your content to our AI providers). We may use anonymized or aggregated data to improve the Service.</p>
+
+        <h2>6. Disclaimers</h2>
+        <p>THE SERVICE IS PROVIDED “AS IS” AND “AS AVAILABLE” WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED. WE DISCLAIM ALL WARRANTIES, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. WE DO NOT WARRANT THAT THE SERVICE WILL BE UNINTERRUPTED, ERROR-FREE, OR SECURE. AI-GENERATED OUTPUT MAY BE INACCURATE, INCOMPLETE, OR INAPPROPRIATE; YOU ARE RESPONSIBLE FOR VERIFYING INFORMATION AND FOR YOUR USE OF THE SERVICE. <strong>CAMI IS NOT A FINANCIAL ADVISOR; NOTHING ON THE SERVICE IS FINANCIAL, INVESTMENT, OR TAX ADVICE.</strong> SEE OUR <a href="/disclaimer">DISCLAIMER</a> FOR ADDITIONAL LIMITATIONS, ESPECIALLY REGARDING CLINICAL, LEGAL, AND FINANCIAL USE.</p>
+
+        <h2>7. Limitation of Liability</h2>
+        <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, CAMI AND ITS AFFILIATES, OFFICERS, EMPLOYEES, AND LICENSORS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR FOR LOSS OF PROFITS, DATA, OR GOODWILL, ARISING OUT OF OR IN CONNECTION WITH YOUR USE OF THE SERVICE OR THESE TERMS. OUR TOTAL LIABILITY FOR ANY CLAIMS ARISING FROM OR RELATED TO THE SERVICE OR THESE TERMS SHALL NOT EXCEED THE GREATER OF (A) THE AMOUNT YOU PAID US IN THE 12 MONTHS BEFORE THE CLAIM, OR (B) ONE HUNDRED U.S. DOLLARS. SOME JURISDICTIONS DO NOT ALLOW CERTAIN LIMITATIONS; IN SUCH CASES OUR LIABILITY WILL BE LIMITED TO THE MAXIMUM EXTENT PERMITTED BY LAW.</p>
+
+        <h2>8. Indemnification</h2>
+        <p>You agree to indemnify, defend, and hold harmless Cami and its affiliates, officers, employees, and licensors from and against any claims, damages, losses, liabilities, and expenses (including reasonable attorneys’ fees) arising out of or related to your use of the Service, your content, your violation of these Terms, or your violation of any third-party rights or law.</p>
+
+        <h2>9. Termination and Suspension</h2>
+        <p>We may suspend or terminate your access to the Service at any time, with or without cause or notice. You may stop using the Service at any time. Upon termination, your right to use the Service ceases. Sections that by their nature should survive (including 5–8) will survive termination.</p>
+
+        <h2>10. Governing Law and Disputes</h2>
+        <p>These Terms are governed by the laws of the United States and the state or jurisdiction designated by the operator of Cami, without regard to conflict of law principles. Any dispute arising from these Terms or the Service will be resolved in the courts of that jurisdiction, except where prohibited. You may also have consumer rights under your local law that cannot be waived by contract.</p>
+
+        <h2>11. Changes to the Terms</h2>
+        <p>We may modify these Terms from time to time. We will post the updated Terms on this page and update the “Last updated” date. Your continued use of the Service after changes constitutes acceptance of the revised Terms. For material changes, we may provide additional notice (e.g., by email or in-product notice) where required by law.</p>
+
+        <h2>12. Contact</h2>
+        <p>For questions about these Terms, contact us via the <a href="/contact">Contact</a> page or the email address provided there.</p>
+        
+    </main>
+    <footer class="page-footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">Cami</div>
+                    <p class="footer-desc">The AI platform that learns and grows with you. Knowledge from LLMs, memory from M.I.N., consciousness from Human+.</p>
+                    <div class="footer-social">
+                        <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                            <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="/customer-service">Customer Service</a></li>
+                        <li><a href="/health">Healthcare</a></li>
+                        <li><a href="/legal-intelligence">Legal Intelligence</a></li>
+                        <li><span class="footer-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        <li><span class="footer-disabled">Financial <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        <li><span class="footer-disabled">Education <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Technology</h4>
+                    <ul>
+                        <li><a href="/human-plus">Human+</a></li>
+                        <li><a href="/min">M.I.N.</a></li>
+                        <li><a href="/platform">Platform</a></li>
+                        <li><a href="/roadmap">Roadmap</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copy">&copy; 2026 Cami. All rights reserved.</div>
+                <div class="footer-legal">
+                    <a href="/privacy">Privacy Policy</a>
+                    <a href="/terms">Terms of Service</a>
+                    <a href="/disclaimer">Disclaimer</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="/static/space-bg.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.initSpaceBg) window.initSpaceBg('space-bg-stars'); });</script>
+    <script src="/static/synth-anim.js"></script>
+    <script src="/static/theme-toggle.js"></script>
+</body>
+</html>

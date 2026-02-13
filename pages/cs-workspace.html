@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Workspace — Cami CS</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f5f1eb; --bg-secondary: #e8efe6; --card: #faf8f5; --border: #c5d4c9; --border-light: #e8efe6;
+            --text: #2c2620; --muted: #6b7a66; --accent: #5a7d64; --accent-hover: #4a6b54;
+            --success: #4a7c59; --warning: #b8860b; --danger: #c0392b; --info: #2980b9;
+            --urgent: #e74c3c; --high: #e67e22; --normal: #2980b9; --low: #8a9485;
+            --sidebar-width: 280px; --header-height: 56px;
+        }
+        [data-theme="dark"] {
+            --bg: #0f1117; --bg-secondary: #161822; --card: #161822; --border: rgba(90,125,100,0.2); --border-light: rgba(90,125,100,0.1);
+            --text: #e4e4e8; --muted: #9a9ba4; --accent: #6e9a7a; --accent-hover: #7eb08a;
+            --success: #5a9a6a; --warning: #d4a843; --danger: #e74c3c; --info: #3498db;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; overflow: hidden; }
+
+        /* ── Layout ── */
+        .workspace { display: grid; grid-template-columns: var(--sidebar-width) 1fr 320px; grid-template-rows: var(--header-height) 1fr; height: 100vh; }
+        .ws-header { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: var(--card); border-bottom: 1px solid var(--border); z-index: 100; }
+        .ws-sidebar { grid-row: 2; background: var(--bg-secondary); border-right: 1px solid var(--border); overflow-y: auto; }
+        .ws-main { grid-row: 2; display: flex; flex-direction: column; overflow: hidden; }
+        .ws-panel { grid-row: 2; background: var(--bg-secondary); border-left: 1px solid var(--border); overflow-y: auto; }
+
+        /* ── Header ── */
+        .ws-header .logo { font-family: 'Libre Baskerville', Georgia, serif; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .ws-header .logo span { font-weight: 400; font-size: 12px; color: var(--muted); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px; }
+        .ws-header .header-stats { display: flex; gap: 24px; }
+        .ws-header .stat { text-align: center; }
+        .ws-header .stat-value { font-size: 20px; font-weight: 700; color: var(--text); }
+        .ws-header .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+        .ws-header .header-actions { display: flex; gap: 12px; align-items: center; }
+        .status-indicator { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--card); }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .status-online .status-dot { background: var(--success); }
+        .status-away .status-dot { background: var(--warning); }
+        .status-offline .status-dot { background: var(--muted); }
+
+        /* ── Sidebar (Queue) ── */
+        .queue-section { padding: 16px; border-bottom: 1px solid var(--border); }
+        .queue-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .queue-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+        .queue-count { background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+
+        .ticket-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 10px; cursor: pointer; transition: all 0.15s; }
+        .ticket-card:hover { border-color: var(--accent); transform: translateX(2px); }
+        .ticket-card.active { border-color: var(--accent); background: rgba(90,125,100,0.05); box-shadow: 0 0 0 2px rgba(90,125,100,0.1); }
+        .ticket-card .tc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+        .ticket-card .tc-number { font-size: 11px; color: var(--muted); }
+        .ticket-card .tc-priority { font-size: 9px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; }
+        .tc-priority.urgent { background: rgba(231,76,60,0.15); color: var(--urgent); }
+        .tc-priority.high { background: rgba(230,126,34,0.15); color: var(--high); }
+        .tc-priority.normal { background: rgba(52,152,219,0.15); color: var(--normal); }
+        .tc-priority.low { background: rgba(149,165,166,0.15); color: var(--low); }
+        .ticket-card .tc-subject { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .ticket-card .tc-customer { font-size: 11px; color: var(--muted); }
+        .ticket-card .tc-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 10px; color: var(--muted); }
+        .tc-channel { display: inline-flex; align-items: center; gap: 4px; }
+        .tc-sla-warning { color: var(--warning); font-weight: 600; }
+        .tc-sla-breach { color: var(--danger); font-weight: 600; }
+
+        /* ── Main Content ── */
+        .conversation-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .conv-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--muted); text-align: center; padding: 40px; }
+        .conv-empty h3 { font-size: 18px; margin-bottom: 8px; color: var(--text); }
+        .conv-header { padding: 16px 20px; background: var(--card); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .conv-header-left h2 { font-size: 15px; font-weight: 600; }
+        .conv-header-left .ch-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+        .conv-header-right { display: flex; gap: 8px; }
+        .conv-messages { flex: 1; overflow-y: auto; padding: 20px; background: var(--bg); }
+        .message { margin-bottom: 16px; max-width: 75%; }
+        .message.customer { margin-right: auto; }
+        .message.agent { margin-left: auto; }
+        .msg-bubble { padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.5; }
+        .message.customer .msg-bubble { background: var(--card); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+        .message.agent .msg-bubble { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+        .msg-meta { font-size: 10px; color: var(--muted); margin-top: 4px; }
+        .message.agent .msg-meta { text-align: right; }
+        .conv-input { padding: 16px 20px; background: var(--card); border-top: 1px solid var(--border); }
+        .input-wrapper { display: flex; gap: 10px; }
+        .input-wrapper textarea { flex: 1; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; resize: none; background: var(--bg); color: var(--text); font-family: inherit; min-height: 60px; }
+        .input-wrapper textarea:focus { outline: none; border-color: var(--accent); }
+        .input-actions { display: flex; flex-direction: column; gap: 6px; }
+
+        /* ── Right Panel (Customer & Copilot) ── */
+        .panel-section { padding: 16px; border-bottom: 1px solid var(--border); }
+        .panel-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+        .customer-profile { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .customer-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; }
+        .customer-info h3 { font-size: 14px; font-weight: 600; }
+        .customer-info p { font-size: 12px; color: var(--muted); }
+        .customer-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .cs-stat { background: var(--card); border: 1px solid var(--border-light); border-radius: 8px; padding: 10px; text-align: center; }
+        .cs-stat-value { font-size: 18px; font-weight: 700; }
+        .cs-stat-label { font-size: 10px; text-transform: uppercase; color: var(--muted); }
+
+        /* Copilot */
+        .copilot-suggestions { display: flex; flex-direction: column; gap: 8px; }
+        .copilot-suggestion { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px; cursor: pointer; transition: all 0.15s; }
+        .copilot-suggestion:hover { border-color: var(--accent); background: rgba(90,125,100,0.03); }
+        .copilot-suggestion .cs-text { font-size: 13px; line-height: 1.5; margin-bottom: 6px; }
+        .copilot-suggestion .cs-meta { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); }
+        .cs-confidence { font-weight: 600; color: var(--success); }
+        .cs-source { text-transform: capitalize; }
+        .copilot-loading { text-align: center; padding: 20px; color: var(--muted); font-size: 12px; }
+
+        /* Macros */
+        .macro-list { display: flex; flex-wrap: wrap; gap: 6px; }
+        .macro-chip { padding: 6px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; background: var(--card); border: 1px solid var(--border); cursor: pointer; transition: all 0.15s; }
+        .macro-chip:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Quick Actions */
+        .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .qa-btn { padding: 10px; border-radius: 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; border: 1px solid var(--border); background: var(--card); color: var(--text); transition: all 0.15s; }
+        .qa-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .qa-btn.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+        /* ── Buttons ── */
+        .btn { padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-secondary { background: var(--bg-secondary); color: var(--text); border: 1px solid var(--border); }
+        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-sm { padding: 6px 12px; font-size: 11px; }
+        .btn-icon { padding: 8px; border-radius: 6px; background: var(--bg-secondary); color: var(--muted); border: 1px solid var(--border); cursor: pointer; }
+        .btn-icon:hover { color: var(--accent); border-color: var(--accent); }
+
+        /* ── Utilities ── */
+        .hidden { display: none !important; }
+        .loading { opacity: 0.6; pointer-events: none; }
+        .badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
+        .badge-success { background: rgba(39,174,96,0.15); color: var(--success); }
+        .badge-warning { background: rgba(243,156,18,0.15); color: var(--warning); }
+        .badge-danger { background: rgba(192,57,43,0.15); color: var(--danger); }
+
+        /* Theme toggle */
+        .theme-toggle { position: fixed; bottom: 20px; left: 20px; z-index: 9999; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); background: var(--text); color: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .theme-toggle:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .theme-toggle svg { display: none !important; }
+        [data-theme="dark"] .theme-toggle { background: var(--card); color: var(--text); }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .workspace { grid-template-columns: 240px 1fr 280px; }
+        }
+        @media (max-width: 900px) {
+            .workspace { grid-template-columns: 1fr; }
+            .ws-sidebar, .ws-panel { display: none; }
+        }
+    </style>
+    <script>(function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();</script>
+</head>
+<body>
+    <div class="workspace">
+        <!-- Header -->
+        <header class="ws-header">
+            <div class="logo">
+                Cami <span>Agent Workspace</span>
+            </div>
+            <div class="header-stats">
+                <div class="stat">
+                    <div class="stat-value" id="statQueue">—</div>
+                    <div class="stat-label">In Queue</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="statUrgent">—</div>
+                    <div class="stat-label">Urgent</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="statSLA">—</div>
+                    <div class="stat-label">SLA At Risk</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="statOnline">—</div>
+                    <div class="stat-label">Agents Online</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="status-indicator status-online" id="statusIndicator" onclick="toggleStatus()">
+                    <div class="status-dot"></div>
+                    <span id="statusText">Online</span>
+                </div>
+                <a href="/customer-service/dashboard" class="btn btn-secondary btn-sm">Analytics</a>
+                <a href="/business" class="btn btn-secondary btn-sm">Settings</a>
+                <button class="btn-icon" onclick="logout()" title="Sign Out">⏻</button>
+            </div>
+        </header>
+
+        <!-- Sidebar: Queue -->
+        <aside class="ws-sidebar">
+            <!-- My Tickets -->
+            <div class="queue-section">
+                <div class="queue-header">
+                    <span class="queue-title">My Tickets</span>
+                    <span class="queue-count" id="myTicketsCount">0</span>
+                </div>
+                <div id="myTicketsList"></div>
+            </div>
+
+            <!-- Unassigned -->
+            <div class="queue-section">
+                <div class="queue-header">
+                    <span class="queue-title">Unassigned</span>
+                    <span class="queue-count" id="unassignedCount">0</span>
+                </div>
+                <div id="unassignedList"></div>
+            </div>
+
+            <!-- Team Queue -->
+            <div class="queue-section">
+                <div class="queue-header">
+                    <span class="queue-title">Team Queue</span>
+                    <span class="queue-count" id="teamCount">0</span>
+                </div>
+                <div id="teamList"></div>
+            </div>
+        </aside>
+
+        <!-- Main: Conversation -->
+        <main class="ws-main">
+            <div class="conversation-area" id="convArea">
+                <!-- Empty state -->
+                <div class="conv-empty" id="convEmpty">
+                    <h3>Select a ticket to begin</h3>
+                    <p>Click on a ticket from the queue to view the conversation and respond</p>
+                </div>
+
+                <!-- Conversation view (hidden by default) -->
+                <div class="hidden" id="convView">
+                    <div class="conv-header">
+                        <div class="conv-header-left">
+                            <h2 id="convSubject">Loading...</h2>
+                            <div class="ch-meta" id="convMeta"></div>
+                        </div>
+                        <div class="conv-header-right">
+                            <button class="btn btn-secondary btn-sm" onclick="transferTicket()">Transfer</button>
+                            <button class="btn btn-secondary btn-sm" onclick="resolveTicket()">Resolve</button>
+                        </div>
+                    </div>
+                    <div class="conv-messages" id="convMessages">
+                        <!-- Messages rendered here -->
+                    </div>
+                    <div class="conv-input">
+                        <div class="input-wrapper">
+                            <textarea id="replyInput" placeholder="Type your response... (Enter to send, Shift+Enter for new line)" onkeydown="handleReplyKey(event)"></textarea>
+                            <div class="input-actions">
+                                <button class="btn btn-primary" onclick="sendReply()">Send</button>
+                                <button class="btn btn-secondary btn-sm" onclick="insertMacro()">Macros</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Panel: Customer & Copilot -->
+        <aside class="ws-panel">
+            <!-- Customer Profile -->
+            <div class="panel-section" id="customerSection">
+                <div class="panel-title">Customer</div>
+                <div class="customer-profile" id="customerProfile">
+                    <div class="customer-avatar" id="customerAvatar">?</div>
+                    <div class="customer-info">
+                        <h3 id="customerName">Select a ticket</h3>
+                        <p id="customerEmail">—</p>
+                    </div>
+                </div>
+                <div class="customer-stats" id="customerStats">
+                    <div class="cs-stat">
+                        <div class="cs-stat-value" id="customerTickets">—</div>
+                        <div class="cs-stat-label">Total Tickets</div>
+                    </div>
+                    <div class="cs-stat">
+                        <div class="cs-stat-value" id="customerCSAT">—</div>
+                        <div class="cs-stat-label">Avg CSAT</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Copilot -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    AI Copilot
+                    <span class="badge badge-success">Live</span>
+                </div>
+                <div id="copilotContent">
+                    <div class="copilot-loading">Select a ticket to get AI suggestions</div>
+                </div>
+            </div>
+
+            <!-- Quick Macros -->
+            <div class="panel-section">
+                <div class="panel-title">Quick Macros</div>
+                <div class="macro-list" id="macroList">
+                    <span class="macro-chip" onclick="useMacro('/hi')">/hi</span>
+                    <span class="macro-chip" onclick="useMacro('/close')">/close</span>
+                    <span class="macro-chip" onclick="useMacro('/refund')">/refund</span>
+                    <span class="macro-chip" onclick="useMacro('/ship')">/ship</span>
+                    <span class="macro-chip" onclick="useMacro('/sorry')">/sorry</span>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="panel-section">
+                <div class="panel-title">Quick Actions</div>
+                <div class="quick-actions">
+                    <button class="qa-btn" onclick="setTicketPriority('urgent')">Mark Urgent</button>
+                    <button class="qa-btn" onclick="addInternalNote()">Add Note</button>
+                    <button class="qa-btn" onclick="escalateTicket()">Escalate</button>
+                    <button class="qa-btn danger" onclick="closeTicket()">Close</button>
+                </div>
+            </div>
+
+            <!-- Ticket Info -->
+            <div class="panel-section" id="ticketInfoSection">
+                <div class="panel-title">Ticket Details</div>
+                <div style="font-size: 12px; color: var(--muted);">
+                    <p><strong>Status:</strong> <span id="ticketStatus">—</span></p>
+                    <p><strong>Priority:</strong> <span id="ticketPriority">—</span></p>
+                    <p><strong>Channel:</strong> <span id="ticketChannel">—</span></p>
+                    <p><strong>Created:</strong> <span id="ticketCreated">—</span></p>
+                    <p><strong>SLA:</strong> <span id="ticketSLA">—</span></p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()"><svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+
+    <script src="/static/js/supabase.min.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        // ── State ──
+        const state = {
+            businessId: null,
+            userId: null,
+            token: null,
+            currentTicket: null,
+            queue: { my_tickets: [], unassigned: [], team_tickets: [] },
+            agentStatus: 'offline',
+            copilotSuggestions: [],
+            macros: [],
+            refreshInterval: null,
+        };
+
+        // ── Supabase ──
+        let sb = null;
+        let config = {};
+
+        function waitSupabase(cb, tries) {
+            tries = tries || 0;
+            if (typeof window.supabase !== 'undefined') { cb(); return; }
+            if (tries > 50) { cb(); return; }
+            setTimeout(function() { waitSupabase(cb, tries + 1); }, 100);
+        }
+
+        async function getConfig() {
+            try {
+                const res = await fetch('/api/config');
+                return await res.json();
+            } catch(e) {
+                return { supabase_url: '', supabase_anon_key: '' };
+            }
+        }
+
+        // ── Init ──
+        async function init() {
+            // Wait for Supabase library
+            await new Promise(resolve => waitSupabase(resolve));
+            if (typeof window.supabase === 'undefined') {
+                alert('Auth library not available');
+                return;
+            }
+
+            // Get config and create client
+            config = await getConfig();
+            if (!config.supabase_url || !config.supabase_anon_key) {
+                alert('Auth not configured');
+                return;
+            }
+
+            sb = window.supabase.createClient(config.supabase_url, config.supabase_anon_key);
+            const sessionResult = await sb.auth.getSession();
+            if (!sessionResult?.data?.session) {
+                window.location.href = '/login?redirect=/cs-workspace';
+                return;
+            }
+
+            state.token = sessionResult.data.session.access_token;
+            state.userId = sessionResult.data.session.user.id;
+
+            // Get business
+            const businesses = await apiFetch('/api/v1/businesses');
+            const csBiz = (businesses.businesses || []).find(b => b.service_type === 'customer_service');
+            if (!csBiz) {
+                alert('No customer service business found. Create one first.');
+                window.location.href = '/business';
+                return;
+            }
+            state.businessId = csBiz.id;
+
+            // Initialize agent status
+            await updateAgentStatus('online');
+
+            // Load initial data
+            await Promise.all([
+                loadQueue(),
+                loadMacros(),
+                loadRealtimeMetrics(),
+            ]);
+
+            // Start refresh interval
+            state.refreshInterval = setInterval(() => {
+                loadQueue();
+                loadRealtimeMetrics();
+            }, 10000); // Refresh every 10s
+
+            // Theme
+            updateThemeButton();
+        }
+
+        // ── API ──
+        async function apiFetch(path, options = {}) {
+            const headers = { 'Content-Type': 'application/json' };
+            if (state.token) headers['Authorization'] = 'Bearer ' + state.token;
+            if (state.businessId) headers['X-Business-ID'] = state.businessId;
+
+            const res = await fetch(path, { ...options, headers: { ...headers, ...options.headers } });
+            if (!res.ok) throw new Error('API error: ' + res.status);
+            return res.json();
+        }
+
+        // ── Queue ──
+        async function loadQueue() {
+            try {
+                const data = await apiFetch('/enterprise/workspace/queue');
+                state.queue = data;
+                renderQueue();
+            } catch (e) {
+                console.error('Queue load error:', e);
+            }
+        }
+
+        function renderQueue() {
+            const { my_tickets, unassigned, team_tickets, stats } = state.queue;
+
+            // Update counts
+            document.getElementById('myTicketsCount').textContent = my_tickets.length;
+            document.getElementById('unassignedCount').textContent = unassigned.length;
+            document.getElementById('teamCount').textContent = team_tickets.length;
+
+            // Render ticket lists
+            document.getElementById('myTicketsList').innerHTML = my_tickets.length 
+                ? my_tickets.map(t => renderTicketCard(t)).join('')
+                : '<p style="font-size:12px;color:var(--muted);text-align:center;padding:12px;">No assigned tickets</p>';
+
+            document.getElementById('unassignedList').innerHTML = unassigned.length
+                ? unassigned.slice(0, 10).map(t => renderTicketCard(t, true)).join('')
+                : '<p style="font-size:12px;color:var(--muted);text-align:center;padding:12px;">Queue empty</p>';
+
+            document.getElementById('teamList').innerHTML = team_tickets.length
+                ? team_tickets.slice(0, 5).map(t => renderTicketCard(t)).join('')
+                : '<p style="font-size:12px;color:var(--muted);text-align:center;padding:12px;">No team tickets</p>';
+
+            // Update header stats
+            document.getElementById('statQueue').textContent = stats?.total_assigned || 0;
+            document.getElementById('statUrgent').textContent = stats?.urgent || 0;
+            document.getElementById('statSLA').textContent = stats?.sla_at_risk || 0;
+        }
+
+        function renderTicketCard(ticket, showAccept = false) {
+            const isActive = state.currentTicket?.id === ticket.id;
+            const priorityClass = ticket.priority || 'normal';
+            const customerName = ticket.customer_name || ticket.customer_email?.split('@')[0] || 'Unknown';
+            const subject = ticket.subject || 'No subject';
+            const timeAgo = formatTimeAgo(ticket.created_at);
+
+            return `
+                <div class="ticket-card ${isActive ? 'active' : ''}" onclick="selectTicket('${ticket.id}')">
+                    <div class="tc-top">
+                        <span class="tc-number">#${ticket.ticket_number || ticket.id.slice(0,8)}</span>
+                        <span class="tc-priority ${priorityClass}">${priorityClass}</span>
+                    </div>
+                    <div class="tc-subject">${escHtml(subject)}</div>
+                    <div class="tc-customer">${escHtml(customerName)}</div>
+                    <div class="tc-meta">
+                        <span class="tc-channel">${ticket.channel || 'chat'}</span>
+                        <span>${timeAgo}</span>
+                    </div>
+                    ${showAccept ? `<button class="btn btn-primary btn-sm" style="width:100%;margin-top:8px;" onclick="event.stopPropagation();acceptTicket('${ticket.id}')">Accept</button>` : ''}
+                </div>
+            `;
+        }
+
+        // ── Ticket Selection ──
+        window.selectTicket = async function(ticketId) {
+            try {
+                const ticket = await apiFetch('/enterprise/tickets/' + ticketId);
+                state.currentTicket = ticket;
+
+                // Show conversation view
+                document.getElementById('convEmpty').classList.add('hidden');
+                document.getElementById('convView').classList.remove('hidden');
+
+                // Update UI
+                document.getElementById('convSubject').textContent = ticket.subject || 'Conversation';
+                document.getElementById('convMeta').textContent = `#${ticket.ticket_number || ticketId.slice(0,8)} · ${ticket.channel} · ${ticket.status}`;
+
+                // Update ticket info panel
+                document.getElementById('ticketStatus').textContent = ticket.status;
+                document.getElementById('ticketPriority').textContent = ticket.priority;
+                document.getElementById('ticketChannel').textContent = ticket.channel;
+                document.getElementById('ticketCreated').textContent = new Date(ticket.created_at).toLocaleString();
+
+                // Load customer info
+                if (ticket.customer_id) {
+                    loadCustomerProfile(ticket.customer_id);
+                } else {
+                    document.getElementById('customerName').textContent = ticket.customer_name || 'Unknown';
+                    document.getElementById('customerEmail').textContent = ticket.customer_email || '—';
+                    document.getElementById('customerAvatar').textContent = (ticket.customer_name || 'U')[0].toUpperCase();
+                }
+
+                // Load SLA status
+                loadSLAStatus(ticketId);
+
+                // Load messages (mock for now - would come from conversation history)
+                renderMessages(ticket);
+
+                // Get copilot suggestions
+                getCopilotSuggestions('');
+
+                // Re-render queue to show active state
+                renderQueue();
+
+            } catch (e) {
+                console.error('Select ticket error:', e);
+            }
+        };
+
+        window.acceptTicket = async function(ticketId) {
+            try {
+                await apiFetch('/enterprise/workspace/accept/' + ticketId, { method: 'POST' });
+                await loadQueue();
+                selectTicket(ticketId);
+            } catch (e) {
+                alert('Failed to accept ticket');
+            }
+        };
+
+        function renderMessages(ticket) {
+            // For now, show a placeholder - in production, load from conversation history
+            const messagesEl = document.getElementById('convMessages');
+            messagesEl.innerHTML = `
+                <div class="message customer">
+                    <div class="msg-bubble">Hello, I need help with my order.</div>
+                    <div class="msg-meta">Customer · Just now</div>
+                </div>
+            `;
+        }
+
+        // ── Customer Profile ──
+        async function loadCustomerProfile(customerId) {
+            try {
+                const profile = await apiFetch('/enterprise/customers/' + customerId);
+                const customer = profile.customer || {};
+                const stats = profile.stats || {};
+
+                document.getElementById('customerName').textContent = customer.name || customer.email?.split('@')[0] || 'Unknown';
+                document.getElementById('customerEmail').textContent = customer.email || '—';
+                document.getElementById('customerAvatar').textContent = (customer.name || 'U')[0].toUpperCase();
+                document.getElementById('customerTickets').textContent = stats.total_tickets || 0;
+                document.getElementById('customerCSAT').textContent = stats.avg_csat ? stats.avg_csat.toFixed(1) : '—';
+            } catch (e) {
+                console.error('Customer profile error:', e);
+            }
+        }
+
+        // ── SLA Status ──
+        async function loadSLAStatus(ticketId) {
+            try {
+                const sla = await apiFetch('/enterprise/sla/status/' + ticketId);
+                let slaText = '—';
+                if (sla.first_response) {
+                    if (sla.first_response.breached) {
+                        slaText = '<span class="tc-sla-breach">BREACHED</span>';
+                    } else if (sla.first_response.warning) {
+                        slaText = '<span class="tc-sla-warning">At Risk</span>';
+                    } else if (sla.first_response.met) {
+                        slaText = '<span style="color:var(--success);">Met</span>';
+                    } else {
+                        const remaining = Math.max(0, sla.first_response.target_minutes - sla.first_response.elapsed_minutes);
+                        slaText = `${Math.round(remaining)}m remaining`;
+                    }
+                }
+                document.getElementById('ticketSLA').innerHTML = slaText;
+            } catch (e) {
+                document.getElementById('ticketSLA').textContent = '—';
+            }
+        }
+
+        // ── Copilot ──
+        async function getCopilotSuggestions(message) {
+            if (!state.currentTicket) return;
+
+            const copilotEl = document.getElementById('copilotContent');
+            copilotEl.innerHTML = '<div class="copilot-loading">Generating suggestions...</div>';
+
+            try {
+                const data = await apiFetch('/enterprise/workspace/copilot', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        ticket_id: state.currentTicket.id,
+                        message: message || 'Customer inquiry',
+                        conversation_history: [],
+                    }),
+                });
+
+                state.copilotSuggestions = data.suggestions || [];
+
+                if (state.copilotSuggestions.length === 0) {
+                    copilotEl.innerHTML = '<div class="copilot-loading">No suggestions available</div>';
+                    return;
+                }
+
+                copilotEl.innerHTML = '<div class="copilot-suggestions">' +
+                    state.copilotSuggestions.map((s, i) => `
+                        <div class="copilot-suggestion" onclick="useSuggestion(${i})">
+                            <div class="cs-text">${escHtml(s.text.slice(0, 150))}${s.text.length > 150 ? '...' : ''}</div>
+                            <div class="cs-meta">
+                                <span class="cs-confidence">${Math.round(s.confidence * 100)}% match</span>
+                                <span class="cs-source">${s.source}</span>
+                            </div>
+                        </div>
+                    `).join('') + '</div>';
+
+                // Show detected info
+                if (data.detected_intent || data.detected_sentiment) {
+                    copilotEl.innerHTML += `
+                        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light);font-size:11px;color:var(--muted);">
+                            ${data.detected_intent ? `<strong>Intent:</strong> ${data.detected_intent}` : ''}
+                            ${data.detected_sentiment ? ` · <strong>Sentiment:</strong> ${data.detected_sentiment}` : ''}
+                        </div>
+                    `;
+                }
+
+            } catch (e) {
+                copilotEl.innerHTML = '<div class="copilot-loading">Failed to get suggestions</div>';
+            }
+        }
+
+        window.useSuggestion = function(index) {
+            const suggestion = state.copilotSuggestions[index];
+            if (suggestion) {
+                document.getElementById('replyInput').value = suggestion.text;
+            }
+        };
+
+        // ── Reply ──
+        window.sendReply = async function() {
+            const input = document.getElementById('replyInput');
+            const message = input.value.trim();
+            if (!message || !state.currentTicket) return;
+
+            // Add to conversation (mock - in production, call API)
+            const messagesEl = document.getElementById('convMessages');
+            messagesEl.innerHTML += `
+                <div class="message agent">
+                    <div class="msg-bubble">${escHtml(message)}</div>
+                    <div class="msg-meta">You · Just now</div>
+                </div>
+            `;
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+
+            // Update ticket
+            try {
+                await apiFetch('/enterprise/tickets/' + state.currentTicket.id, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        agent_reply_count: (state.currentTicket.agent_reply_count || 0) + 1,
+                    }),
+                });
+            } catch (e) {
+                console.error('Update ticket error:', e);
+            }
+
+            input.value = '';
+            getCopilotSuggestions(message);
+        };
+
+        window.handleReplyKey = function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendReply();
+            }
+        };
+
+        // ── Macros ──
+        async function loadMacros() {
+            try {
+                const data = await apiFetch('/enterprise/macros');
+                state.macros = data.macros || [];
+
+                const macroEl = document.getElementById('macroList');
+                macroEl.innerHTML = state.macros.slice(0, 8).map(m => 
+                    `<span class="macro-chip" onclick="useMacro('${m.shortcut || m.name}')">${m.shortcut || m.name}</span>`
+                ).join('');
+            } catch (e) {
+                console.error('Macros load error:', e);
+            }
+        }
+
+        window.useMacro = async function(shortcut) {
+            const macro = state.macros.find(m => m.shortcut === shortcut || m.name === shortcut);
+            if (macro) {
+                document.getElementById('replyInput').value = macro.content;
+            }
+        };
+
+        window.insertMacro = function() {
+            alert('Macro browser coming soon!');
+        };
+
+        // ── Quick Actions ──
+        window.setTicketPriority = async function(priority) {
+            if (!state.currentTicket) return;
+            try {
+                await apiFetch('/enterprise/tickets/' + state.currentTicket.id, {
+                    method: 'PUT',
+                    body: JSON.stringify({ priority }),
+                });
+                state.currentTicket.priority = priority;
+                document.getElementById('ticketPriority').textContent = priority;
+                loadQueue();
+            } catch (e) {
+                alert('Failed to update priority');
+            }
+        };
+
+        window.escalateTicket = async function() {
+            if (!state.currentTicket) return;
+            try {
+                await apiFetch('/enterprise/tickets/' + state.currentTicket.id, {
+                    method: 'PUT',
+                    body: JSON.stringify({ escalation_level: 'high', priority: 'urgent' }),
+                });
+                alert('Ticket escalated');
+                loadQueue();
+            } catch (e) {
+                alert('Failed to escalate');
+            }
+        };
+
+        window.resolveTicket = async function() {
+            if (!state.currentTicket) return;
+            try {
+                await apiFetch('/enterprise/tickets/' + state.currentTicket.id, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status: 'solved' }),
+                });
+                alert('Ticket resolved!');
+                state.currentTicket = null;
+                document.getElementById('convView').classList.add('hidden');
+                document.getElementById('convEmpty').classList.remove('hidden');
+                loadQueue();
+            } catch (e) {
+                alert('Failed to resolve');
+            }
+        };
+
+        window.closeTicket = async function() {
+            if (!state.currentTicket) return;
+            if (!confirm('Close this ticket?')) return;
+            try {
+                await apiFetch('/enterprise/tickets/' + state.currentTicket.id, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status: 'closed' }),
+                });
+                state.currentTicket = null;
+                document.getElementById('convView').classList.add('hidden');
+                document.getElementById('convEmpty').classList.remove('hidden');
+                loadQueue();
+            } catch (e) {
+                alert('Failed to close');
+            }
+        };
+
+        window.transferTicket = function() {
+            alert('Transfer dialog coming soon!');
+        };
+
+        window.addInternalNote = async function() {
+            if (!state.currentTicket) return;
+            const note = prompt('Enter internal note:');
+            if (!note) return;
+            try {
+                await apiFetch('/enterprise/tickets/' + state.currentTicket.id + '/notes', {
+                    method: 'POST',
+                    body: JSON.stringify({ content: note, is_internal: true }),
+                });
+                alert('Note added');
+            } catch (e) {
+                alert('Failed to add note');
+            }
+        };
+
+        // ── Agent Status ──
+        async function updateAgentStatus(status) {
+            state.agentStatus = status;
+            try {
+                await apiFetch('/enterprise/workspace/status', {
+                    method: 'PUT',
+                    body: JSON.stringify({ status }),
+                });
+            } catch (e) {
+                console.error('Status update error:', e);
+            }
+            updateStatusUI();
+        }
+
+        function updateStatusUI() {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+            indicator.className = 'status-indicator status-' + state.agentStatus;
+            text.textContent = state.agentStatus.charAt(0).toUpperCase() + state.agentStatus.slice(1);
+        }
+
+        window.toggleStatus = function() {
+            const statuses = ['online', 'away', 'offline'];
+            const current = statuses.indexOf(state.agentStatus);
+            const next = statuses[(current + 1) % statuses.length];
+            updateAgentStatus(next);
+        };
+
+        // ── Realtime Metrics ──
+        async function loadRealtimeMetrics() {
+            try {
+                const data = await apiFetch('/enterprise/analytics/realtime');
+                document.getElementById('statOnline').textContent = data.agents?.online || 0;
+            } catch (e) {
+                console.error('Realtime metrics error:', e);
+            }
+        }
+
+        // ── Utilities ──
+        function escHtml(str) {
+            return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function formatTimeAgo(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diff = (now - date) / 1000;
+            if (diff < 60) return 'Just now';
+            if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+            if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+            return Math.floor(diff / 86400) + 'd ago';
+        }
+
+        // ── Theme ──
+        window.toggleTheme = function() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('cami-theme', next);
+            updateThemeButton();
+        };
+
+        function updateThemeButton() {
+            const btn = document.getElementById('themeToggle');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const moon = btn.querySelector('.icon-moon');
+            const sun = btn.querySelector('.icon-sun');
+            if (isDark) { moon.style.display = 'none'; sun.style.display = 'block'; }
+            else { moon.style.display = 'block'; sun.style.display = 'none'; }
+        }
+
+        // ── Logout ──
+        window.logout = async function() {
+            if (state.refreshInterval) clearInterval(state.refreshInterval);
+            await updateAgentStatus('offline');
+            if (sb) await sb.auth.signOut();
+            window.location.href = '/login';
+        };
+
+        // ── Boot ──
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+    </script>
+</body>
+</html>

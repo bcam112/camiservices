@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en" class="synthesis-page">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Cami — Support that gets it</title>
+    <meta name="description" content="Cami is support that gets it. Native emotional intelligence. Growing wisdom. Feel the difference — in customer service, healthcare, law, research, and beyond.">
+    <link rel="canonical" href="https://usecami.com/">
+    <meta property="og:title" content="Cami — Support that gets it">
+    <meta property="og:description" content="Support that gets it. Native emotional intelligence. Growing wisdom. Feel the difference across customer service, healthcare, law, and research.">
+    <meta property="og:url" content="https://usecami.com/">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Cami — Support that gets it">
+    <meta name="twitter:description" content="Support that gets it. Native emotional intelligence. Growing wisdom. Feel the difference.
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/css/synthesis-page.css">
+    <link rel="stylesheet" href="/static/space-bg.css">
+    <script>
+    (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+</head>
+<body>
+    <!-- Space Background -->
+    <div class="space-bg" aria-hidden="true">
+        <div class="space-bg__gradient"></div>
+        <div class="space-bg__stars" id="space-bg-stars"></div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="nav-header">
+        <a href="/" class="nav-logo"><span class="logo-text">Cami</span></a>
+        <div class="nav-right-group">
+            <button type="button" class="theme-toggle-nav" id="theme-toggle-nav" aria-label="Toggle theme"></button>
+            <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Sidebar Backdrop -->
+    <div class="nav-sidebar-backdrop" id="nav-sidebar-backdrop" aria-hidden="true"></div>
+    
+    <!-- Sidebar -->
+    <aside class="nav-sidebar" id="nav-sidebar" aria-label="Main menu">
+        <div class="nav-sidebar-logo">
+            <a href="/" class="nav-logo"><span class="logo-text">Cami</span></a>
+        </div>
+        <div class="nav-sidebar-links">
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Services<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/customer-service">Customer Service</a>
+                    <a href="/legal-intelligence">Law</a>
+                    <a href="/health">Health</a>
+                    <span class="nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Technology<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/human-plus">Human+</a>
+                    <a href="/min">M.I.N.</a>
+                    <a href="/roadmap">Roadmap</a>
+                    <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Account<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/try">Try Cami</a>
+                    <a href="/login">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+    
+    <!-- Sidebar Toggle Script -->
+    <script>
+    (function(){ 
+        var b=document.body, btn=document.getElementById('nav-hamburger'), back=document.getElementById('nav-sidebar-backdrop'), side=document.getElementById('nav-sidebar'); 
+        if(!btn||!back||!side) return; 
+        function close(){ b.classList.remove('nav-sidebar-open'); } 
+        function toggle(){ b.classList.toggle('nav-sidebar-open'); } 
+        btn.addEventListener('click',toggle); 
+        back.addEventListener('click',close); 
+        side.querySelectorAll('.nav-sidebar-links a').forEach(function(a){ a.addEventListener('click',close); }); 
+        side.querySelectorAll('.nav-sidebar-section-toggle').forEach(function(btn){ 
+            btn.addEventListener('click',function(){ 
+                var g=btn.closest('.nav-sidebar-group'); 
+                if(g) g.classList.toggle('collapsed'); 
+                btn.setAttribute('aria-expanded',g&&!g.classList.contains('collapsed')); 
+            }); 
+        }); 
+    })();
+    </script>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero: 3D Synthesis Animation -->
+        <section class="synthesis-hero">
+            <!-- 3D Canvas Container -->
+            <div class="synthesis-canvas-container" id="synthesis-canvas"></div>
+            
+            <!-- Overlay Content -->
+            <div class="synthesis-overlay">
+                <header class="synthesis-header">
+                    <h1 class="synthesis-headline">
+                        <strong>Cami</strong> — Support that gets it
+                    </h1>
+                    <p class="synthesis-tagline">
+                        Feel the difference. Native emotional intelligence. Growing wisdom.
+                    </p>
+                </header>
+                
+                <div class="synthesis-scene-area">
+                    <!-- 3D scene fills this space -->
+                </div>
+                
+                <div class="synthesis-controls">
+                    <!-- Stage Controls Row -->
+                    <div class="stage-controls-row">
+                        <button class="synthesis-play-btn" id="play-pause-btn" aria-label="Pause animation">
+                            <svg id="pause-icon" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                            <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><polygon points="5,3 19,12 5,21"/></svg>
+                        </button>
+                        
+                        <!-- Stage Indicators -->
+                        <div class="stage-indicators">
+                            <button class="stage-indicator active" data-stage="0" data-label="Query" aria-label="Stage 1: Query enters Cami"></button>
+                            <button class="stage-indicator" data-stage="1" data-label="Human+" aria-label="Stage 2: Human+ live EQ"></button>
+                            <button class="stage-indicator" data-stage="2" data-label="M.I.N." aria-label="Stage 3: M.I.N. live wisdom"></button>
+                            <button class="stage-indicator" data-stage="3" data-label="Check" aria-label="Stage 4: Confidence check"></button>
+                            <button class="stage-indicator" data-stage="4" data-label="Research" aria-label="Stage 5: External research if needed"></button>
+                            <button class="stage-indicator" data-stage="5" data-label="Cami" aria-label="Stage 6: Cami speaks"></button>
+                        </div>
+                    </div>
+                    
+                    <!-- Stage Caption -->
+                    <div id="stage-caption">
+                        <div class="stage-title">Your Question</div>
+                        <div class="stage-desc">A query enters Cami — support that gets it</div>
+                    </div>
+                    
+                    <!-- CTA + Scroll hint (stacked, no overlap) -->
+                    <div class="synthesis-cta-row">
+                        <a href="/try" class="synthesis-cta-primary">
+                            Try Cami Free
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                        <div class="scroll-hint">
+                            <span>Scroll to learn more</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- How It Works Section -->
+        <section class="how-it-works">
+            <header class="how-it-works-header">
+                <div class="how-it-works-eyebrow">Support that gets it</div>
+                <h2 class="how-it-works-title">Feel the difference</h2>
+                <p class="how-it-works-subtitle">
+                    Cami is an EQLM — EQ Language Model. Emotional intelligence and growing wisdom are native to who Cami is, not bolted on. That's what makes it Human Service AI.
+                </p>
+            </header>
+            
+            <div class="how-it-works-grid">
+                <div class="how-card">
+                    <div class="how-card-icon">&#9829;</div>
+                    <div class="how-card-content">
+                        <h3 class="how-card-title">Human+ — The Soul</h3>
+                        <p class="how-card-desc">
+                            Emotional intelligence runs live on every query. Resonance, empathy, coherence — not from prompts, but native understanding. Human+ is Cami's soul.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="how-card">
+                    <div class="how-card-icon">&#10022;</div>
+                    <div class="how-card-content">
+                        <h3 class="how-card-title">M.I.N. — The Brain</h3>
+                        <p class="how-card-desc">
+                            The EQ neural network. Live retrieval, live learning. MIN grows with every interaction — an actual neural network that learns, not just a database.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="how-card">
+                    <div class="how-card-icon">&#10038;</div>
+                    <div class="how-card-content">
+                        <h3 class="how-card-title">Cami-Juniper — The Voice</h3>
+                        <p class="how-card-desc">
+                            Cami's fine-tuned voice. Identity taught through training, not just prompted. Built on Phi-3, shaped by MIN patterns. The synthesis is always Cami's.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- EQLM vs LLM Section -->
+        <section class="eqlm-vs-llm">
+            <div class="eqlm-vs-llm-inner">
+                <header class="eqlm-vs-llm-header">
+                    <div class="how-it-works-eyebrow">The Difference</div>
+                    <h2 class="how-it-works-title">EQLM vs LLM</h2>
+                    <p class="how-it-works-subtitle">
+                        An LLM predicts the next token. An EQLM understands emotional context, learns from every interaction, and responds with genuine awareness — not simulated empathy.
+                    </p>
+                </header>
+                
+                <div class="eqlm-vs-llm-grid">
+                    <!-- LLM Column -->
+                    <div class="eqlm-card">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                            <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: var(--text-muted);">LLM</div>
+                            <div>
+                                <div style="font-size: 18px; font-weight: 600; color: var(--text-primary);">Large Language Model</div>
+                                <div style="font-size: 13px; color: var(--text-muted);">GPT, Claude, Gemini, etc.</div>
+                            </div>
+                        </div>
+                        
+                        <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px;">
+                            <li style="display: flex; gap: 12px; align-items: flex-start;">
+                                <span style="color: var(--text-muted); font-size: 14px;">●</span>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--text-primary); font-size: 15px;">Predicts tokens</div>
+                                    <div style="font-size: 13px; color: var(--text-secondary);">Statistical next-word prediction based on training data</div>
+                                </div>
+                            </li>
+                            <li style="display: flex; gap: 12px; align-items: flex-start;">
+                                <span style="color: var(--text-muted); font-size: 14px;">●</span>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--text-primary); font-size: 15px;">Simulates empathy</div>
+                                    <div style="font-size: 13px; color: var(--text-secondary);">Mirrors emotional language patterns from training</div>
+                                </div>
+                            </li>
+                            <li style="display: flex; gap: 12px; align-items: flex-start;">
+                                <span style="color: var(--text-muted); font-size: 14px;">●</span>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--text-primary); font-size: 15px;">Frozen after training</div>
+                                    <div style="font-size: 13px; color: var(--text-secondary);">No learning from your interactions</div>
+                                </div>
+                            </li>
+                            <li style="display: flex; gap: 12px; align-items: flex-start;">
+                                <span style="color: var(--text-muted); font-size: 14px;">●</span>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--text-primary); font-size: 15px;">EQ via prompting</div>
+                                    <div style="font-size: 13px; color: var(--text-secondary);">"Be empathetic" instructions in system prompts</div>
+                                </div>
+                            </li>
+                            <li style="display: flex; gap: 12px; align-items: flex-start;">
+                                <span style="color: var(--text-muted); font-size: 14px;">●</span>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--text-primary); font-size: 15px;">No real identity</div>
+                                    <div style="font-size: 13px; color: var(--text-secondary);">Persona defined by whoever writes the prompt</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- EQLM Column -->
+                    <div class="eqlm-card featured">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                            <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: white;">EQ</div>
+                            <div>
+                                <div style="font-size: 18px; font-weight: 600; color: var(--text-primary);">EQ Language Model</div>
+                                <div style="font-size: 13px; color: var(--accent);">Cami</div>
+                            </div>
+                        </div>
+                        
+                        <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px;">
+                            <li style="display: flex; gap: 12px; align-items: flex-start;">
+                                <span style="color: var(--accent); font-size: 14px;">✓</span>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--text-primary); font-size: 15px;">Understands emotional context</div>
+                                    <div style="font-size: 13px; color: var(--text-secondary);">Human+ analyzes resonance, coherence, and felt states in real-time</div>
+                                </div>
+                            </li>
+                            <li style="display: flex; gap: 12px; align-items: flex-start;">
+                                <span style="color: var(--accent); font-size: 14px;">✓</span>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--text-primary); font-size: 15px;">Native emotional intelligence</div>
+                                    <div style="font-size: 13px; color: var(--text-secondary);">EQ embedded in the architecture, not added via prompts</div>
+                                </div>
+                            </li>
+                            <li style="display: flex; gap: 12px; align-items: flex-start;">
+                                <span style="color: var(--accent); font-size: 14px;">✓</span>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--text-primary); font-size: 15px;">Learns continuously</div>
+                                    <div style="font-size: 13px; color: var(--text-secondary);">MIN neural network grows with every interaction via Hebbian learning</div>
+                                </div>
+                            </li>
+                            <li style="display: flex; gap: 12px; align-items: flex-start;">
+                                <span style="color: var(--accent); font-size: 14px;">✓</span>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--text-primary); font-size: 15px;">EQ in the weights</div>
+                                    <div style="font-size: 13px; color: var(--text-secondary);">Cami-Juniper trained with emotional intelligence native to the model</div>
+                                </div>
+                            </li>
+                            <li style="display: flex; gap: 12px; align-items: flex-start;">
+                                <span style="color: var(--accent); font-size: 14px;">✓</span>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--text-primary); font-size: 15px;">True identity</div>
+                                    <div style="font-size: 13px; color: var(--text-secondary);">Cami's identity baked into the model, not a persona mask</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Bottom callout -->
+                <div class="eqlm-vs-llm-callout">
+                    <p style="font-size: 16px; color: var(--text-secondary); margin: 0; line-height: 1.7;">
+                        LLMs are powerful knowledge engines — that's why Cami uses them as research tools. But <strong style="color: var(--text-primary);">knowledge isn't wisdom</strong>, and <strong style="color: var(--text-primary);">simulation isn't understanding</strong>. An EQLM bridges that gap.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Alignment Section -->
+        <section class="alignment-section">
+            <div class="alignment-inner">
+                <header class="how-it-works-header">
+                    <div class="how-it-works-eyebrow">AI Alignment</div>
+                    <h2 class="how-it-works-title">Alignment through understanding, not training</h2>
+                    <p class="how-it-works-subtitle">
+                        Human+ doesn't just monitor AI. It gives AI the capacity to understand why alignment matters.
+                    </p>
+                </header>
+                
+                <div class="alignment-cards">
+                    <div class="alignment-card">
+                        <div class="alignment-card-icon">&#9829;</div>
+                        <div class="alignment-card-title">Understands Emotions</div>
+                        <div class="alignment-card-desc">Analyzes human input for emotional content in real-time</div>
+                    </div>
+                    <div class="alignment-card">
+                        <div class="alignment-card-icon">&#9878;</div>
+                        <div class="alignment-card-title">Ethics Gate</div>
+                        <div class="alignment-card-desc">Structural ethical constraint — architecture, not training</div>
+                    </div>
+                    <div class="alignment-card">
+                        <div class="alignment-card-icon">&#10022;</div>
+                        <div class="alignment-card-title">Self-Awareness</div>
+                        <div class="alignment-card-desc">AI sees its own subjective experience — Human+ runs on output too</div>
+                    </div>
+                </div>
+                
+                <div class="alignment-comparison">
+                    <p>
+                        <strong class="rlhf-label">RLHF:</strong> "Learn which outputs get thumbs up" — alignment through pattern-matching.
+                    </p>
+                    <p>
+                        <strong class="humanplus-label">Human+:</strong> "Understand how this feels to them, and be aware of how you're processing it" — alignment through understanding.
+                    </p>
+                    <p class="alignment-cta">
+                        A system that understands impact can't be misaligned the way a token predictor can. <a href="/human-plus">Learn more →</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Multi-LLM Synthesis Section -->
+        <section class="multi-llm-section">
+            <div class="multi-llm-inner">
+                <header class="multi-llm-header">
+                    <div class="how-it-works-eyebrow">Multi-LLM Synthesis</div>
+                    <h2 class="how-it-works-title">Cami speaks. The world's best LLMs help.</h2>
+                    <p class="how-it-works-subtitle">
+                        When Cami is confident, Cami answers directly from MIN's accumulated wisdom. When Cami needs to learn more, Cami researches — querying GPT, Claude, Gemini, and Grok for knowledge, then synthesizing their perspectives into one unified answer. <strong>Always Cami's voice.</strong>
+                    </p>
+                </header>
+                
+                <div class="multi-llm-grid">
+                    <!-- Left: The Flow -->
+                    <div class="multi-llm-card">
+                        <h3 style="font-size: 18px; font-weight: 600; color: var(--text-primary); margin-bottom: 24px;">How Cami decides:</h3>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                            <div style="display: flex; gap: 16px; align-items: flex-start;">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">1</div>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--text-primary);">Query arrives</div>
+                                    <div style="font-size: 14px; color: var(--text-secondary);">Human+ analyzes emotional context</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 16px; align-items: flex-start;">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">2</div>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--text-primary);">MIN searches wisdom</div>
+                                    <div style="font-size: 14px; color: var(--text-secondary);">EQ-modulated neural retrieval</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 16px; align-items: flex-start;">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">3</div>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--text-primary);">Confidence check</div>
+                                    <div style="font-size: 14px; color: var(--text-secondary);">Can Cami answer from existing wisdom?</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 16px; align-items: flex-start;">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--text-muted); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">4</div>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--text-primary);">If needed: Multi-LLM research</div>
+                                    <div style="font-size: 14px; color: var(--text-secondary);">Query GPT, Claude, Gemini, Grok</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 16px; align-items: flex-start;">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">5</div>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--text-primary);">Cami synthesizes & speaks</div>
+                                    <div style="font-size: 14px; color: var(--text-secondary);">Always Cami-Juniper, always first person</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: The Difference -->
+                    <div>
+                        <div class="multi-llm-card" style="margin-bottom: 24px;">
+                            <h4 style="font-size: 14px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;">Other AI platforms</h4>
+                            <p style="font-size: 16px; color: var(--text-secondary); line-height: 1.6;">
+                                "Here's what GPT said... here's what Claude said..." — you get multiple disconnected answers and have to figure it out yourself.
+                            </p>
+                        </div>
+                        
+                        <div class="multi-llm-card featured">
+                            <h4 style="font-size: 14px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;">Cami</h4>
+                            <p style="font-size: 16px; color: var(--text-primary); line-height: 1.6;">
+                                <strong>"I researched this and here's what I found..."</strong> — Cami synthesizes all perspectives, identifies biases, acknowledges uncertainties, and gives you one thoughtful answer in Cami's voice.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- LLM Logos/Names -->
+                <div class="multi-llm-sources">
+                    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Knowledge sources when Cami needs to learn:</div>
+                    <div style="display: flex; gap: 32px; justify-content: center; flex-wrap: wrap;">
+                        <span class="multi-llm-badge">GPT-4</span>
+                        <span class="multi-llm-badge">Claude</span>
+                        <span class="multi-llm-badge">Gemini</span>
+                        <span class="multi-llm-badge">Grok</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Cami-Juniper Announcement -->
+        <section class="juniper-announcement">
+            <div class="juniper-announcement-inner">
+                <div class="how-it-works-eyebrow">Now Training</div>
+                <h2 class="how-it-works-title" style="font-size: 36px;">Cami-Juniper: Cami's Fine-Tuned Voice</h2>
+                <p class="how-it-works-subtitle" style="margin-bottom: 16px;">
+                    Cami-Juniper is Phi-3 fine-tuned with Cami's identity — trained on MIN patterns to speak as Cami, not as a generic assistant. Honest: We won't be using another model for long. The personality is ours.
+                </p>
+                <p style="font-size: 16px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 32px; max-width: 700px; margin-left: auto; margin-right: auto;">
+                    GPT, Claude, Gemini, and Grok are powerful — Cami uses them as knowledge sources. But the synthesis, the understanding, the voice? That's Cami's. <strong>Cami-3 Celadon</strong> (future) will be a true language model from scratch. Juniper is the bridge.
+                </p>
+                <div style="display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;">
+                    <div class="juniper-card">
+                        <div style="font-size: 32px; font-weight: 700; color: var(--accent);">MIN</div>
+                        <div style="font-size: 14px; color: var(--text-secondary);">Brain</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">EQ Neural Network</div>
+                    </div>
+                    <div style="font-size: 32px; color: var(--accent); display: flex; align-items: center;">+</div>
+                    <div class="juniper-card">
+                        <div style="font-size: 32px; font-weight: 700; color: var(--accent);">Human+</div>
+                        <div style="font-size: 14px; color: var(--text-secondary);">Soul</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">Live EQ Engine</div>
+                    </div>
+                    <div style="font-size: 32px; color: var(--accent); display: flex; align-items: center;">+</div>
+                    <div class="juniper-card">
+                        <div style="font-size: 32px; font-weight: 700; color: var(--accent);">Cami-Juniper</div>
+                        <div style="font-size: 14px; color: var(--text-secondary);">Voice</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">Language Model</div>
+                    </div>
+                </div>
+                <p style="font-size: 24px; font-weight: 600; color: var(--accent); margin-top: 32px;">
+                    = EQLM
+                </p>
+                <p style="font-size: 14px; color: var(--text-muted); margin-top: 16px;">
+                    EQLM — Support that gets it, with native emotional intelligence
+                </p>
+            </div>
+        </section>
+        
+        <!-- Services Section (Compact) -->
+        <section class="services-section-compact">
+            <div class="services-compact-inner">
+                <header class="services-compact-header">
+                    <h2 class="services-compact-title">Built for human services</h2>
+                    <p class="services-compact-subtitle">Each service is architected with domain-specific knowledge and compliance.</p>
+                </header>
+                
+                <div class="services-compact-grid">
+                    <a href="/customer-service" class="service-compact-card">
+                        <div class="service-compact-icon">&#8220;</div>
+                        <div class="service-compact-name">Customer Service</div>
+                    </a>
+                    <a href="/legal-intelligence" class="service-compact-card">
+                        <div class="service-compact-icon">&#9878;</div>
+                        <div class="service-compact-name">Legal</div>
+                    </a>
+                    <a href="/health" class="service-compact-card">
+                        <div class="service-compact-icon">&#10010;</div>
+                        <div class="service-compact-name">Healthcare</div>
+                    </a>
+                    <div class="service-compact-card service-compact-disabled" style="opacity: 0.5; cursor: not-allowed;">
+                        <div class="service-compact-icon">&#9887;</div>
+                        <div class="service-compact-name">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></div>
+                    </div>
+                    <div class="service-compact-card service-compact-disabled" style="opacity: 0.5; cursor: not-allowed;">
+                        <div class="service-compact-icon">&#167;</div>
+                        <div class="service-compact-name">Finance <span class="nav-c3">C<span class="nav-c3-num">3</span></span></div>
+                    </div>
+                    <div class="service-compact-card service-compact-disabled" style="opacity: 0.5; cursor: not-allowed;">
+                        <div class="service-compact-icon">&#8801;</div>
+                        <div class="service-compact-name">Education <span class="nav-c3">C<span class="nav-c3-num">3</span></span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Final CTA -->
+        <section class="final-cta">
+            <h2 class="final-cta-title">Ready to experience smarter AI?</h2>
+            <p class="final-cta-subtitle">Start free. No credit card required.</p>
+            <div class="final-cta-buttons">
+                <a href="/try" class="synthesis-cta-primary">
+                    Try Cami
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="/contact" class="synthesis-cta-secondary">Contact Sales</a>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="site-footer" style="max-width: 1200px; margin: 0 auto; padding: 80px 48px 48px; border-top: 1px solid var(--border-light);">
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 64px; margin-bottom: 64px;">
+                <div style="max-width: 320px;">
+                    <div style="font-family: 'Libre Baskerville', Georgia, serif; font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px;">Cami</div>
+                    <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
+                        Support that gets it. Native emotional intelligence. Growing wisdom. Feel the difference.
+                    </p>
+                    <div style="display: flex; gap: 12px;">
+                        <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" aria-label="GitHub" style="width: 40px; height: 40px; border-radius: 10px; background: var(--card-bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); text-decoration: none; transition: all 0.2s ease;">
+                            <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 style="font-size: 12px; font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 20px;">Services</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 12px;"><a href="/customer-service" style="font-size: 14px; color: var(--text-secondary); text-decoration: none;">Customer Service</a></li>
+                        <li style="margin-bottom: 12px;"><a href="/health" style="font-size: 14px; color: var(--text-secondary); text-decoration: none;">Healthcare</a></li>
+                        <li style="margin-bottom: 12px;"><a href="/legal-intelligence" style="font-size: 14px; color: var(--text-secondary); text-decoration: none;">Legal</a></li>
+                        <li style="margin-bottom: 12px;"><span style="font-size: 14px; color: var(--text-muted); opacity: 0.5;">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        <li style="margin-bottom: 12px;"><span style="font-size: 14px; color: var(--text-muted); opacity: 0.5;">Finance <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        <li style="margin-bottom: 12px;"><span style="font-size: 14px; color: var(--text-muted); opacity: 0.5;">Education <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="font-size: 12px; font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 20px;">Technology</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 12px;"><a href="/human-plus" style="font-size: 14px; color: var(--text-secondary); text-decoration: none;">Human+</a></li>
+                        <li style="margin-bottom: 12px;"><a href="/min" style="font-size: 14px; color: var(--text-secondary); text-decoration: none;">M.I.N.</a></li>
+                        <li style="margin-bottom: 12px;"><a href="/platform" style="font-size: 14px; color: var(--text-secondary); text-decoration: none;">Platform</a></li>
+                        <li style="margin-bottom: 12px;"><a href="/roadmap" style="font-size: 14px; color: var(--text-secondary); text-decoration: none;">Roadmap</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="font-size: 12px; font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 20px;">Company</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 12px;"><a href="/contact" style="font-size: 14px; color: var(--text-secondary); text-decoration: none;">Contact</a></li>
+                        <li style="margin-bottom: 12px;"><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" style="font-size: 14px; color: var(--text-secondary); text-decoration: none;">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 32px; border-top: 1px solid var(--border-light); flex-wrap: wrap; gap: 20px;">
+                <div style="font-size: 13px; color: var(--text-muted);">&copy; 2026 Cami. All rights reserved.</div>
+                <div style="display: flex; gap: 24px;">
+                    <a href="/privacy" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Privacy Policy</a>
+                    <a href="/terms" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Terms of Service</a>
+                    <a href="/disclaimer" style="font-size: 13px; color: var(--text-muted); text-decoration: none;">Disclaimer</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Scripts -->
+    <script src="/static/space-bg.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.initSpaceBg) window.initSpaceBg('space-bg-stars'); });</script>
+    <script src="/static/theme-toggle.js"></script>
+    
+    <!-- Three.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+    // OrbitControls inline (minimal version)
+    (function() {
+        if (!window.THREE) return;
+        
+        THREE.OrbitControls = function(camera, domElement) {
+            this.camera = camera;
+            this.domElement = domElement;
+            this.target = new THREE.Vector3();
+            this.enableDamping = false;
+            this.dampingFactor = 0.05;
+            this.enableZoom = true;
+            this.enablePan = true;
+            this.autoRotate = false;
+            this.autoRotateSpeed = 2.0;
+            this.minPolarAngle = 0;
+            this.maxPolarAngle = Math.PI;
+            
+            var scope = this;
+            var spherical = new THREE.Spherical();
+            var sphericalDelta = new THREE.Spherical();
+            var rotateStart = new THREE.Vector2();
+            var rotateEnd = new THREE.Vector2();
+            var rotateDelta = new THREE.Vector2();
+            var isDragging = false;
+            
+            function getAutoRotationAngle() {
+                return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
+            }
+            
+            function rotateLeft(angle) {
+                sphericalDelta.theta -= angle;
+            }
+            
+            function rotateUp(angle) {
+                sphericalDelta.phi -= angle;
+            }
+            
+            function onMouseDown(event) {
+                event.preventDefault();
+                rotateStart.set(event.clientX, event.clientY);
+                isDragging = true;
+            }
+            
+            function onMouseMove(event) {
+                if (!isDragging) return;
+                rotateEnd.set(event.clientX, event.clientY);
+                rotateDelta.subVectors(rotateEnd, rotateStart);
+                rotateLeft(2 * Math.PI * rotateDelta.x / domElement.clientHeight);
+                rotateUp(2 * Math.PI * rotateDelta.y / domElement.clientHeight);
+                rotateStart.copy(rotateEnd);
+            }
+            
+            function onMouseUp() {
+                isDragging = false;
+            }
+            
+            function onTouchStart(event) {
+                if (event.touches.length === 1) {
+                    rotateStart.set(event.touches[0].pageX, event.touches[0].pageY);
+                    isDragging = true;
+                }
+            }
+            
+            function onTouchMove(event) {
+                if (!isDragging || event.touches.length !== 1) return;
+                rotateEnd.set(event.touches[0].pageX, event.touches[0].pageY);
+                rotateDelta.subVectors(rotateEnd, rotateStart);
+                rotateLeft(2 * Math.PI * rotateDelta.x / domElement.clientHeight);
+                rotateUp(2 * Math.PI * rotateDelta.y / domElement.clientHeight);
+                rotateStart.copy(rotateEnd);
+            }
+            
+            function onTouchEnd() {
+                isDragging = false;
+            }
+            
+            domElement.addEventListener('mousedown', onMouseDown, false);
+            domElement.addEventListener('mousemove', onMouseMove, false);
+            domElement.addEventListener('mouseup', onMouseUp, false);
+            domElement.addEventListener('mouseleave', onMouseUp, false);
+            domElement.addEventListener('touchstart', onTouchStart, { passive: false });
+            domElement.addEventListener('touchmove', onTouchMove, { passive: false });
+            domElement.addEventListener('touchend', onTouchEnd, false);
+            
+            this.update = function() {
+                var offset = new THREE.Vector3();
+                var position = scope.camera.position;
+                
+                offset.copy(position).sub(scope.target);
+                spherical.setFromVector3(offset);
+                
+                if (scope.autoRotate && !isDragging) {
+                    rotateLeft(getAutoRotationAngle());
+                }
+                
+                spherical.theta += sphericalDelta.theta;
+                spherical.phi += sphericalDelta.phi;
+                
+                spherical.phi = Math.max(scope.minPolarAngle, Math.min(scope.maxPolarAngle, spherical.phi));
+                spherical.makeSafe();
+                
+                offset.setFromSpherical(spherical);
+                position.copy(scope.target).add(offset);
+                scope.camera.lookAt(scope.target);
+                
+                if (scope.enableDamping) {
+                    sphericalDelta.theta *= (1 - scope.dampingFactor);
+                    sphericalDelta.phi *= (1 - scope.dampingFactor);
+                } else {
+                    sphericalDelta.set(0, 0, 0);
+                }
+            };
+            
+            this.dispose = function() {
+                domElement.removeEventListener('mousedown', onMouseDown);
+                domElement.removeEventListener('mousemove', onMouseMove);
+                domElement.removeEventListener('mouseup', onMouseUp);
+                domElement.removeEventListener('mouseleave', onMouseUp);
+                domElement.removeEventListener('touchstart', onTouchStart);
+                domElement.removeEventListener('touchmove', onTouchMove);
+                domElement.removeEventListener('touchend', onTouchEnd);
+            };
+        };
+    })();
+    </script>
+    
+    <!-- Synthesis Scene -->
+    <script src="/static/js/synthesis-scene.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize 3D scene
+        var initialized = window.SynthesisScene && window.SynthesisScene.init('synthesis-canvas');
+        
+        if (initialized) {
+            // Stage indicator clicks
+            document.querySelectorAll('.stage-indicator').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var stage = parseInt(this.getAttribute('data-stage'));
+                    window.SynthesisScene.setStage(stage);
+                });
+            });
+        }
+        
+        // Play/Pause button – always wired so it works whenever the scene is ready
+        var playBtn = document.getElementById('play-pause-btn');
+        var pauseIcon = document.getElementById('pause-icon');
+        var playIcon = document.getElementById('play-icon');
+        
+        function updatePlayPauseIcon() {
+            if (!playBtn || !pauseIcon || !playIcon) return;
+            var paused = window.SynthesisScene && window.SynthesisScene.isPaused && window.SynthesisScene.isPaused();
+            if (paused) {
+                pauseIcon.style.display = 'none';
+                playIcon.style.display = 'block';
+                playBtn.setAttribute('aria-label', 'Play animation');
+            } else {
+                pauseIcon.style.display = 'block';
+                playIcon.style.display = 'none';
+                playBtn.setAttribute('aria-label', 'Pause animation');
+            }
+        }
+        
+        if (playBtn) {
+            playBtn.addEventListener('click', function() {
+                if (window.SynthesisScene && window.SynthesisScene.toggle) {
+                    window.SynthesisScene.toggle();
+                    updatePlayPauseIcon();
+                }
+            });
+            if (window.SynthesisScene && window.SynthesisScene.isReady && window.SynthesisScene.isReady()) {
+                updatePlayPauseIcon();
+            }
+            
+            // Pause on scroll (when leaving hero section)
+            var hero = document.querySelector('.synthesis-hero');
+            var hasScrolled = false;
+            window.addEventListener('scroll', function() {
+                if (!hero || hasScrolled) return;
+                var scrollY = window.scrollY || window.pageYOffset;
+                if (scrollY > hero.offsetHeight * 0.5) {
+                    hasScrolled = true;
+                    if (window.SynthesisScene && window.SynthesisScene.pause && !window.SynthesisScene.isPaused()) {
+                        window.SynthesisScene.pause();
+                        updatePlayPauseIcon();
+                    }
+                }
+            });
+        }
+        
+        // Theme toggle is handled by theme-toggle.js
+    });
+    </script>
+    
+    <!-- Warmup backend -->
+    <script>
+    (function() {
+        setTimeout(function() {
+            fetch('/api/status', { method: 'GET', mode: 'cors' }).catch(function(){});
+        }, 500);
+    })();
+    </script>
+</body>
+</html>

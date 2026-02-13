@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Cami — App</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/backend-ui.css">
+    <link rel="stylesheet" href="/static/space-bg.css">
+    <script>
+        (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+    <style>
+        /* Chat-specific overrides */
+        .backend-main {
+            background: transparent;
+        }
+        .backend-content {
+            padding: 0;
+            max-width: none;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - var(--header-height));
+        }
+        
+        /* Services selector */
+        .services-section {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .services-title {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: var(--space-3);
+        }
+        .service-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            width: 100%;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: left;
+            margin-bottom: 2px;
+        }
+        .service-btn:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+        }
+        .service-btn.active {
+            background: var(--accent-subtle);
+            color: var(--accent);
+        }
+        .service-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-sm);
+            background: var(--surface-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6875rem;
+            font-weight: 700;
+            color: var(--text-tertiary);
+        }
+        .service-btn.active .service-icon {
+            background: var(--accent-subtle);
+            color: var(--accent);
+        }
+        .service-lock {
+            margin-left: auto;
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            padding: 2px 6px;
+            background: var(--surface-tertiary);
+            border-radius: var(--radius-sm);
+        }
+        
+        /* Conversations list */
+        .convos-section {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding: var(--space-4);
+        }
+        .conv-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+            margin-bottom: 2px;
+        }
+        .conv-item:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+        }
+        .conv-item.active {
+            background: var(--accent-subtle);
+            color: var(--accent);
+        }
+        .conv-item-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .conv-item-delete {
+            opacity: 0;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 2px 4px;
+            font-size: 14px;
+            border-radius: var(--radius-sm);
+            transition: opacity var(--transition-fast);
+        }
+        .conv-item:hover .conv-item-delete {
+            opacity: 0.6;
+        }
+        .conv-item-delete:hover {
+            opacity: 1 !important;
+            color: var(--danger);
+        }
+        .conv-empty {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: var(--space-2) var(--space-3);
+        }
+        
+        /* Account section */
+        .account-section {
+            padding: var(--space-4);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        .account-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .account-email {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .account-plan {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            background: var(--accent-subtle);
+            color: var(--accent);
+            margin-top: var(--space-1);
+        }
+        .account-actions {
+            display: flex;
+            gap: var(--space-1);
+        }
+        .account-action-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-default);
+            background: var(--surface-primary);
+            color: var(--text-tertiary);
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all var(--transition-fast);
+        }
+        .account-action-btn:hover {
+            background: var(--surface-hover);
+            color: var(--accent);
+            border-color: var(--border-strong);
+        }
+        .account-action-btn.logout:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+        }
+        
+        /* Chat container */
+        .chat-area {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-messages {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding: var(--space-6);
+            scroll-behavior: smooth;
+        }
+        
+        /* Welcome screen */
+        .welcome-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100%;
+            padding: var(--space-8);
+        }
+        .welcome-content {
+            text-align: center;
+            max-width: 600px;
+        }
+        .welcome-content h2 {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: var(--space-3);
+            color: var(--text-primary);
+        }
+        .welcome-content > p {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-8);
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-3);
+            margin-bottom: var(--space-8);
+        }
+        .feature-card {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4);
+            background: var(--surface-primary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            text-align: left;
+            transition: all var(--transition-fast);
+        }
+        .feature-card:hover {
+            border-color: var(--border-strong);
+            box-shadow: var(--shadow-md);
+        }
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: var(--accent-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+        .feature-card span:not(.feature-icon) {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .example-questions {
+            text-align: left;
+        }
+        .example-questions > p {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: var(--space-3);
+        }
+        .example-btn {
+            display: block;
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            background: var(--surface-primary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: var(--space-2);
+            transition: all var(--transition-fast);
+        }
+        .example-btn:hover {
+            background: var(--surface-hover);
+            border-color: var(--accent);
+            transform: translateX(4px);
+        }
+        
+        /* Messages */
+        .message {
+            display: flex;
+            gap: var(--space-3);
+            max-width: 720px;
+            margin: 0 auto var(--space-4);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-full);
+            background: var(--surface-tertiary);
+            border: 1px solid var(--border-default);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-family: var(--font-serif);
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+        .message.user .message-avatar {
+            background: var(--accent-subtle);
+            color: var(--accent);
+        }
+        .message-content {
+            flex: 1;
+            min-width: 0;
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-lg);
+            background: var(--surface-primary);
+            border: 1px solid var(--border-default);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+        .message.user .message-content {
+            background: var(--accent-subtle);
+            border-color: var(--accent-muted);
+            border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-lg);
+            max-width: 75%;
+            margin-left: auto;
+        }
+        .message.assistant .message-content {
+            border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm);
+            max-width: 85%;
+        }
+        .message-content p { margin: 0 0 var(--space-3); }
+        .message-content p:last-child { margin-bottom: 0; }
+        .message-content code {
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+            padding: 2px 6px;
+            background: var(--surface-tertiary);
+            border-radius: var(--radius-sm);
+        }
+        
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2);
+        }
+        .typing-icon-c {
+            font-family: var(--font-serif);
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--accent);
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+        
+        /* Thinking steps - vertical loading status */
+        .thinking-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 4px 0;
+        }
+        .thinking-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }
+        .thinking-step.active {
+            opacity: 1;
+        }
+        .thinking-step.done {
+            opacity: 0.5;
+        }
+        .thinking-step.done .thinking-step-icon {
+            color: var(--success, #27ae60);
+        }
+        .thinking-step-icon {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .thinking-step-icon svg {
+            width: 14px;
+            height: 14px;
+        }
+        .thinking-step.active .thinking-step-icon {
+            animation: step-pulse 1s ease-in-out infinite;
+        }
+        .thinking-step-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .thinking-step.active .thinking-step-text {
+            color: var(--text-primary);
+        }
+        @keyframes step-pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        /* Synthesis glyphs (response signature) */
+        .synth-glyphs {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 6px;
+            opacity: 0.4;
+        }
+        .synth-glyph {
+            width: 12px;
+            height: 12px;
+            opacity: 0.2;
+        }
+        .synth-glyph.lit {
+            opacity: 1;
+        }
+        .synth-glyph svg {
+            width: 12px;
+            height: 12px;
+        }
+        
+        /* Input area */
+        .input-area {
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--border-default);
+            background: var(--surface-primary);
+        }
+        .input-wrapper {
+            display: flex;
+            align-items: flex-end;
+            gap: var(--space-3);
+            max-width: 720px;
+            margin: 0 auto;
+            padding: var(--space-3) var(--space-4);
+            background: var(--surface-secondary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+        .input-wrapper:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-subtle);
+        }
+        .message-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+            font-family: var(--font-sans);
+            line-height: 1.5;
+            resize: none;
+            max-height: 150px;
+            overflow-y: auto;
+            outline: none;
+        }
+        .message-input::placeholder {
+            color: var(--text-muted);
+        }
+        .scribe-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-default);
+            background: var(--surface-primary);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            flex-shrink: 0;
+        }
+        .scribe-btn:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+            border-color: var(--border-strong);
+        }
+        .send-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            border: none;
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            flex-shrink: 0;
+        }
+        .send-btn:hover:not(:disabled) {
+            background: var(--accent-hover);
+            transform: scale(1.05);
+        }
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .input-footer {
+            max-width: 720px;
+            margin: var(--space-2) auto 0;
+            text-align: center;
+        }
+        .input-disclaimer {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .scribe-context-badge {
+            font-size: 0.75rem;
+            color: var(--warning);
+            margin-right: var(--space-3);
+        }
+        
+        /* Scribe modal */
+        .scribe-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+        }
+        .scribe-modal {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: min(90vw, 480px);
+            max-height: 85vh;
+            overflow-y: auto;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            z-index: 201;
+            box-shadow: var(--shadow-xl);
+        }
+        .scribe-modal h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+        }
+        .scribe-modal-desc {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: var(--space-5);
+        }
+        .scribe-modal label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .scribe-input {
+            width: 100%;
+            padding: var(--space-3);
+            background: var(--surface-secondary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-family: var(--font-sans);
+            resize: vertical;
+            margin-bottom: var(--space-4);
+        }
+        .scribe-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .scribe-record-row,
+        .scribe-upload-row {
+            margin-bottom: var(--space-4);
+        }
+        .scribe-record-controls,
+        .scribe-upload-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            flex-wrap: wrap;
+        }
+        .scribe-record-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-default);
+            background: var(--surface-secondary);
+            color: var(--text-primary);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .scribe-record-btn:hover {
+            background: var(--surface-hover);
+            border-color: var(--border-strong);
+        }
+        .scribe-record-btn.recording {
+            background: var(--danger-subtle);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        .scribe-record-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: var(--radius-full);
+            background: currentColor;
+        }
+        .scribe-record-status {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .scribe-upload-input {
+            display: none;
+        }
+        .scribe-modal-actions {
+            display: flex;
+            gap: var(--space-3);
+            justify-content: flex-end;
+            margin-top: var(--space-5);
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--border-subtle);
+        }
+        .scribe-modal-btn {
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .scribe-modal-btn.secondary {
+            background: var(--surface-secondary);
+            border: 1px solid var(--border-default);
+            color: var(--text-secondary);
+        }
+        .scribe-modal-btn.secondary:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+        }
+        .scribe-modal-btn.primary {
+            background: var(--accent);
+            border: 1px solid var(--accent);
+            color: white;
+        }
+        .scribe-modal-btn.primary:hover {
+            background: var(--accent-hover);
+        }
+        .scribe-follow-ups {
+            margin-top: var(--space-3);
+            padding: var(--space-3);
+            background: var(--accent-subtle);
+            border-radius: var(--radius-md);
+            font-size: 0.8125rem;
+        }
+        .scribe-export-row {
+            margin-bottom: var(--space-4);
+        }
+        .scribe-export-controls {
+            display: flex;
+            gap: var(--space-2);
+        }
+        
+        /* Welcome back styles */
+        .welcome-back {
+            text-align: left;
+            max-width: 560px;
+        }
+        .welcome-back-greeting {
+            font-family: var(--font-serif);
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+        .welcome-back-sub {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            margin-bottom: var(--space-6);
+        }
+        .welcome-back-continue {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            width: 100%;
+            padding: var(--space-4);
+            background: var(--surface-primary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-bottom: var(--space-5);
+            text-align: left;
+        }
+        .welcome-back-continue:hover {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-md);
+        }
+        .welcome-back-continue-icon {
+            font-size: 1.25rem;
+            color: var(--accent);
+        }
+        .welcome-back-continue-text {
+            flex: 1;
+            min-width: 0;
+        }
+        .welcome-back-continue-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .welcome-back-continue-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: var(--space-1);
+        }
+        .welcome-back-continue-arrow {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+        }
+        .welcome-back-threads {
+            margin-bottom: var(--space-5);
+        }
+        .welcome-back-threads-title {
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: var(--space-2);
+        }
+        .welcome-back-thread {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+        .welcome-back-thread:hover {
+            background: var(--surface-hover);
+        }
+        .welcome-back-thread-mode {
+            font-size: 0.625rem;
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 24px;
+            text-align: center;
+        }
+        .welcome-back-thread-title {
+            flex: 1;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .welcome-back-thread-time {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+        }
+        .welcome-back-stats {
+            display: flex;
+            gap: var(--space-5);
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--border-subtle);
+        }
+        .welcome-back-stat {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+        }
+        .welcome-back-stat strong {
+            color: var(--accent);
+            font-weight: 700;
+        }
+        
+        /* Loading state */
+        .app-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: transparent;
+        }
+        .app-loading .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-default);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: var(--space-3);
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* M.I.N. counter */
+        .min-counter {
+            padding: var(--space-3) var(--space-4);
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        .min-counter-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        /* Mode description card */
+        #modeDescription {
+            padding: var(--space-4);
+            background: var(--surface-primary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-6);
+        }
+        
+        /* Mobile sidebar backdrop */
+        .mobile-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-backdrop.visible {
+            display: block;
+            opacity: 1;
+        }
+        
+        /* Mobile header */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            padding: 0 var(--space-4);
+            background: var(--surface-primary);
+            border-bottom: 1px solid var(--border-default);
+            z-index: 98;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: env(safe-area-inset-top, 0);
+        }
+        .mobile-header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        .mobile-menu-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-default);
+            background: var(--surface-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .mobile-menu-btn:active {
+            background: var(--surface-hover);
+        }
+        .mobile-header-title {
+            font-family: var(--font-serif);
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .mobile-header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .mobile-header {
+                display: flex;
+            }
+            .backend-header {
+                display: none;
+            }
+            .backend-sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: min(280px, 85vw);
+                transform: translateX(-100%);
+                z-index: 100;
+                transition: transform 0.3s ease;
+                padding-top: env(safe-area-inset-top, 0);
+            }
+            .backend-sidebar.open {
+                transform: translateX(0);
+            }
+            .backend-main {
+                margin-left: 0;
+                padding-top: calc(56px + env(safe-area-inset-top, 0));
+            }
+            .backend-content {
+                height: calc(100vh - 56px - env(safe-area-inset-top, 0));
+            }
+            .chat-area {
+                height: 100%;
+            }
+        }
+        @media (max-width: 640px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .welcome-content {
+                padding: var(--space-4);
+            }
+            .welcome-content h2 {
+                font-size: 1.375rem;
+            }
+            .welcome-screen {
+                padding: var(--space-4);
+            }
+            .chat-messages {
+                padding: var(--space-3);
+            }
+            .input-area {
+                padding: var(--space-3);
+                padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0));
+            }
+            .input-wrapper {
+                padding: var(--space-2) var(--space-3);
+            }
+            .message {
+                gap: var(--space-2);
+            }
+            .message-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 0.75rem;
+            }
+            .message-content {
+                padding: var(--space-2) var(--space-3);
+                font-size: 0.875rem;
+            }
+            .scribe-btn span:last-child {
+                display: none;
+            }
+            .scribe-btn {
+                padding: var(--space-2);
+            }
+            .send-btn {
+                width: 40px;
+                height: 40px;
+            }
+            .feature-card {
+                padding: var(--space-3);
+            }
+            .feature-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 0.625rem;
+            }
+            .welcome-back-greeting {
+                font-size: 1.375rem;
+            }
+            .welcome-back-stats {
+                flex-wrap: wrap;
+                gap: var(--space-3);
+            }
+            .scribe-modal {
+                width: calc(100vw - var(--space-6));
+                max-height: calc(100vh - var(--space-8));
+                padding: var(--space-4);
+            }
+        }
+        @media (max-width: 380px) {
+            .service-btn {
+                font-size: 0.75rem;
+                padding: var(--space-2);
+            }
+            .service-icon {
+                width: 20px;
+                height: 20px;
+                font-size: 0.625rem;
+            }
+            .account-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-2);
+            }
+            .account-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body class="backend-ui">
+    <div class="space-bg" aria-hidden="true">
+        <div class="space-bg__gradient"></div>
+        <div class="space-bg__stars" id="space-bg-stars"></div>
+    </div>
+    
+    <!-- Loading state -->
+    <div class="app-loading" id="appLoading">
+        <div class="spinner"></div>
+        <span style="color: var(--text-secondary);">Loading Cami...</span>
+    </div>
+    
+    <div id="appMain" style="display: none;">
+        <!-- Mobile header -->
+        <header class="mobile-header">
+            <div class="mobile-header-left">
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+                <span class="mobile-header-title">Cami</span>
+            </div>
+            <div class="mobile-header-right">
+                <button class="mobile-menu-btn" id="mobileThemeToggle" aria-label="Toggle theme">
+                    <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Mobile backdrop -->
+        <div class="mobile-backdrop" id="mobileBackdrop"></div>
+        
+        <div class="backend-layout">
+            <!-- Sidebar -->
+            <aside class="backend-sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <a href="/" class="sidebar-logo">
+                        <span class="sidebar-logo-text">Cami</span>
+                        <span class="sidebar-logo-badge" id="modeBadge" style="display:none;"><span id="modeLabel"></span></span>
+                    </a>
+                    <p style="font-size: 0.6875rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: var(--space-1);" id="modeSubtitle">Feel the difference</p>
+                </div>
+                
+                <div style="padding: var(--space-4);">
+                    <button class="btn btn-secondary" id="newChatBtn" style="width: 100%;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        New Chat
+                    </button>
+                </div>
+                
+                <div class="services-section">
+                    <div class="services-title">Services</div>
+                    <div id="modeSelector">
+                        <button class="service-btn admin-mode" data-mode="cami" style="display:none;">
+                            <span class="service-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+                            Cami
+                        </button>
+                        <button class="service-btn" data-mode="customer_service">
+                            <span class="service-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+                            Customer Service
+                        </button>
+                        <button class="service-btn" data-mode="health">
+                            <span class="service-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
+                            Health
+                        </button>
+                        <button class="service-btn" data-mode="legal_intelligence">
+                            <span class="service-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>
+                            Legal Intelligence
+                        </button>
+                        <button class="service-btn admin-mode" data-mode="research" style="display:none;">
+                            <span class="service-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+                            Research
+                        </button>
+                        <button class="service-btn admin-mode" data-mode="tutor" style="display:none;">
+                            <span class="service-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
+                            Tutor
+                        </button>
+                        <button class="service-btn admin-mode" data-mode="cami_money" style="display:none;">
+                            <span class="service-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+                            Cami Money
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="convos-section">
+                    <div class="services-title">Conversations</div>
+                    <div id="convList">
+                        <div class="conv-empty">No conversations yet</div>
+                    </div>
+                </div>
+                
+                <div class="min-counter" id="minCounter" style="display:none;">
+                    <span class="min-counter-dot"></span>
+                    <span>M.I.N. <strong id="minPatternCount">0</strong> patterns learned</span>
+                </div>
+                
+                <div class="account-section">
+                    <div class="account-info">
+                        <div class="account-email" id="accountEmail"></div>
+                        <span class="account-plan" id="accountPlan"></span>
+                        <div id="accountServicesHint" style="display:none; font-size: 0.625rem; color: var(--text-muted); margin-top: var(--space-1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></div>
+                    </div>
+                    <div class="account-actions">
+                        <a href="/dashboard" class="account-action-btn" title="Dashboard">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            </svg>
+                        </a>
+                        <a href="/admin" id="btnAdmin" class="account-action-btn" title="Admin" style="display:none;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                            </svg>
+                        </a>
+                        <button type="button" id="btnLogout" class="account-action-btn logout" title="Sign Out">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Main content -->
+            <main class="backend-main">
+                <header class="backend-header">
+                    <div class="header-left">
+                        <div class="header-breadcrumb">
+                            <span class="header-breadcrumb-item">Cami</span>
+                            <span class="header-breadcrumb-sep">/</span>
+                            <span class="header-breadcrumb-item current">Chat</span>
+                        </div>
+                    </div>
+                    <div class="header-right">
+                        <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
+                            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="5"/>
+                                <line x1="12" y1="1" x2="12" y2="3"/>
+                                <line x1="12" y1="21" x2="12" y2="23"/>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                                <line x1="1" y1="12" x2="3" y2="12"/>
+                                <line x1="21" y1="12" x2="23" y2="12"/>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                            </svg>
+                            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </header>
+                
+                <div class="backend-content">
+                    <div class="chat-area">
+                        <div class="chat-messages" id="chatContainer">
+                            <div class="welcome-screen" id="welcomeScreen">
+                                <div class="welcome-content">
+                                    <h2 id="welcomeTitle">Welcome to Cami</h2>
+                                    <p id="welcomeSubtitle">Multi-LLM synthesis with M.I.N. memory and Human+ consciousness</p>
+                                    <div id="modeDescription"></div>
+                                    <div class="features-grid">
+                                        <div class="feature-card">
+                                            <span class="feature-icon">H+</span>
+                                            <span>Human+ Consciousness</span>
+                                        </div>
+                                        <div class="feature-card">
+                                            <span class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3C7.5 3 5.5 4.5 5 6.5 3.5 7 2.5 8.5 2.5 10.5c0 1.5.6 2.8 1.5 3.7-.3.8-.5 1.6-.5 2.5C3.5 19 5 20.5 7 21c1 .3 2.2 0 3-.5"/><path d="M14 3c2.5 0 4.5 1.5 5 3.5 1.5.5 2.5 2 2.5 4 0 1.5-.6 2.8-1.5 3.7.3.8.5 1.6.5 2.5 0 2.3-1.5 3.8-3.5 4.3-1 .3-2.2 0-3-.5"/><path d="M12 3v18"/></svg></span>
+                                            <span>M.I.N. Memory</span>
+                                        </div>
+                                        <div class="feature-card">
+                                            <span class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="5" r="1.5" opacity="0.7"/><circle cx="5" cy="17" r="1.5" opacity="0.7"/><circle cx="19" cy="17" r="1.5" opacity="0.7"/><circle cx="12" cy="13" r="2"/></svg></span>
+                                            <span>Multi-LLM Synthesis</span>
+                                        </div>
+                                        <div class="feature-card">
+                                            <span class="feature-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+                                            <span>Learns From You</span>
+                                        </div>
+                                    </div>
+                                    <div class="example-questions" id="exampleQuestions">
+                                        <p>Try asking:</p>
+                                        <div id="exampleButtons"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-area">
+                            <form id="chatForm">
+                                <div class="input-wrapper">
+                                    <textarea id="messageInput" class="message-input" placeholder="Ask Cami anything..." rows="1"></textarea>
+                                    <button type="button" class="scribe-btn" id="scribeBtn" title="Record session">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/>
+                                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                                            <line x1="12" y1="19" x2="12" y2="22"/>
+                                            <line x1="8" y1="22" x2="16" y2="22"/>
+                                        </svg>
+                                        <span>Scribe</span>
+                                    </button>
+                                    <button type="submit" class="send-btn" id="sendBtn">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                                            <path d="M18 2L9 11M18 2L12 18L9 11M18 2L2 8L9 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </form>
+                            <div class="input-footer">
+                                <span class="scribe-context-badge" id="scribeContextBadge" style="display: none;">Session context will be sent</span>
+                                <span class="input-disclaimer">Cami — Support that gets it</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Scribe modal -->
+    <div class="scribe-modal-backdrop" id="scribeModalBackdrop" style="display: none;"></div>
+    <div class="scribe-modal" id="scribeModal" style="display: none;">
+        <h2 id="scribeModalTitle">Scribe</h2>
+        <p class="scribe-modal-desc" id="scribeModalDesc">Record a session or upload audio. Cami transcribes, analyzes, and learns.</p>
+        <div class="scribe-record-row">
+            <label>Record live</label>
+            <div class="scribe-record-controls">
+                <button type="button" class="scribe-record-btn" id="scribeRecordBtn">
+                    <span class="scribe-record-icon"></span>
+                    <span id="scribeRecordLabel">Record</span>
+                </button>
+                <span class="scribe-record-status" id="scribeRecordStatus"></span>
+            </div>
+        </div>
+        <div class="scribe-upload-row">
+            <label>Upload audio</label>
+            <div class="scribe-upload-controls">
+                <input type="file" id="scribeUploadInput" class="scribe-upload-input" accept="audio/*,.webm,.wav,.mp3,.m4a,.ogg">
+                <button type="button" class="scribe-modal-btn secondary" id="scribeUploadBtn">Choose file</button>
+                <span class="scribe-record-status" id="scribeUploadStatus"></span>
+            </div>
+        </div>
+        <label for="scribeSessionSummary">Summary (optional)</label>
+        <textarea id="scribeSessionSummary" class="scribe-input" rows="2" placeholder="Brief summary..."></textarea>
+        <label for="scribeUtterances">Transcript</label>
+        <textarea id="scribeUtterances" class="scribe-input" rows="6" placeholder="Speaker 1: ...&#10;Speaker 2: ... [empathetic]"></textarea>
+        <div id="scribeFollowUps" class="scribe-follow-ups" style="display: none;"></div>
+        <div class="scribe-export-row" id="scribeExportRow" style="display: none;">
+            <label>Export</label>
+            <div class="scribe-export-controls">
+                <button type="button" class="scribe-modal-btn secondary" id="scribeExportTxt">Download .txt</button>
+                <button type="button" class="scribe-modal-btn secondary" id="scribeExportPdf">Download .pdf</button>
+            </div>
+        </div>
+        <div class="scribe-modal-actions">
+            <button type="button" class="scribe-modal-btn secondary" id="scribeModalCancel">Cancel</button>
+            <button type="button" class="scribe-modal-btn primary" id="scribeModalUse">Use for next message</button>
+        </div>
+    </div>
+    
+    <script src="/static/js/supabase.min.js"></script>
+    <script>
+    if (typeof window.supabase === 'undefined') {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        s.crossOrigin = 'anonymous';
+        document.head.appendChild(s);
+    }
+    </script>
+    <script>
+    // Theme toggle
+    function toggleTheme() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const newTheme = isDark ? '' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('cami-theme', newTheme);
+        updateThemeIcons();
+    }
+    
+    function updateThemeIcons() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        document.querySelectorAll('.icon-sun').forEach(el => el.style.display = isDark ? 'none' : '');
+        document.querySelectorAll('.icon-moon').forEach(el => el.style.display = isDark ? '' : 'none');
+    }
+    
+    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+    document.getElementById('mobileThemeToggle').addEventListener('click', toggleTheme);
+    updateThemeIcons();
+    
+    // Mobile menu
+    (function() {
+        var mobileBtn = document.getElementById('mobileMenuBtn');
+        var backdrop = document.getElementById('mobileBackdrop');
+        var sidebar = document.getElementById('sidebar');
+        
+        function openSidebar() {
+            sidebar.classList.add('open');
+            backdrop.classList.add('visible');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            backdrop.classList.remove('visible');
+            document.body.style.overflow = '';
+        }
+        
+        mobileBtn.addEventListener('click', function() {
+            if (sidebar.classList.contains('open')) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        });
+        
+        backdrop.addEventListener('click', closeSidebar);
+        
+        // Close sidebar on window resize to desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 1024) {
+                closeSidebar();
+            }
+        });
+        
+        // Close sidebar when clicking a service or conversation
+        sidebar.addEventListener('click', function(e) {
+            var isButton = e.target.closest('.service-btn') || e.target.closest('.conv-item') || e.target.closest('#newChatBtn');
+            if (isButton && window.innerWidth <= 1024) {
+                setTimeout(closeSidebar, 100);
+            }
+        });
+        
+        // Expose closeSidebar for use elsewhere
+        window.closeMobileSidebar = closeSidebar;
+    })();
+    </script>
+    <script>
+    // App orchestrator: auth check -> load profile -> init chat -> manage conversations
+    window.CAMI_APP_MODE = true;
+    (function() {
+        let sb = null, token = null, profile = null;
+        let PLATFORM_BASE = '';
+        let currentConvId = null;
+        let chatInstance = null;
+
+        function waitSB(cb, n) { n = n||0; if (typeof window.supabase !== 'undefined') return cb(); if (n > 50) return cb(); setTimeout(() => waitSB(cb, n+1), 100); }
+
+        function apiHeaders() {
+            const h = { 'Content-Type': 'application/json' };
+            if (token) h['Authorization'] = 'Bearer ' + token;
+            return h;
+        }
+
+        async function refreshToken() {
+            if (!sb) return;
+            try {
+                const { data: { session } } = await sb.auth.getSession();
+                if (session && session.access_token) token = session.access_token;
+            } catch (_) {}
+        }
+
+        async function init() {
+            await new Promise(r => waitSB(r));
+            if (typeof window.supabase === 'undefined') { redirectLogin(); return; }
+
+            let config = {};
+            try {
+                const r = await fetch('/api/config');
+                config = await r.json();
+            } catch (e) { console.warn('[Cami] Config fetch failed:', e); }
+
+            if (!config.supabase_url || !config.supabase_anon_key) { redirectLogin(); return; }
+            sb = window.supabase.createClient(config.supabase_url, config.supabase_anon_key);
+
+            const { data: { session } } = await sb.auth.getSession();
+            if (!session) { redirectLogin(); return; }
+            token = session.access_token;
+
+            sb.auth.onAuthStateChange(function(_event, newSession) {
+                if (newSession && newSession.access_token) {
+                    token = newSession.access_token;
+                }
+            });
+
+            var sessionEmail = '';
+            try {
+                const { data: { user } } = await sb.auth.getUser();
+                if (user && user.email) sessionEmail = user.email;
+            } catch {}
+
+            try {
+                const r = await fetch('/api/me', { headers: apiHeaders() });
+                if (r.ok) {
+                    profile = await r.json();
+                } else if (r.status === 401) {
+                    redirectLogin(); return;
+                }
+            } catch {}
+
+            if (!profile) {
+                try {
+                    const br = await fetch('/api/me', { method: 'POST', headers: apiHeaders() });
+                    if (br.ok) {
+                        const rr = await fetch('/api/me', { headers: apiHeaders() });
+                        if (rr.ok) profile = await rr.json();
+                    }
+                } catch {}
+            }
+
+            document.getElementById('appLoading').style.display = 'none';
+            document.getElementById('appMain').style.display = '';
+
+            renderProfile();
+            if (!profile && sessionEmail) {
+                document.getElementById('accountEmail').textContent = sessionEmail;
+            }
+
+            var entitlements = (profile && profile.service_entitlements) || [];
+            var isAdmin = isProfileAdmin();
+            if (entitlements.length === 0 && !isAdmin) {
+                showSubscribeGate();
+                bindUI();
+                return;
+            }
+
+            initChat();
+            bindUI();
+            await fetchUserContext();
+            loadConversations({ autoLoad: true });
+
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState !== 'visible') return;
+                fetch('/api/me', { headers: apiHeaders() }).then(function(r) {
+                    if (!r.ok) return;
+                    return r.json();
+                }).then(function(data) {
+                    if (!data) return;
+                    profile = data;
+                    renderProfile();
+                }).catch(function() {});
+            });
+        }
+
+        function redirectLogin() { window.location.href = '/login?redirect=/app'; }
+
+        function showSubscribeGate() {
+            var chatArea = document.querySelector('.chat-area');
+            if (!chatArea) return;
+            chatArea.innerHTML = '<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:var(--space-6);">' +
+                '<div style="max-width:560px;text-align:center;">' +
+                '<h2 style="font-family:var(--font-serif);font-size:1.5rem;margin-bottom:var(--space-3);">Subscribe to use Cami</h2>' +
+                '<p style="color:var(--text-secondary);font-size:0.875rem;line-height:1.6;margin-bottom:var(--space-6);">Try Cami free at <a href="/try" style="color:var(--accent);font-weight:600;">/try</a>. Subscribe to unlock the full experience.</p>' +
+                '<div style="display:flex;flex-direction:column;gap:var(--space-4);">' +
+                    subscribeCard('Cami Law', '$29/mo', 'Legal research, multi-LLM synthesis, M.I.N. memory.', 'law') +
+                    subscribeCard('Cami Health', '$29/mo', 'Clinical decision support, evidence-graded research.', 'health') +
+                    subscribeCard('Cami Pro', '$49/mo', 'Law + Health together. Unlimited everything.', 'pro') +
+                '</div></div></div>';
+        }
+
+        function subscribeCard(name, price, desc, plan) {
+            return '<div class="card" style="text-align:left;">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-2);">' +
+                    '<strong>' + name + '</strong>' +
+                    '<span style="font-weight:700;color:var(--accent);">' + price + '</span>' +
+                '</div>' +
+                '<p style="font-size:0.8125rem;color:var(--text-secondary);margin-bottom:var(--space-3);">' + desc + '</p>' +
+                '<a href="/dashboard?checkout=' + plan + '" class="btn btn-primary btn-sm">Subscribe</a>' +
+                '</div>';
+        }
+
+        function isProfileAdmin() {
+            return profile && (profile.is_admin || (profile.plan && profile.plan.toLowerCase() === 'admin'));
+        }
+
+        function checkModeAccess(mode) {
+            if (!profile) return false;
+            if (isProfileAdmin()) return true;
+            var entitlements = profile.service_entitlements || [];
+            return entitlements.indexOf(mode) !== -1;
+        }
+
+        function getDefaultMode() {
+            var sidebarModes = ['cami', 'customer_service', 'health', 'legal_intelligence', 'research', 'tutor', 'cami_money'];
+            var entitlements = (profile && profile.service_entitlements) || [];
+            if (isProfileAdmin()) return 'cami';
+            for (var i = 0; i < sidebarModes.length; i++) {
+                if (entitlements.indexOf(sidebarModes[i]) !== -1) return sidebarModes[i];
+            }
+            return 'customer_service';
+        }
+
+        function showModePaywall(mode) {
+            var info = {
+                'customer_service': { name: 'Customer Service', plan: 'customer_service', price: '—' },
+                'legal_intelligence': { name: 'Cami Law', plan: 'law', price: '$29/mo' },
+                'health': { name: 'Cami Health', plan: 'health', price: '$29/mo' },
+            };
+            var m = info[mode] || { name: 'this service', plan: 'pro', price: '$49/mo' };
+            var welcome = document.getElementById('welcomeScreen');
+            if (welcome) {
+                welcome.innerHTML = '<div class="welcome-content" style="text-align:center;">' +
+                    '<h2>Unlock ' + m.name + '</h2>' +
+                    '<p style="color:var(--text-secondary);margin:var(--space-3) 0 var(--space-6);">Subscribe to access this service.</p>' +
+                    '<a href="/dashboard?checkout=' + m.plan + '" class="btn btn-primary">Subscribe to ' + m.name + '</a>' +
+                    '</div>';
+                welcome.style.display = '';
+            }
+        }
+
+        function renderProfile() {
+            if (!profile) return;
+            document.getElementById('accountEmail').textContent = profile.email || '--';
+            document.getElementById('accountPlan').textContent = profile.plan_display_name || profile.plan || 'Free';
+
+            var serviceNames = { cami: 'Cami', customer_service: 'CS', research: 'Research', health: 'Health', legal_intelligence: 'Legal', tutor: 'Tutor', cami_money: 'Money' };
+            var entitlements = profile.service_entitlements || [];
+            var hint = document.getElementById('accountServicesHint');
+            if (hint) {
+                if (entitlements.length > 0 || isProfileAdmin()) {
+                    hint.textContent = isProfileAdmin() ? 'Admin (all services)' : entitlements.map(function(s) { return serviceNames[s] || s; }).join(', ');
+                    hint.style.display = '';
+                } else {
+                    hint.style.display = 'none';
+                }
+            }
+
+            var adminBtn = document.getElementById('btnAdmin');
+            if (adminBtn && isProfileAdmin()) adminBtn.style.display = '';
+
+            document.querySelectorAll('.service-btn.admin-mode').forEach(function(btn) {
+                btn.style.display = isProfileAdmin() ? '' : 'none';
+            });
+
+            document.querySelectorAll('.service-btn').forEach(function(btn) {
+                var mode = btn.dataset.mode;
+                var lock = btn.querySelector('.service-lock');
+                if (!checkModeAccess(mode)) {
+                    if (!lock) {
+                        var span = document.createElement('span');
+                        span.className = 'service-lock';
+                        span.textContent = 'Lock';
+                        btn.appendChild(span);
+                    }
+                } else if (lock) {
+                    lock.remove();
+                }
+            });
+        }
+
+        function _renderConvList(convos) {
+            var list = document.getElementById('convList');
+            if (!list) return;
+            list.innerHTML = '';
+            if (!convos || convos.length === 0) {
+                list.innerHTML = '<div class="conv-empty">No conversations yet</div>';
+                return;
+            }
+            convos.forEach(function(c) {
+                var el = document.createElement('div');
+                el.className = 'conv-item' + (c.id === currentConvId ? ' active' : '');
+                el.innerHTML = '<span class="conv-item-title">' + escHtml(c.title || 'Untitled') + '</span><button class="conv-item-delete" title="Delete">&times;</button>';
+                el.querySelector('.conv-item-title').addEventListener('click', function() { loadConversation(c.id); });
+                el.querySelector('.conv-item-delete').addEventListener('click', function(e) { e.stopPropagation(); deleteConversation(c.id); });
+                list.appendChild(el);
+            });
+        }
+
+        async function loadConversations(opts) {
+            opts = opts || {};
+            var autoLoad = opts.autoLoad || false;
+            var retries = opts.retries != null ? opts.retries : 4;
+
+            if (!token) return;
+
+            if (userContext && userContext.recent_conversations && userContext.recent_conversations.length > 0) {
+                _renderConvList(userContext.recent_conversations);
+            }
+
+            await refreshToken();
+
+            var convos = null;
+            for (var attempt = 0; attempt <= retries; attempt++) {
+                try {
+                    var r = await fetch(PLATFORM_BASE + '/api/conversations', { headers: apiHeaders() });
+                    if (r.ok) {
+                        var data = await r.json();
+                        convos = data.conversations || [];
+                        break;
+                    } else if (r.status === 401) {
+                        await refreshToken();
+                        continue;
+                    }
+                } catch (e) {
+                    console.warn('[Cami] loadConversations error:', e);
+                }
+                if (attempt < retries) {
+                    await new Promise(function(resolve) { setTimeout(resolve, (attempt + 1) * 2000); });
+                }
+            }
+
+            if (convos) _renderConvList(convos);
+
+            var effectiveConvos = convos || (userContext && userContext.recent_conversations) || [];
+            if (autoLoad && !currentConvId && effectiveConvos.length > 0) {
+                var targetId = effectiveConvos[0].id;
+                function tryAutoLoad(n) {
+                    n = n || 0;
+                    if (chatInstance) { loadConversation(targetId); return; }
+                    if (n > 40) { loadConversation(targetId); return; }
+                    setTimeout(function() { tryAutoLoad(n + 1); }, 50);
+                }
+                tryAutoLoad();
+            }
+        }
+
+        async function loadConversation(id) {
+            try {
+                const r = await fetch(PLATFORM_BASE + '/api/conversations/' + id, { headers: apiHeaders() });
+                if (!r.ok) return;
+                const conv = await r.json();
+                currentConvId = conv.id;
+
+                if (conv.mode && chatInstance) {
+                    chatInstance.mode = conv.mode;
+                    chatInstance.isTryMe = false;
+                    chatInstance.updateModeUI();
+                    chatInstance.updateExampleQuestions();
+                    setActiveMode(conv.mode);
+                }
+
+                if (chatInstance) {
+                    chatInstance.messages = conv.messages || [];
+                    chatInstance.currentChatId = conv.id;
+                    const container = document.getElementById('chatContainer');
+                    const welcome = document.getElementById('welcomeScreen');
+                    container.querySelectorAll('.message').forEach(el => el.remove());
+                    if (chatInstance.messages.length > 0) {
+                        if (welcome) welcome.style.display = 'none';
+                        chatInstance.messages.forEach(m => {
+                            chatInstance.renderMessageToDOM(m.role, m.content);
+                        });
+                    } else {
+                        if (welcome) welcome.style.display = '';
+                    }
+                }
+                loadConversations();
+            } catch (e) { console.error('Load conversation error', e); }
+        }
+
+        async function deleteConversation(id) {
+            try {
+                await fetch(PLATFORM_BASE + '/api/conversations/' + id, { method: 'DELETE', headers: apiHeaders() });
+                if (id === currentConvId) {
+                    currentConvId = null;
+                    if (chatInstance) chatInstance.newChat();
+                }
+                loadConversations();
+            } catch (e) { console.warn('[Cami] deleteConversation error:', e); }
+        }
+
+        var userContext = null;
+
+        async function fetchUserContext() {
+            if (!token) return;
+            try {
+                var r = await fetch('/api/user-context', { headers: apiHeaders() });
+                if (!r.ok) return;
+                userContext = await r.json();
+                renderWelcomeBack(userContext);
+                if (userContext.min_patterns > 0) {
+                    var counter = document.getElementById('minCounter');
+                    var countEl = document.getElementById('minPatternCount');
+                    if (counter && countEl) {
+                        countEl.textContent = userContext.min_patterns.toLocaleString();
+                        counter.style.display = '';
+                    }
+                }
+            } catch (e) { console.warn('[Cami] fetchUserContext error:', e); }
+        }
+
+        function renderWelcomeBack(ctx) {
+            if (!ctx) return;
+            var welcome = document.getElementById('welcomeScreen');
+            if (!welcome) return;
+            if (currentConvId) return;
+
+            var convos = ctx.recent_conversations || [];
+            var name = ctx.display_name || ctx.email_prefix || '';
+            var greeting = name ? ('Welcome back, ' + escHtml(name)) : 'Welcome back';
+
+            if (convos.length === 0) {
+                var sub = document.getElementById('welcomeSubtitle');
+                if (sub) sub.textContent = 'Cami learns and adapts to you over time.';
+                return;
+            }
+
+            var modeNames = { cami:'Cami', customer_service:'CS', research:'Research', health:'Health', legal_intelligence:'Law', tutor:'Tutor', cami_money:'Money' };
+
+            var html = '<div class="welcome-back">';
+            html += '<h2 class="welcome-back-greeting">' + greeting + '</h2>';
+            html += '<p class="welcome-back-sub">Pick up where you left off, or start something new.</p>';
+
+            var continuable = convos.find(function(c) { return c.message_count > 0; });
+            if (continuable) {
+                html += '<button class="welcome-back-continue" data-conv-id="' + continuable.id + '">';
+                html += '<span class="welcome-back-continue-icon">▶</span>';
+                html += '<div class="welcome-back-continue-text">';
+                html += '<div class="welcome-back-continue-title">' + escHtml(continuable.title || 'Untitled') + '</div>';
+                html += '<div class="welcome-back-continue-meta">' + (modeNames[continuable.mode] || continuable.mode) + ' · ' + _timeAgo(continuable.updated_at) + '</div>';
+                html += '</div>';
+                html += '<span class="welcome-back-continue-arrow">→</span>';
+                html += '</button>';
+            }
+
+            var threads = convos.filter(function(c) { return c.id !== (continuable || {}).id && c.message_count > 0; }).slice(0, 3);
+            if (threads.length > 0) {
+                html += '<div class="welcome-back-threads">';
+                html += '<div class="welcome-back-threads-title">Recent threads</div>';
+                threads.forEach(function(c) {
+                    html += '<div class="welcome-back-thread" data-conv-id="' + c.id + '">';
+                    html += '<span class="welcome-back-thread-mode">' + (modeNames[c.mode] || 'C') + '</span>';
+                    html += '<span class="welcome-back-thread-title">' + escHtml(c.title || 'Untitled') + '</span>';
+                    html += '<span class="welcome-back-thread-time">' + _timeAgo(c.updated_at) + '</span>';
+                    html += '</div>';
+                });
+                html += '</div>';
+            }
+
+            html += '<div class="welcome-back-stats">';
+            html += '<span class="welcome-back-stat"><strong>' + (ctx.total_conversations || 0) + '</strong> conversations</span>';
+            html += '<span class="welcome-back-stat"><strong>' + (ctx.total_messages || 0) + '</strong> messages</span>';
+            if (ctx.min_patterns > 0) {
+                html += '<span class="welcome-back-stat"><strong>' + ctx.min_patterns.toLocaleString() + '</strong> M.I.N. patterns</span>';
+            }
+            html += '</div>';
+            html += '</div>';
+
+            var content = welcome.querySelector('.welcome-content');
+            if (content) content.innerHTML = html;
+
+            welcome.querySelectorAll('[data-conv-id]').forEach(function(el) {
+                el.addEventListener('click', function() {
+                    loadConversation(el.getAttribute('data-conv-id'));
+                });
+            });
+        }
+
+        function _timeAgo(isoStr) {
+            if (!isoStr) return '';
+            try {
+                var d = new Date(isoStr);
+                var now = new Date();
+                var diff = Math.floor((now - d) / 1000);
+                if (diff < 60) return 'just now';
+                if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+                if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+                if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
+                return d.toLocaleDateString();
+            } catch (_) { return ''; }
+        }
+
+        async function saveCurrentConversation() {
+            if (!chatInstance || !currentConvId || chatInstance.messages.length === 0) return;
+            if (!token) return;
+            var title = null;
+            for (var i = 0; i < chatInstance.messages.length; i++) {
+                if (chatInstance.messages[i].role === 'user') {
+                    title = (chatInstance.messages[i].content || '').substring(0, 80) || 'New Chat';
+                    break;
+                }
+            }
+            try {
+                await fetch(PLATFORM_BASE + '/api/conversations/' + currentConvId, {
+                    method: 'PUT',
+                    headers: apiHeaders(),
+                    body: JSON.stringify({ messages: chatInstance.messages, title: title }),
+                });
+            } catch (e) { console.warn('[Cami] saveConversation error:', e); }
+        }
+
+        async function createNewConversation(mode) {
+            if (!token) return null;
+            try {
+                const r = await fetch(PLATFORM_BASE + '/api/conversations', {
+                    method: 'POST',
+                    headers: apiHeaders(),
+                    body: JSON.stringify({ mode: mode || 'cami', title: 'New Chat' }),
+                });
+                if (!r.ok) return null;
+                const conv = await r.json();
+                currentConvId = conv.id;
+                loadConversations();
+                return conv;
+            } catch (e) { return null; }
+        }
+
+        function ensureChatInstance() {
+            if (!chatInstance && window._camiChat) chatInstance = window._camiChat;
+            return chatInstance;
+        }
+
+        function initChat() {
+            var defaultMode = getDefaultMode();
+            window.CAMI_FORCE_MODE = defaultMode;
+            function waitForChat(n) {
+                n = n || 0;
+                if (window._camiChat) {
+                    chatInstance = window._camiChat;
+                    chatInstance.mode = defaultMode;
+                    chatInstance.isTryMe = false;
+                    chatInstance.updateModeUI();
+                    chatInstance.updateExampleQuestions();
+                    setActiveMode(defaultMode);
+                    return;
+                }
+                if (n > 100) return;
+                setTimeout(() => waitForChat(n + 1), 50);
+            }
+            waitForChat();
+        }
+
+        function switchToMode(mode) {
+            var ci = ensureChatInstance();
+            setActiveMode(mode);
+            if (ci) {
+                ci.mode = mode;
+                ci.isTryMe = false;
+                ci.updateModeUI();
+                ci.updateExampleQuestions();
+                ci.newChat();
+            } else {
+                window.CAMI_FORCE_MODE = mode;
+            }
+        }
+
+        function setActiveMode(mode) {
+            document.querySelectorAll('.service-btn').forEach(el => {
+                el.classList.toggle('active', el.dataset.mode === mode);
+            });
+        }
+
+        function bindUI() {
+            setActiveMode(getDefaultMode());
+
+            var modeSelectorEl = document.getElementById('modeSelector');
+            if (modeSelectorEl) {
+                modeSelectorEl.addEventListener('click', function(e) {
+                    var btn = e.target && e.target.closest && e.target.closest('.service-btn');
+                    if (!btn) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var mode = btn.getAttribute('data-mode');
+                    if (!mode) return;
+                    if (!checkModeAccess(mode)) {
+                        setActiveMode(mode);
+                        showModePaywall(mode);
+                        return;
+                    }
+                    switchToMode(mode);
+                    currentConvId = null;
+                    closeMobile();
+                    createNewConversation(mode).catch(function() {});
+                });
+            }
+
+            document.getElementById('newChatBtn').addEventListener('click', function() {
+                var ci = ensureChatInstance();
+                var mode = ci ? ci.mode : getDefaultMode();
+                currentConvId = null;
+                if (ci) ci.newChat();
+                closeMobile();
+                createNewConversation(mode).catch(function() {});
+            });
+
+            document.getElementById('btnLogout').addEventListener('click', async () => {
+                if (sb) await sb.auth.signOut();
+                window.location.href = '/login';
+            });
+
+            function hookChat() {
+                if (typeof CamiChat === 'undefined') return;
+                const origSend = CamiChat.prototype.sendMessage;
+                CamiChat.prototype.sendMessage = async function() {
+                    if (!currentConvId) {
+                        await createNewConversation(this.mode);
+                    }
+                    await origSend.call(this);
+                    var saveFn = function() {
+                        saveCurrentConversation();
+                        loadConversations();
+                    };
+                    setTimeout(saveFn, 500);
+                    setTimeout(saveFn, 2000);
+                    setTimeout(saveFn, 5000);
+                    setTimeout(saveFn, 10000);
+                };
+            }
+            hookChat();
+            if (typeof CamiChat === 'undefined') setTimeout(hookChat, 500);
+        }
+
+        function closeMobile() {
+            if (window.closeMobileSidebar) window.closeMobileSidebar();
+        }
+
+        function escHtml(t) {
+            if (!t) return '';
+            return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+        else init();
+    })();
+    </script>
+    <script src="/static/space-bg.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function(){ if(window.initSpaceBg) window.initSpaceBg('space-bg-stars'); });</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+    <script src="/static/app.js?v=18"></script>
+    <script src="/static/synth-anim.js"></script>
+</body>
+</html>

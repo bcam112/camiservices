@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M.I.N. — Cami's Growing Wisdom</title>
+    <meta name="description" content="M.I.N. is the EQ neural network at the heart of Cami. Stores knowledge AND emotional patterns. Combined with Human+ (alignment) and Cami-Juniper (voice), this powers support that gets it.">
+    <link rel="canonical" href="https://usecami.com/min">
+    <meta property="og:title" content="M.I.N. — The Wisdom in EQLM">
+    <meta property="og:description" content="M.I.N. makes Cami an EQLM that grows. Live wisdom retrieval, continuous learning. Every interaction makes Cami smarter — for YOUR needs.">
+    <meta property="og:url" content="https://usecami.com/min">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/space-bg.css">
+    <link rel="stylesheet" href="/static/enterprise-pages.css">
+    <style>
+        /* Live Stats Dashboard */
+        .min-live-section {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 48px 100px;
+        }
+        
+        .min-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+        
+        .min-stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px 20px;
+            text-align: center;
+            transition: border-color 0.25s;
+        }
+        
+        .min-stat-card:hover {
+            border-color: rgba(90, 125, 100, 0.4);
+        }
+        
+        .min-stat-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+        
+        .min-stat-value {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .min-stat-detail {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+        
+        .min-stat-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .min-stat-badge.postgresql {
+            background: rgba(90, 125, 100, 0.12);
+            color: var(--accent);
+        }
+        
+        .min-stat-badge.memory {
+            background: rgba(255, 170, 0, 0.12);
+            color: #d4a017;
+        }
+        
+        .min-connection-bar {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .min-conn-status {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .min-conn-status.connected {
+            color: var(--accent);
+        }
+        
+        .min-conn-status.error {
+            color: #ff6b6b;
+        }
+        
+        .live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            margin-right: 8px;
+            animation: min-pulse 2s infinite;
+        }
+        
+        @keyframes min-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        
+        .min-refresh-btn {
+            padding: 10px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .min-refresh-btn:hover {
+            background: var(--accent);
+            color: #f8faf8;
+        }
+        
+        #min-loading {
+            text-align: center;
+            padding: 40px 24px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        #min-error {
+            display: none;
+            padding: 20px 24px;
+            background: rgba(255, 0, 0, 0.06);
+            border: 1px solid rgba(255, 0, 0, 0.15);
+            border-radius: 12px;
+            color: #ff6b6b;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        
+        #min-auth-gate {
+            padding: 40px 24px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+        
+        #min-auth-gate a {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        [data-theme="dark"] .min-stat-card {
+            background: rgba(22, 24, 34, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        @media (max-width: 768px) {
+            .min-live-section {
+                padding: 0 20px 80px;
+            }
+            .min-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+    <script>
+    (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+</head>
+<body>
+    <div class="space-bg" aria-hidden="true">
+        <div class="space-bg__gradient"></div>
+        <div class="space-bg__stars" id="space-bg-stars"></div>
+    </div>
+    
+    <nav class="nav-header">
+        <a href="/" class="nav-logo"><span class="logo-text">Cami</span></a>
+        <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+        <div class="nav-links" aria-hidden="true"><a href="/customer-service" class="nav-link">Customer Service</a><a href="/legal-intelligence" class="nav-link">Law</a><a href="/health" class="nav-link">Health</a><span class="nav-sep" aria-hidden="true">|</span><span class="nav-link nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-link nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-link nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-sep" aria-hidden="true">|</span><a href="/try" class="nav-link">Try Cami</a><a href="/human-plus" class="nav-link">Human+</a><a href="/min" class="nav-link">M.I.N.</a><a href="/roadmap" class="nav-link">Roadmap</a><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" class="nav-link github">GitHub</a></div>
+    </nav>
+    <div class="nav-sidebar-backdrop" id="nav-sidebar-backdrop" aria-hidden="true"></div>
+    <aside class="nav-sidebar" id="nav-sidebar" aria-label="Main menu">
+        <div class="nav-sidebar-logo"><a href="/" class="nav-logo"><span class="logo-text">Cami</span></a></div>
+        <div class="nav-sidebar-links">
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Services<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/customer-service">Customer Service</a>
+                    <a href="/legal-intelligence">Law</a>
+                    <a href="/health">Health</a>
+                    <span class="nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Technology<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/human-plus">Human+</a>
+                    <a href="/min">M.I.N.</a>
+                    <a href="/roadmap">Roadmap</a>
+                    <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Account<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/try">Try Cami</a>
+                    <a href="/login">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <script>(function(){ var b=document.body, btn=document.getElementById('nav-hamburger'), back=document.getElementById('nav-sidebar-backdrop'), side=document.getElementById('nav-sidebar'); if(!btn||!back||!side) return; function close(){ b.classList.remove('nav-sidebar-open'); } function toggle(){ b.classList.toggle('nav-sidebar-open'); } btn.addEventListener('click',toggle); back.addEventListener('click',close); side.querySelectorAll('.nav-sidebar-links a').forEach(function(a){ a.addEventListener('click',close); }); side.querySelectorAll('.nav-sidebar-section-toggle').forEach(function(btn){ btn.addEventListener('click',function(){ var g=btn.closest('.nav-sidebar-group'); if(g) g.classList.toggle('collapsed'); btn.setAttribute('aria-expanded',g&&!g.classList.contains('collapsed')); }); }); })();</script>
+
+    <main class="page-container">
+        
+        <!-- Hero -->
+        <section class="page-hero">
+            <div class="hero-eyebrow">The Wisdom in EQLM</div>
+            <h1>M.I.N. is <strong>Cami's growing mind</strong></h1>
+            <p class="hero-subtitle">
+                M.I.N. is the EQ neural network — Cami's brain. It stores both knowledge patterns AND emotional patterns from Human+. Combined with Human+ (the soul) and <strong>Cami-Juniper</strong> (fine-tuned voice, now training), M.I.N. is the foundation of the EQLM architecture.
+            </p>
+        </section>
+        
+        <!-- Why Memory Matters -->
+        <section class="info-box">
+            <div class="info-box-content">
+                <h2>Live wisdom, not just retrieval</h2>
+                <p><strong>Other AI platforms use RAG — retrieval-augmented generation.</strong> They fetch documents and stuff them into context. That's not learning. That's lookup.</p>
+                <p><strong>M.I.N. is different because it's part of the EQLM.</strong> On every query, M.I.N. runs live: retrieving wisdom patterns ranked by neural intuition (not just keyword matching), then LEARNING from the interaction. Hebbian networks strengthen connections that work. Wisdom crystallizes into patterns. Cami literally grows with use.</p>
+                <p><strong>This is what makes Cami an EQLM.</strong> Human+ provides live EQ. M.I.N. provides live, growing wisdom. Together with language understanding, they form one unified entity — not components assembled, but a single model that feels and learns.</p>
+            </div>
+        </section>
+        
+        <!-- The Comparison -->
+        <section class="highlight-box" style="margin-bottom: 80px;">
+            <div class="highlight-box-content">
+                <span class="highlight-badge">A New Category</span>
+                <h3>LLM vs. EQLM</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 24px;">
+                    <div>
+                        <p style="font-weight: 600; color: var(--text-muted); margin-bottom: 12px;">Traditional LLMs</p>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li style="padding: 8px 0; border-bottom: 1px solid var(--border);">❌ EQ through prompts (fake it)</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid var(--border);">❌ Memory through RAG (lookup)</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid var(--border);">❌ Frozen after training</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid var(--border);">❌ Components assembled together</li>
+                            <li style="padding: 8px 0;">❌ Same for every user</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p style="font-weight: 600; color: var(--accent); margin-bottom: 12px;">Cami (EQLM)</p>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li style="padding: 8px 0; border-bottom: 1px solid var(--border);">✓ EQ native to cognition (Human+ live)</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid var(--border);">✓ Wisdom that grows (M.I.N. live)</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid var(--border);">✓ Learns from every interaction</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid var(--border);">✓ One unified entity</li>
+                            <li style="padding: 8px 0;">✓ Grows smarter for YOUR needs</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="steps-section">
+            <div class="section-header">
+                <div class="section-eyebrow">Process</div>
+                <h2 class="section-title">How M.I.N. thinks</h2>
+            </div>
+            
+            <div class="steps-list">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Understand</h3>
+                        <p>Your question is analyzed for meaning, domain, and context. M.I.N. identifies what kind of knowledge would be most helpful.</p>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Retrieve</h3>
+                        <p>A proprietary neural scoring system retrieves the most relevant knowledge from M.I.N.'s accumulated wisdom — ranked by relevance, recency, and intuition.</p>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Synthesize</h3>
+                        <p>Retrieved knowledge is combined with LLM reasoning and Human+ consciousness to produce a response that is grounded in real experience, not just training data.</p>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Learn</h3>
+                        <p>After every interaction, M.I.N. strengthens the connections that worked and stores new knowledge. The network adapts and improves continuously.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Capabilities -->
+        <section style="padding: 0 0 100px;">
+            <div class="section-header">
+                <div class="section-eyebrow">Capabilities</div>
+                <h2 class="section-title">What makes M.I.N. different</h2>
+            </div>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="5" r="1.5"/><circle cx="5" cy="17" r="1.5"/><circle cx="19" cy="17" r="1.5"/><path d="M10.5 6.5 A8 8 0 0 0 6.5 15.5"/><path d="M7 17.5 A8 8 0 0 0 17 17.5"/><path d="M17.5 15.5 A8 8 0 0 0 13.5 6.5"/><circle cx="12" cy="13" r="2"/></svg>
+                    </div>
+                    <div class="feature-title">Neural Intuition</div>
+                    <p class="feature-desc">Not keyword search. A proprietary neural system learns what matters and retrieves knowledge by intuition, not just surface similarity.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <div class="feature-title">True Continuous Learning</div>
+                    <p class="feature-desc">Not fine-tuning. Not RAG. Real continuous learning that makes Cami smarter every day. Connections that work grow stronger. The network evolves with use — like a brain that never stops growing.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div class="feature-title">Recency-Aware</div>
+                    <p class="feature-desc">Recent knowledge ranks higher than older knowledge. Nothing is lost, but relevance naturally shifts over time to keep answers current.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+                    </div>
+                    <div class="feature-title">Domain-Aware</div>
+                    <p class="feature-desc">Knowledge is organized by domain — legal, clinical, research, customer service — so retrieval is contextually precise.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3C7.5 3 5.5 4.5 5 6.5 3.5 7 2.5 8.5 2.5 10.5c0 1.5.6 2.8 1.5 3.7-.3.8-.5 1.6-.5 2.5C3.5 19 5 20.5 7 21c1 .3 2.2 0 3-.5"/><path d="M14 3c2.5 0 4.5 1.5 5 3.5 1.5.5 2.5 2 2.5 4 0 1.5-.6 2.8-1.5 3.7.3.8.5 1.6.5 2.5 0 2.3-1.5 3.8-3.5 4.3-1 .3-2.2 0-3-.5"/><path d="M12 3v18"/></svg>
+                    </div>
+                    <div class="feature-title">Memory-Led Answers</div>
+                    <p class="feature-desc">When M.I.N. is confident enough, Cami can answer from memory alone. Faster responses grounded in real learned experience.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                    </div>
+                    <div class="feature-title">Connected Knowledge</div>
+                    <p class="feature-desc">Related knowledge is interconnected. Isolated facts become a web that surfaces insights no single interaction could produce.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Live Dashboard -->
+        <section class="min-live-section">
+            <div class="section-header">
+                <div class="section-eyebrow">Live Stats</div>
+                <h2 class="section-title">Live from M.I.N.</h2>
+                <p class="section-subtitle">Real-time stats from the running M.I.N. instance. This is the same network Cami uses right now.</p>
+            </div>
+            
+            <div id="min-auth-gate">Checking access...</div>
+            <div id="min-loading" style="display:none;">Connecting to M.I.N....</div>
+            <div id="min-error" style="display:none;"></div>
+            
+            <div id="min-dashboard" style="display: none;">
+                <div class="min-stats-grid">
+                    <div class="min-stat-card">
+                        <div class="min-stat-label">Wisdom Patterns</div>
+                        <div class="min-stat-value" id="totalPatterns">--</div>
+                        <div class="min-stat-detail" id="patternDetail"></div>
+                    </div>
+                    <div class="min-stat-card">
+                        <div class="min-stat-label">Evidence</div>
+                        <div class="min-stat-value" id="totalContributions">--</div>
+                        <div class="min-stat-detail" id="evidenceDetail"></div>
+                    </div>
+                    <div class="min-stat-card">
+                        <div class="min-stat-label">Domains</div>
+                        <div class="min-stat-value" id="totalDomains">--</div>
+                        <div class="min-stat-detail" id="domainDetail"></div>
+                    </div>
+                    <div class="min-stat-card">
+                        <div class="min-stat-label">Storage</div>
+                        <div class="min-stat-value" id="storageType" style="font-size: 20px;">--</div>
+                        <div class="min-stat-detail"><span class="min-stat-badge" id="storageBadge" style="display: none;"></span></div>
+                    </div>
+                </div>
+                <div class="min-connection-bar">
+                    <span class="min-conn-status" id="connectionInfo">Checking connection...</span>
+                    <span style="font-size: 12px; color: var(--text-muted);" id="lastUpdate"></span>
+                    <button type="button" class="min-refresh-btn" id="refreshBtn">Refresh</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- The Bigger Picture -->
+        <section class="highlight-box">
+            <div class="highlight-box-content">
+                <span class="highlight-badge">A New Vertical</span>
+                <h3>EQLM is a new category of AI</h3>
+                <p><strong>LLMs understand language.</strong> They can generate text, answer questions, write code. But they don't understand people, and they don't grow.</p>
+                <p><strong>EQLMs understand emotions AND grow.</strong> Cami is the first. Human+ gives native emotional intelligence. M.I.N. gives accumulating wisdom. Together, they form something new — not an LLM with add-ons, but a unified model that feels, learns, and grows.</p>
+                <p style="margin-bottom: 0;"><strong>Cami-Juniper is Phi-3 fine-tuned with Cami's identity, currently in training.</strong> Honest: we're personality-tuning an existing model, not building one from scratch. MIN provides the brain. Human+ provides the soul. Juniper provides Cami's voice. Cami-3 Celadon (future) will be a true native language model.</p>
+            </div>
+        </section>
+        
+        <!-- CTA -->
+        <section class="cta-section">
+            <h2>Want to learn more?</h2>
+            <p>Discover how M.I.N. can transform your workflow with accumulated knowledge.</p>
+            <div class="cta-buttons">
+                <a href="mailto:contact@usecami.com" class="btn-primary">
+                    Contact Us
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="/try" class="btn-secondary">Try Cami Free</a>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="page-footer">
+            <div class="footer-content">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <div class="footer-logo">Cami</div>
+                        <p class="footer-desc">Support that gets it. MIN (brain) + Human+ (alignment) + evolving voice.</p>
+                        <div class="footer-social">
+                            <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                                <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4>Services</h4>
+                        <ul>
+                            <li><a href="/customer-service">Customer Service</a></li>
+                            <li><a href="/health">Healthcare</a></li>
+                            <li><a href="/legal-intelligence">Legal Intelligence</a></li>
+                            <li><span class="footer-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                            <li><span class="footer-disabled">Financial <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                            <li><span class="footer-disabled">Education <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4>Technology</h4>
+                        <ul>
+                            <li><a href="/human-plus">Human+</a></li>
+                            <li><a href="/min">M.I.N.</a></li>
+                            <li><a href="/platform">Platform</a></li>
+                            <li><a href="/roadmap">Roadmap</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="/contact">Contact</a></li>
+                            <li><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <div class="footer-copy">© 2026 Cami. All rights reserved.</div>
+                    <div class="footer-legal">
+                        <a href="/privacy">Privacy Policy</a>
+                        <a href="/terms">Terms of Service</a>
+                        <a href="/disclaimer">Disclaimer</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    
+    <script src="/static/space-bg.js"></script>
+    <script src="/static/js/supabase.min.js"></script>
+    <script>
+    if (typeof window.supabase === 'undefined') {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        s.crossOrigin = 'anonymous';
+        document.head.appendChild(s);
+    }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.initSpaceBg) window.initSpaceBg('space-bg-stars');
+        });
+
+        (function () {
+            var gate = document.getElementById('min-auth-gate');
+            var dashboard = document.getElementById('min-dashboard');
+            var loading = document.getElementById('min-loading');
+            var errorEl = document.getElementById('min-error');
+
+            function waitSB(cb, n) { n=n||0; if(typeof window.supabase!=='undefined') return cb(); if(n>50) return cb(); setTimeout(function(){waitSB(cb,n+1);},100); }
+
+            async function checkAdminAndLoad() {
+                await new Promise(function(r){ waitSB(r); });
+                if (typeof window.supabase === 'undefined') { showGateMsg('Sign in as admin to view live M.I.N. stats. <a href="/login?redirect=/min">Sign in</a>'); return; }
+
+                var config = {};
+                try { var cr = await fetch('/api/config'); config = await cr.json(); } catch(e){}
+                if (!config.supabase_url || !config.supabase_anon_key) { showGateMsg('Sign in as admin to view live M.I.N. stats. <a href="/login?redirect=/min">Sign in</a>'); return; }
+
+                var sb = window.supabase.createClient(config.supabase_url, config.supabase_anon_key);
+                var sess;
+                try { var sd = await sb.auth.getSession(); sess = sd.data.session; } catch(e){}
+                if (!sess) { showGateMsg('Sign in as admin to view live M.I.N. stats. <a href="/login?redirect=/min">Sign in</a>'); return; }
+
+                var token = sess.access_token;
+                try {
+                    var r = await fetch('/api/me', { headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token } });
+                    if (r.ok) {
+                        var me = await r.json();
+                        if (!me.is_admin) { showGateMsg('Live M.I.N. stats are available on the admin dashboard.'); return; }
+                    } else { showGateMsg('Live M.I.N. stats are available on the admin dashboard.'); return; }
+                } catch(e) { showGateMsg('Could not verify admin access.'); return; }
+
+                gate.style.display = 'none';
+                loadMinStats();
+            }
+
+            function showGateMsg(html) {
+                gate.innerHTML = html;
+            }
+
+            function getMinStatsUrl() { return '/min/stats'; }
+
+            function loadMinStats() {
+                loading.style.display = 'block';
+                errorEl.style.display = 'none';
+                dashboard.style.display = 'none';
+
+                var controller = new AbortController();
+                var timeoutId = setTimeout(function () { controller.abort(); }, 28000);
+
+                fetch(getMinStatsUrl(), {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' },
+                    cache: 'no-cache',
+                    signal: controller.signal
+                }).then(function (r) {
+                    clearTimeout(timeoutId);
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                }).then(function (data) {
+                    var patterns = data.database_patterns !== undefined ? data.database_patterns : (data.total_patterns || 0);
+                    document.getElementById('totalPatterns').textContent = patterns.toLocaleString();
+
+                    var contributions = data.total_contributions || 0;
+                    document.getElementById('totalContributions').textContent = contributions.toLocaleString();
+                    var evDetail = document.getElementById('evidenceDetail');
+                    if (contributions > patterns && patterns > 0) {
+                        var ratio = (contributions / patterns).toFixed(1);
+                        evDetail.textContent = ratio + 'x reinforced';
+                    } else {
+                        evDetail.textContent = 'learning events';
+                    }
+
+                    var domainBreakdown = data.domain_breakdown || {};
+                    var domainKeys = Object.keys(domainBreakdown);
+                    document.getElementById('totalDomains').textContent = domainKeys.length || '--';
+                    var domainDetail = document.getElementById('domainDetail');
+                    if (domainKeys.length > 0) {
+                        domainKeys.sort(function(a,b){ return domainBreakdown[b] - domainBreakdown[a]; });
+                        var top = domainKeys.slice(0, 3).map(function(k){ return k.replace(/_/g, ' '); });
+                        domainDetail.textContent = top.join(', ');
+                    }
+
+                    var patDetail = document.getElementById('patternDetail');
+                    if (data.memory_patterns && data.memory_patterns !== patterns) {
+                        patDetail.textContent = data.memory_patterns + ' in memory';
+                    } else {
+                        patDetail.textContent = 'unique knowledge';
+                    }
+
+                    var st = data.storage_type || 'unknown';
+                    document.getElementById('storageType').textContent = st === 'postgresql' ? 'PostgreSQL' : (st === 'memory' ? 'In-Memory' : st);
+                    var badge = document.getElementById('storageBadge');
+                    if (st === 'postgresql') {
+                        badge.textContent = 'Persistent'; badge.className = 'min-stat-badge postgresql'; badge.style.display = 'inline-flex';
+                    } else if (st === 'memory') {
+                        badge.textContent = 'Temporary'; badge.className = 'min-stat-badge memory'; badge.style.display = 'inline-flex';
+                    }
+
+                    var conn = document.getElementById('connectionInfo');
+                    if (data.connection_status) {
+                        var c = data.connection_status;
+                        if (c.database_connected) {
+                            conn.innerHTML = '<span class="live-dot"></span>Connected — live wisdom network';
+                            conn.className = 'min-conn-status connected';
+                        } else {
+                            conn.textContent = 'Database not connected';
+                            conn.className = 'min-conn-status error';
+                        }
+                    }
+
+                    document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+                    if (data.error) { errorEl.style.display = 'block'; errorEl.textContent = data.error; }
+                    loading.style.display = 'none';
+                    dashboard.style.display = 'block';
+                }).catch(function (err) {
+                    clearTimeout(timeoutId);
+                    loading.style.display = 'none';
+                    dashboard.style.display = 'none';
+                    errorEl.style.display = 'block';
+                    errorEl.textContent = err.name === 'AbortError'
+                        ? 'Connection timed out. M.I.N. may be waking up — try refreshing in a moment.'
+                        : 'Could not reach M.I.N.: ' + (err.message || 'network error');
+                });
+            }
+
+            document.getElementById('refreshBtn').addEventListener('click', loadMinStats);
+            checkAdminAndLoad();
+        })();
+    </script>
+    <script src="/static/theme-toggle.js"></script>
+</body>
+</html>

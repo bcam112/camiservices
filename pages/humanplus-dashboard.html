@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human+ Dashboard | API Management</title>
+    <meta name="description" content="Manage your Human+ API keys, monitor usage, and handle billing.">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/space-bg.css">
+    <link rel="stylesheet" href="/static/enterprise-pages.css">
+    <script>
+    (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+    <style>
+        .dashboard-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 140px 2rem 4rem;
+        }
+        
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-header h1 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .dashboard-header p {
+            color: var(--text-secondary);
+        }
+        
+        .tier-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            background: rgba(90, 125, 100, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(90, 125, 100, 0.3);
+        }
+        
+        .tier-badge.enterprise { background: rgba(139, 92, 246, 0.15); color: #a78bfa; border-color: rgba(139, 92, 246, 0.3); }
+        .tier-badge.growth { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.3); }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+        
+        .dashboard-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+        
+        .dashboard-card h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .stat-value {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0 0.5rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-fill.warning { background: #f59e0b; }
+        .progress-fill.danger { background: #ef4444; }
+        
+        /* API Keys */
+        .key-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .key-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+        
+        .key-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .key-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .key-prefix {
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        
+        .key-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-small {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-small:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        .btn-small.danger:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 8px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent);
+        }
+        
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        /* Login/Signup forms */
+        .auth-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .auth-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        
+        .auth-card h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .auth-toggle {
+            text-align: center;
+            margin-top: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .auth-toggle a {
+            color: var(--accent);
+            cursor: pointer;
+        }
+        
+        /* New key modal */
+        .new-key-display {
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            word-break: break-all;
+            color: var(--accent);
+        }
+        
+        .warning-text {
+            color: #f59e0b;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        /* Quick actions */
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        
+        /* Hidden sections */
+        .hidden { display: none !important; }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="space-bg" aria-hidden="true">
+        <div class="space-bg__gradient"></div>
+        <canvas class="space-bg__stars" id="space-bg-stars"></canvas>
+    </div>
+    
+    <nav class="nav-header">
+        <a href="/" class="nav-logo"><span class="logo-text">Cami</span></a>
+        <div class="nav-links">
+            <a href="/human-plus" class="nav-link">Human+</a>
+            <a href="/human-plus/pricing" class="nav-link">Pricing</a>
+            <a href="/human-plus/docs" class="nav-link">Docs</a>
+            <a href="#" class="nav-link" id="nav-logout" style="display: none;">Logout</a>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Auth Section (Login/Signup) -->
+        <div id="auth-section" class="auth-container" style="padding-top: 140px;">
+            <!-- Login Form -->
+            <div id="login-form" class="auth-card">
+                <h2>Sign In</h2>
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" class="form-input" required placeholder="you@company.com">
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Sign In</button>
+                </form>
+                <div class="auth-toggle">
+                    Don't have an account? <a onclick="showSignup()">Sign up</a>
+                </div>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signup-form" class="auth-card hidden">
+                <h2>Create Account</h2>
+                <form onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" class="form-input" required placeholder="you@company.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-company">Company Name</label>
+                        <input type="text" id="signup-company" class="form-input" required placeholder="Acme Inc">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-name">Your Name</label>
+                        <input type="text" id="signup-name" class="form-input" required placeholder="Jane Doe">
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Create Account</button>
+                </form>
+                <div class="auth-toggle">
+                    Already have an account? <a onclick="showLogin()">Sign in</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="dashboard-container hidden">
+            <header class="dashboard-header">
+                <h1>Human+ Dashboard</h1>
+                <p>Welcome back, <span id="user-name">User</span> <span id="tier-badge" class="tier-badge">free</span></p>
+            </header>
+            
+            <div class="quick-actions">
+                <button class="btn-primary" onclick="showCreateKeyModal()">+ Create API Key</button>
+                <button class="btn-secondary" onclick="openBillingPortal()">Manage Billing</button>
+                <a href="/human-plus/docs" class="btn-secondary" style="text-decoration: none;">API Docs</a>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- Usage Card -->
+                <div class="dashboard-card">
+                    <h2>📊 Usage This Month</h2>
+                    <div class="stat-value" id="usage-count">0</div>
+                    <div class="stat-label" id="usage-limit">of 100 API calls</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="usage-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <!-- Performance Card -->
+                <div class="dashboard-card">
+                    <h2>⚡ Avg Response Time</h2>
+                    <div class="stat-value" id="avg-response">--</div>
+                    <div class="stat-label">milliseconds</div>
+                </div>
+            </div>
+            
+            <!-- API Keys Card -->
+            <div class="dashboard-card" style="margin-bottom: 2rem;">
+                <h2>🔑 API Keys</h2>
+                <div id="keys-list" class="key-list">
+                    <div class="loading">Loading keys...</div>
+                </div>
+            </div>
+            
+            <!-- Upgrade CTA (for free tier) -->
+            <div id="upgrade-cta" class="dashboard-card hidden" style="text-align: center; padding: 2rem;">
+                <h2 style="margin-bottom: 0.5rem;">Need more API calls?</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Upgrade to unlock higher limits and full metrics access.</p>
+                <a href="/human-plus/pricing" class="btn-primary" style="text-decoration: none;">View Plans</a>
+            </div>
+        </div>
+        
+        <!-- Create Key Modal -->
+        <div id="create-key-modal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+            <div class="auth-card" style="max-width: 400px; width: 90%;">
+                <h2>Create API Key</h2>
+                <form onsubmit="createKey(event)">
+                    <div class="form-group">
+                        <label for="key-name">Key Name</label>
+                        <input type="text" id="key-name" class="form-input" required placeholder="Production, Development, etc.">
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="button" class="btn-secondary" style="flex: 1;" onclick="hideCreateKeyModal()">Cancel</button>
+                        <button type="submit" class="btn-primary" style="flex: 1;">Create</button>
+                    </div>
+                </form>
+                
+                <!-- New key display (shown after creation) -->
+                <div id="new-key-result" class="hidden">
+                    <p class="warning-text" style="margin-top: 1rem;">⚠️ Copy this key now - it won't be shown again!</p>
+                    <div class="new-key-display" id="new-key-value"></div>
+                    <button class="btn-primary" style="width: 100%;" onclick="copyKeyAndClose()">Copy & Close</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Space background
+        (function() {
+            const c = document.getElementById('space-bg-stars');
+            if (!c) return;
+            const ctx = c.getContext('2d');
+            function resize() { c.width = window.innerWidth; c.height = window.innerHeight; draw(); }
+            function draw() {
+                ctx.clearRect(0, 0, c.width, c.height);
+                for (let i = 0; i < 100; i++) {
+                    const x = Math.random() * c.width;
+                    const y = Math.random() * c.height;
+                    ctx.beginPath();
+                    ctx.arc(x, y, Math.random() * 1.2, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255,255,255,${0.3 + Math.random() * 0.4})`;
+                    ctx.fill();
+                }
+            }
+            window.addEventListener('resize', resize);
+            resize();
+        })();
+        
+        // State
+        let currentUser = null;
+        let newKeyValue = null;
+        
+        // Check auth on load
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/v1/licensing/auth/me');
+                if (res.ok) {
+                    const data = await res.json();
+                    currentUser = data.customer;
+                    showDashboard();
+                } else {
+                    showAuth();
+                }
+            } catch (e) {
+                showAuth();
+            }
+        }
+        
+        function showAuth() {
+            document.getElementById('auth-section').classList.remove('hidden');
+            document.getElementById('dashboard-section').classList.add('hidden');
+            document.getElementById('nav-logout').style.display = 'none';
+        }
+        
+        function showDashboard() {
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('hidden');
+            document.getElementById('nav-logout').style.display = 'block';
+            
+            // Update user info
+            document.getElementById('user-name').textContent = currentUser.contact_name;
+            const tierBadge = document.getElementById('tier-badge');
+            tierBadge.textContent = currentUser.tier;
+            tierBadge.className = 'tier-badge ' + currentUser.tier;
+            
+            // Show upgrade CTA for free tier
+            if (currentUser.tier === 'free') {
+                document.getElementById('upgrade-cta').classList.remove('hidden');
+            }
+            
+            // Load data
+            loadUsage();
+            loadKeys();
+        }
+        
+        function showLogin() {
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('signup-form').classList.add('hidden');
+        }
+        
+        function showSignup() {
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('signup-form').classList.remove('hidden');
+        }
+        
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            
+            try {
+                const res = await fetch('/api/v1/licensing/auth/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email }),
+                });
+                
+                const data = await res.json();
+                if (res.ok) {
+                    currentUser = data.customer;
+                    showDashboard();
+                } else {
+                    alert(data.error || 'Login failed');
+                }
+            } catch (e) {
+                alert('Login failed: ' + e.message);
+            }
+        }
+        
+        async function handleSignup(e) {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const company = document.getElementById('signup-company').value;
+            const name = document.getElementById('signup-name').value;
+            
+            try {
+                const res = await fetch('/api/v1/licensing/signup', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        email,
+                        company_name: company,
+                        contact_name: name,
+                    }),
+                });
+                
+                const data = await res.json();
+                if (res.ok) {
+                    currentUser = data.customer;
+                    // Show the new API key
+                    alert(`Account created! Your API key: ${data.api_key.key}\n\nSave this now - it won't be shown again.`);
+                    showDashboard();
+                } else {
+                    alert(data.error || 'Signup failed');
+                }
+            } catch (e) {
+                alert('Signup failed: ' + e.message);
+            }
+        }
+        
+        async function loadUsage() {
+            try {
+                const res = await fetch('/api/v1/licensing/usage');
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('usage-count').textContent = data.summary.total_calls.toLocaleString();
+                    document.getElementById('usage-limit').textContent = `of ${data.limits.monthly_calls.toLocaleString()} API calls`;
+                    
+                    const percent = Math.min(data.usage_percent, 100);
+                    const progress = document.getElementById('usage-progress');
+                    progress.style.width = percent + '%';
+                    if (percent > 90) progress.classList.add('danger');
+                    else if (percent > 75) progress.classList.add('warning');
+                    
+                    // Avg response time
+                    if (data.summary.total_calls > 0) {
+                        const avg = Math.round(data.summary.total_processing_ms / data.summary.total_calls);
+                        document.getElementById('avg-response').textContent = avg;
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to load usage:', e);
+            }
+        }
+        
+        async function loadKeys() {
+            try {
+                const res = await fetch('/api/v1/licensing/keys');
+                if (res.ok) {
+                    const data = await res.json();
+                    renderKeys(data.keys);
+                }
+            } catch (e) {
+                console.error('Failed to load keys:', e);
+            }
+        }
+        
+        function renderKeys(keys) {
+            const container = document.getElementById('keys-list');
+            if (!keys.length) {
+                container.innerHTML = '<p style="color: var(--text-muted);">No API keys yet. Create one to get started.</p>';
+                return;
+            }
+            
+            container.innerHTML = keys.map(k => `
+                <div class="key-item">
+                    <div class="key-info">
+                        <span class="key-name">${escapeHtml(k.name)}</span>
+                        <span class="key-prefix">${k.key_prefix}...</span>
+                    </div>
+                    <div class="key-actions">
+                        ${k.is_active ? 
+                            `<button class="btn-small danger" onclick="revokeKey('${k.id}')">Revoke</button>` :
+                            `<span style="color: var(--text-muted); font-size: 0.75rem;">Revoked</span>`
+                        }
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showCreateKeyModal() {
+            document.getElementById('create-key-modal').classList.remove('hidden');
+            document.getElementById('create-key-modal').style.display = 'flex';
+            document.getElementById('new-key-result').classList.add('hidden');
+            document.getElementById('key-name').value = '';
+        }
+        
+        function hideCreateKeyModal() {
+            document.getElementById('create-key-modal').classList.add('hidden');
+            document.getElementById('create-key-modal').style.display = 'none';
+            newKeyValue = null;
+        }
+        
+        async function createKey(e) {
+            e.preventDefault();
+            const name = document.getElementById('key-name').value;
+            
+            try {
+                const res = await fetch('/api/v1/licensing/keys', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ name }),
+                });
+                
+                const data = await res.json();
+                if (res.ok) {
+                    newKeyValue = data.key;
+                    document.getElementById('new-key-value').textContent = data.key;
+                    document.getElementById('new-key-result').classList.remove('hidden');
+                    e.target.classList.add('hidden');
+                    loadKeys();
+                } else {
+                    alert(data.error || 'Failed to create key');
+                }
+            } catch (e) {
+                alert('Failed to create key: ' + e.message);
+            }
+        }
+        
+        function copyKeyAndClose() {
+            if (newKeyValue) {
+                navigator.clipboard.writeText(newKeyValue);
+            }
+            hideCreateKeyModal();
+        }
+        
+        async function revokeKey(keyId) {
+            if (!confirm('Are you sure you want to revoke this key? This cannot be undone.')) return;
+            
+            try {
+                const res = await fetch(`/api/v1/licensing/keys/${keyId}`, {
+                    method: 'DELETE',
+                });
+                
+                if (res.ok) {
+                    loadKeys();
+                } else {
+                    const data = await res.json();
+                    alert(data.error || 'Failed to revoke key');
+                }
+            } catch (e) {
+                alert('Failed to revoke key: ' + e.message);
+            }
+        }
+        
+        async function openBillingPortal() {
+            if (!currentUser.stripe_customer_id) {
+                window.location.href = '/human-plus/pricing';
+                return;
+            }
+            
+            try {
+                const res = await fetch('/api/v1/licensing/billing/portal');
+                if (res.ok) {
+                    const data = await res.json();
+                    window.location.href = data.portal_url;
+                } else {
+                    alert('Failed to open billing portal');
+                }
+            } catch (e) {
+                alert('Failed to open billing portal: ' + e.message);
+            }
+        }
+        
+        // Logout
+        document.getElementById('nav-logout').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await fetch('/api/v1/licensing/auth/logout', { method: 'POST' });
+            currentUser = null;
+            showAuth();
+        });
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+        
+        // Init
+        checkAuth();
+    </script>
+</body>
+</html>

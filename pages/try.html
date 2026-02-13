@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Try Cami — Support that gets it</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css?v=18">
+    <link rel="stylesheet" href="/static/space-bg.css">
+    <link rel="stylesheet" href="/static/enterprise-pages.css">
+    <script>/* Theme init — prevent flash */
+    (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+    <style>
+        body { color: var(--text-primary); font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        /* Theme from style.css (cream light / dark) */
+        /* Trial badge — sits inside the nav bar, between logo and sign-in */
+        .trial-badge { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 200; padding: 5px 14px; background: rgba(90,125,100,0.12); border: 1px solid rgba(90,125,100,0.25); border-radius: 20px; font-size: 11px; font-weight: 600; color: var(--accent, #5a7d64); letter-spacing: 0.02em; white-space: nowrap; }
+        .trial-badge.exhausted { background: rgba(192,57,43,0.15); border-color: rgba(192,57,43,0.3); color: #e74c3c; }
+        /* On mobile, trial badge is hidden (shown below input instead) */
+        /* Trial wall overlay */
+        .trial-wall { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(245,241,235,0.96); backdrop-filter: blur(8px); }
+        [data-theme="dark"] .trial-wall { background: rgba(15,17,23,0.96); }
+        .trial-wall.active { display: flex; align-items: center; justify-content: center; }
+        .trial-wall-card { max-width: 420px; width: 90%; padding: 40px 32px; background: var(--bg-secondary, #e8efe6); border: 1px solid var(--border, #c5d4c9); border-radius: 16px; text-align: center; box-shadow: 0 4px 24px var(--shadow, rgba(44,38,32,0.08)); }
+        .trial-wall-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--text-primary, #2c2620); }
+        .trial-wall-card p { font-size: 14px; color: var(--text-secondary, #5c5349); line-height: 1.6; margin-bottom: 24px; }
+        .trial-wall-card .tw-btn { display: inline-block; padding: 14px 32px; background: var(--accent, #5a7d64); color: #fff; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; transition: background 0.2s; }
+        .trial-wall-card .tw-btn:hover { background: var(--accent-hover, #4a6b54); }
+        .trial-wall-card .tw-secondary { display: block; margin-top: 12px; font-size: 13px; color: var(--text-secondary, #5c5349); text-decoration: none; }
+        .trial-wall-card .tw-secondary:hover { color: var(--accent, #5a7d64); }
+        /* Hide sidebar on try page */
+        .sidebar { display: none !important; }
+        .main-content { margin-left: 0 !important; width: 100% !important; }
+        .mobile-header { display: none !important; }
+        /* Try nav bar */
+        .try-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: var(--nav-header-bg, rgba(245,241,235,0.92)); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--nav-header-border, rgba(90,125,100,0.15)); }
+        .try-nav-logo { font-family: 'Libre Baskerville', Georgia, serif; font-size: 18px; font-weight: 700; color: var(--logo-color, #3d3630); text-decoration: none; }
+        .try-nav-links { display: flex; gap: 16px; align-items: center; }
+        .try-nav-links a { font-size: 13px; color: var(--text-secondary, #5c5349); text-decoration: none; font-weight: 500; }
+        .try-nav-links a:hover { color: var(--accent, #5a7d64); }
+        .try-nav-links .btn-signin { padding: 7px 16px; background: var(--accent, #5a7d64); color: #fff; border-radius: 6px; font-weight: 600; }
+        .try-nav-links .btn-signin:hover { background: var(--accent-hover, #4a6b54); color: #fff; }
+        /* Inline theme toggle in nav — always visible */
+        .try-nav-toggle { display: flex; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border, #c5d4c9); background: transparent; color: var(--text-primary, #2c2620); cursor: pointer; font-size: 16px; align-items: center; justify-content: center; transition: background 0.2s; }
+        .try-nav-toggle:hover { background: var(--accent, #5a7d64); color: #fff; border-color: var(--accent, #5a7d64); }
+        .try-nav-toggle .t-sun { display: none; }
+        .try-nav-toggle .t-moon { display: inline; }
+        [data-theme="dark"] .try-nav-toggle .t-sun { display: inline; }
+        [data-theme="dark"] .try-nav-toggle .t-moon { display: none; }
+        /* Trial badge — below input on mobile, hidden at top */
+        .trial-badge-bottom { display: none; text-align: center; margin-top: 6px; font-size: 11px; font-weight: 600; color: var(--accent, #5a7d64); letter-spacing: 0.02em; }
+        .trial-badge-bottom.exhausted { color: #e74c3c; }
+        /* Fix layout: account for nav height */
+        .app-container { 
+            padding-top: 52px; 
+            height: 100dvh;
+            box-sizing: border-box;
+        }
+        .main-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+        .input-container {
+            flex-shrink: 0;
+            position: relative;
+            bottom: 0;
+        }
+        .try-mode-badge { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; color: var(--accent, #5a7d64); margin-bottom: 14px; padding: 8px 14px; background: rgba(90,125,100,0.12); border: 1px solid rgba(90,125,100,0.3); border-radius: 8px; display: inline-block; }
+        .try-mode-bar { display: none; margin-top: 52px; padding: 10px 20px; background: var(--accent, #5a7d64); color: #f8faf8; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; text-align: center; text-transform: uppercase; }
+        .try-mode-bar.visible { display: block; }
+        /* Distinct look per try mode — only bar and badge, no body/global */
+        .try-mode-bar[data-mode="cami"] { background: #6b5b4b; }
+        .try-mode-bar[data-mode="customer_service"] { background: var(--accent, #5a7d64); }
+        .try-mode-bar[data-mode="legal_intelligence"] { background: #2c3e6b; }
+        .try-mode-bar[data-mode="health"] { background: #1a5f5a; }
+        .try-mode-badge[data-mode="cami"] { color: #6b5b4b; background: rgba(107,91,75,0.12); border-color: rgba(107,91,75,0.35); }
+        .try-mode-badge[data-mode="customer_service"] { color: var(--accent, #5a7d64); background: rgba(90,125,100,0.12); border-color: rgba(90,125,100,0.3); }
+        .try-mode-badge[data-mode="legal_intelligence"] { color: #2c3e6b; background: rgba(44,62,107,0.12); border-color: rgba(44,62,107,0.35); }
+        .try-mode-badge[data-mode="health"] { color: #1a5f5a; background: rgba(26,95,90,0.12); border-color: rgba(26,95,90,0.35); }
+        @media (max-width: 600px) {
+            .try-nav-links .nav-home-link { display: none; }
+            .trial-badge { display: none; }
+            .trial-badge-bottom { display: block; }
+            .app-container { 
+                padding-top: 52px;
+                height: 100dvh;
+                height: -webkit-fill-available;
+            }
+        }
+    </style>
+</head>
+<body class="has-space-bg">
+    <div class="space-bg" aria-hidden="true">
+        <div class="space-bg__gradient"></div>
+        <div class="space-bg__stars" id="space-bg-stars"></div>
+    </div>
+    <nav class="try-nav">
+        <a href="/" class="try-nav-logo">Cami</a>
+        <div class="try-nav-links">
+            <a href="/" id="tryNavBack" style="display:none;">Back</a>
+            <a href="/" class="nav-home-link">Home</a>
+            <button type="button" class="try-nav-toggle" id="tryThemeToggle" aria-label="Toggle dark/light mode"><span class="t-moon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span><span class="t-sun" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span></button>
+            <a href="/login" class="btn-signin">Sign In</a>
+        </div>
+    </nav>
+    <!-- Trial badge removed -->
+    <div id="tryModeBar" class="try-mode-bar" aria-live="polite"></div>
+    <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar"></aside>
+        <main class="main-content">
+            <div class="chat-container" id="chatContainer">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-content">
+                        <p id="tryModeBadge" class="try-mode-badge" style="display: none;"></p>
+                        <h2 id="welcomeTitle">Try Cami</h2>
+                        <p id="welcomeSubtitle">Ask anything. See what Cami can do.</p>
+                        <div id="modeDescription" style="margin: 24px 0; padding: 20px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; font-size: 14px; line-height: 1.6; color: var(--text-secondary);">You're talking to Cami — an EQLM with its own memory (MIN) and emotional intelligence (Human+). Cami-Juniper (fine-tuned voice) is training now. Currently, Cami synthesizes responses from multiple LLMs — but the judgment, emotional understanding, and growing wisdom are Cami's.</div>
+                        <div class="features">
+                            <div class="feature"><span class="feature-icon">H+</span><span>Human+ Consciousness</span></div>
+                            <div class="feature"><span class="feature-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3C7.5 3 5.5 4.5 5 6.5 3.5 7 2.5 8.5 2.5 10.5c0 1.5.6 2.8 1.5 3.7-.3.8-.5 1.6-.5 2.5C3.5 19 5 20.5 7 21c1 .3 2.2 0 3-.5"/><path d="M14 3c2.5 0 4.5 1.5 5 3.5 1.5.5 2.5 2 2.5 4 0 1.5-.6 2.8-1.5 3.7.3.8.5 1.6.5 2.5 0 2.3-1.5 3.8-3.5 4.3-1 .3-2.2 0-3-.5"/><path d="M12 3v18"/></svg></span><span>M.I.N. Memory</span></div>
+                            <div class="feature"><span class="feature-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="5" r="1.5" opacity="0.7"/><circle cx="5" cy="17" r="1.5" opacity="0.7"/><circle cx="19" cy="17" r="1.5" opacity="0.7"/><circle cx="12" cy="13" r="2"/></svg></span><span>Multi-LLM Synthesis</span></div>
+                            <div class="feature"><span class="feature-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span><span>Learns From You</span></div>
+                        </div>
+                        <div class="example-questions" id="exampleQuestions">
+                            <p>Try asking:</p>
+                            <div id="exampleButtons"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-container">
+                <form id="chatForm" class="chat-form">
+                    <div class="input-wrapper">
+                        <textarea id="messageInput" class="message-input" placeholder="Ask Cami anything..." rows="1"></textarea>
+                        <button type="button" class="scribe-btn scribe-hidden" id="scribeBtn" title="Scribe" aria-label="Scribe">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+                            <span>Scribe</span>
+                        </button>
+                        <button type="submit" class="send-btn" id="sendBtn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M18 2L9 11M18 2L12 18L9 11M18 2L2 8L9 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                    </div>
+                </form>
+                <div class="input-footer"></div>
+            </div>
+            <!-- Scribe modal (minimal for try) -->
+            <div class="scribe-modal-backdrop" id="scribeModalBackdrop" style="display:none;"></div>
+            <div class="scribe-modal" id="scribeModal" role="dialog" aria-labelledby="scribeModalTitle" style="display:none;">
+                <h2 id="scribeModalTitle">Scribe</h2>
+                <p class="scribe-modal-desc">Record or upload audio.</p>
+                <div class="scribe-record-row"><label>Record</label><div class="scribe-record-controls"><button type="button" class="scribe-record-btn" id="scribeRecordBtn"><span class="scribe-record-icon"></span><span id="scribeRecordLabel">Record</span></button><span class="scribe-record-status" id="scribeRecordStatus"></span></div></div>
+                <div class="scribe-upload-row"><label>Upload</label><div class="scribe-upload-controls"><input type="file" id="scribeUploadInput" class="scribe-upload-input" accept="audio/*,video/*"><button type="button" class="scribe-modal-btn secondary scribe-upload-btn" id="scribeUploadBtn">Choose file</button><span class="scribe-record-status" id="scribeUploadStatus"></span></div></div>
+                <label for="scribeSessionSummary">Summary</label><textarea id="scribeSessionSummary" class="scribe-input" rows="2" placeholder="Brief summary..."></textarea>
+                <label for="scribeUtterances">Transcript</label><textarea id="scribeUtterances" class="scribe-input" rows="4" placeholder="Paste transcript..."></textarea>
+                <div id="scribeFollowUps" class="scribe-follow-ups" style="display:none;"></div>
+                <div class="scribe-modal-actions"><button type="button" class="scribe-modal-btn secondary" id="scribeModalCancel">Cancel</button><button type="button" class="scribe-modal-btn primary" id="scribeModalUse">Use</button></div>
+            </div>
+        </main>
+    </div>
+    <!-- Trial wall (disabled) -->
+    <div class="trial-wall" id="trialWall" style="display:none !important;"></div>
+    <script>
+        /* Mode comes from URL (?mode=legal_intelligence etc); default is customer_service when no param */
+        window.CAMI_TRIAL_MODE = true;
+
+        /* Early title + welcome text update based on URL path — avoids flash of generic "Try Cami" */
+        (function(){
+            var p = window.location.pathname || '';
+            var titles = {
+                '/try/customer-service': ['Try Cami Customer Service', 'Warm, concise support that learns from every conversation'],
+                '/try/legal': ['Try Cami Legal Intelligence', 'IRAC-structured legal analysis with multi-perspective reasoning'],
+                '/try/health': ['Try Cami Health', 'Clinical reasoning, drug info, and wellness — with empathy built in'],
+                '/try/clinical': ['Try Cami Health', 'Clinical reasoning, drug info, and wellness — with empathy built in'],
+                '/try/research': ['Try Cami Research', 'Multi-LLM synthesis with conflict resolution and bias detection'],
+                '/try/tutor': ['Try Cami Tutor', 'Guides your thinking — doesn\'t do it for you'],
+                '/try/money': ['Try Cami Money', 'ZDR & AEGR by prompt — no buttons'],
+            };
+            var match = titles[p];
+            if (match) {
+                document.title = match[0] + ' \u2014 Human Service AI';
+                var wt = document.getElementById('welcomeTitle');
+                var ws = document.getElementById('welcomeSubtitle');
+                if (wt) wt.textContent = match[0];
+                if (ws) ws.textContent = match[1];
+            }
+        })();
+
+        /* Inline nav theme toggle */
+        (function(){
+            var btn = document.getElementById('tryThemeToggle');
+            if (!btn) return;
+            btn.addEventListener('click', function(){
+                var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                var next = isDark ? 'light' : 'dark';
+                if (next === 'dark') document.documentElement.setAttribute('data-theme','dark');
+                else document.documentElement.removeAttribute('data-theme');
+                try { localStorage.setItem('cami-theme', next); } catch(_){}
+            });
+        })();
+    </script>
+    <script src="/static/app.js?v=18"></script>
+    <script>
+    (function() {
+        // Trial limits removed - unlimited chat for /try page
+        const badge = document.getElementById('trialBadge');
+        const badgeBottom = document.getElementById('trialBadgeBottom');
+        
+        // Hide trial badges
+        if (badge) badge.style.display = 'none';
+        if (badgeBottom) badgeBottom.style.display = 'none';
+        
+        // Init config only
+        async function init() {
+            try {
+                const r = await fetch('/api/config');
+                const cfg = await r.json();
+            } catch {}
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+        else init();
+    })();
+    </script>
+    <script src="/static/space-bg.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function(){ if(window.initSpaceBg) window.initSpaceBg('space-bg-stars'); });</script>
+    <script src="/static/synth-anim.js"></script>
+    <script src="/static/theme-toggle.js"></script>
+</body>
+</html>

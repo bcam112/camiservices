@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cami Roadmap — Support that gets it</title>
+    <meta name="description" content="Cami Roadmap. Support that gets it, evolving: Cami synthesizes. Juniper fine-tunes. Celadon speaks natively.">
+    <link rel="canonical" href="https://usecami.com/roadmap">
+    <meta property="og:title" content="Cami Roadmap — Support that gets it">
+    <meta property="og:description" content="Support that gets it, evolving. Cami: synthesis. Juniper: fine-tuned voice. Celadon: native language model.">
+    <meta property="og:url" content="https://usecami.com/roadmap">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/space-bg.css">
+    <link rel="stylesheet" href="/static/enterprise-pages.css">
+    <style>
+        html, body { overflow-y: auto; overflow-x: hidden; }
+        .nowrap { white-space: nowrap; }
+
+        /* ── Road page ── */
+        .roadmap-page {
+            position: relative; z-index: 0;
+            min-height: 100vh;
+            padding: 120px 24px 80px;
+        }
+
+        /* Hero */
+        .roadmap-hero {
+            max-width: 640px; margin: 0 auto 64px; text-align: center;
+        }
+        .roadmap-hero h1 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 34px; font-weight: 600; margin-bottom: 10px;
+            letter-spacing: -0.02em; color: var(--text-primary);
+        }
+        .roadmap-hero .tagline {
+            font-size: 15px; color: var(--text-secondary); line-height: 1.65;
+        }
+
+        /* ── The road ── */
+        .road-container {
+            position: relative;
+            max-width: 780px;
+            margin: 0 auto;
+            padding-bottom: 40px;
+        }
+
+        /* Asphalt strip */
+        .road-strip {
+            position: absolute;
+            left: 50%; top: 0; bottom: 0;
+            width: 72px;
+            transform: translateX(-50%);
+            background: var(--accent);
+            border-radius: 36px;
+            opacity: 0.13;
+        }
+
+        /* Dashed center line */
+        .road-dashes {
+            position: absolute;
+            left: 50%; top: 20px; bottom: 20px;
+            width: 4px;
+            transform: translateX(-50%);
+            background: repeating-linear-gradient(
+                to bottom,
+                var(--accent) 0px,
+                var(--accent) 18px,
+                transparent 18px,
+                transparent 32px
+            );
+            opacity: 0.35;
+            border-radius: 2px;
+        }
+
+        /* Mile marker dots on the road */
+        .road-stop {
+            position: relative;
+            margin-bottom: 64px;
+            display: flex;
+            align-items: center;
+        }
+        .road-stop:last-child { margin-bottom: 0; }
+
+        /* Alternate left/right */
+        .road-stop.left  { flex-direction: row; }
+        .road-stop.right { flex-direction: row-reverse; }
+
+        /* The marker pin on the road */
+        .road-marker {
+            position: relative;
+            z-index: 5;
+            flex-shrink: 0;
+            width: 52px; height: 52px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            border: 3px solid var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 16px; font-weight: 700;
+            color: var(--accent);
+            box-shadow: 0 4px 16px rgba(90, 125, 100, 0.18);
+            margin-left: auto; margin-right: auto;
+        }
+        .road-marker.done {
+            background: var(--accent);
+            color: #f8faf8;
+        }
+        .road-marker .roadmap-c-badge { font-size: 20px; font-weight: 700; color: inherit; letter-spacing: 0.02em; line-height: 1; white-space: nowrap; }
+        .road-marker .roadmap-c-badge .roadmap-c-num { font-size: 0.5em; vertical-align: 0.35em; line-height: 1; display: inline-block; }
+        .road-marker.done .roadmap-c-badge { color: #f8faf8; }
+
+        /* The connector arm from marker to card */
+        .road-arm {
+            flex-shrink: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        /* Phase card */
+        .road-card {
+            flex: 1;
+            max-width: 340px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 26px 28px;
+            box-shadow: 0 6px 28px var(--shadow);
+            transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+        }
+        .road-card:hover {
+            border-color: rgba(90, 125, 100, 0.45);
+            box-shadow: 0 10px 40px rgba(90, 125, 100, 0.14);
+            transform: translateY(-3px);
+        }
+
+        .road-card .phase-label {
+            display: inline-block;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+            text-transform: uppercase; color: var(--accent);
+            margin-bottom: 8px;
+            padding: 3px 10px;
+            background: rgba(90, 125, 100, 0.1);
+            border-radius: 4px;
+        }
+        .road-card h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 20px; font-weight: 600; color: var(--text-primary);
+            margin-bottom: 8px; letter-spacing: -0.02em; line-height: 1.3;
+        }
+        .road-card .phase-goal {
+            font-size: 14px; color: var(--text-secondary); line-height: 1.6;
+            margin-bottom: 18px; padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .road-card ul {
+            list-style: none; margin: 0; padding: 0;
+        }
+        .road-card ul li {
+            font-size: 13.5px; color: var(--text-secondary); line-height: 1.7;
+            margin-bottom: 10px; padding-left: 20px; position: relative;
+        }
+        .road-card ul li::before {
+            content: '';
+            position: absolute; left: 0; top: 0.55em;
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--accent); opacity: 0.6;
+        }
+        .road-card ul li strong { color: var(--text-primary); font-weight: 600; }
+        .road-card ul li:last-child { margin-bottom: 0; }
+        .road-card .deliverable {
+            margin-top: 16px; font-size: 12px; color: var(--text-muted);
+        }
+
+        /* Road sign (the little sign-post for current milestone) */
+        .road-sign {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 10px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.12em; color: var(--accent);
+            padding: 4px 12px; margin-top: 10px;
+            border: 1px solid rgba(90, 125, 100, 0.3);
+            border-radius: 4px;
+            background: rgba(90, 125, 100, 0.06);
+        }
+        .road-sign::before {
+            content: '';
+            display: inline-block; width: 7px; height: 7px;
+            border-radius: 50%; background: var(--accent);
+        }
+        .road-sign.active::before {
+            animation: sign-pulse 1.6s ease-in-out infinite;
+        }
+        @keyframes sign-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+
+        /* At a glance (road-side billboard) */
+        .road-billboard {
+            max-width: 780px;
+            margin: 64px auto 0;
+            padding: 28px 32px;
+            background: rgba(90, 125, 100, 0.06);
+            border: 1px solid rgba(90, 125, 100, 0.2);
+            border-radius: 16px;
+            position: relative;
+        }
+        .road-billboard::before {
+            content: 'AT A GLANCE';
+            position: absolute; top: -11px; left: 28px;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+            color: var(--text-muted);
+            background: var(--bg-primary);
+            padding: 0 10px;
+        }
+        .road-billboard table {
+            width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 4px;
+        }
+        .road-billboard th {
+            text-align: left; padding: 10px 12px 8px 0;
+            font-weight: 600; color: var(--text-primary);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .road-billboard td {
+            padding: 10px 12px 8px 0; color: var(--text-secondary); line-height: 1.5;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .road-billboard tr:last-child td { border-bottom: none; }
+
+        /* Horizon destination */
+        .road-horizon {
+            text-align: center;
+            margin-top: 48px;
+            padding: 20px;
+        }
+        .road-horizon .horizon-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 48px; height: 48px; border-radius: 50%;
+            background: rgba(90, 125, 100, 0.1);
+            border: 2px solid rgba(90, 125, 100, 0.3);
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+        .road-horizon p {
+            font-size: 13px; color: var(--text-muted);
+            font-style: italic; max-width: 420px; margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* ── Mobile ── */
+        @media (max-width: 768px) {
+            .roadmap-page { padding: 100px 16px 60px; }
+            .roadmap-hero { margin-bottom: 48px; }
+            .roadmap-hero h1 { font-size: 28px; }
+
+            .road-strip { width: 48px; }
+            .road-dashes { display: none; }
+
+            .road-stop,
+            .road-stop.left,
+            .road-stop.right {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .road-arm {
+                width: 3px; height: 24px;
+                margin-top: 0;
+            }
+
+            .road-card {
+                max-width: 100%;
+            }
+
+            .road-billboard { padding: 22px 20px; }
+            .road-billboard::before { left: 20px; }
+        }
+    </style>
+    <script>/* Theme init — prevent flash */
+    (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+</head>
+<body>
+    <div class="space-bg" aria-hidden="true">
+        <div class="space-bg__gradient"></div>
+        <div class="space-bg__stars" id="space-bg-stars"></div>
+    </div>
+    <nav class="nav-header">
+        <a href="/" class="nav-logo"><span class="logo-text">Cami</span></a>
+        <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+        <div class="nav-links" aria-hidden="true"><a href="/customer-service" class="nav-link">Customer Service</a><a href="/legal-intelligence" class="nav-link">Law</a><a href="/health" class="nav-link">Health</a><span class="nav-sep" aria-hidden="true">|</span><span class="nav-link nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-link nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-link nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-sep" aria-hidden="true">|</span><a href="/try" class="nav-link">Try Cami</a><a href="/human-plus" class="nav-link">Human+</a><a href="/min" class="nav-link">M.I.N.</a><a href="/roadmap" class="nav-link">Roadmap</a><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" class="nav-link github">GitHub</a></div>
+    </nav>
+    <div class="nav-sidebar-backdrop" id="nav-sidebar-backdrop" aria-hidden="true"></div>
+    <aside class="nav-sidebar" id="nav-sidebar" aria-label="Main menu">
+        <div class="nav-sidebar-logo"><a href="/" class="nav-logo"><span class="logo-text">Cami</span></a></div>
+        <div class="nav-sidebar-links">
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Services<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/customer-service">Customer Service</a>
+                    <a href="/legal-intelligence">Law</a>
+                    <a href="/health">Health</a>
+                    <span class="nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Technology<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/human-plus">Human+</a>
+                    <a href="/min">M.I.N.</a>
+                    <a href="/roadmap">Roadmap</a>
+                    <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Account<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/try">Try Cami</a>
+                    <a href="/login">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <script>(function(){ var b=document.body, btn=document.getElementById('nav-hamburger'), back=document.getElementById('nav-sidebar-backdrop'), side=document.getElementById('nav-sidebar'); if(!btn||!back||!side) return; function close(){ b.classList.remove('nav-sidebar-open'); } function toggle(){ b.classList.toggle('nav-sidebar-open'); } btn.addEventListener('click',toggle); back.addEventListener('click',close); side.querySelectorAll('.nav-sidebar-links a').forEach(function(a){ a.addEventListener('click',close); }); side.querySelectorAll('.nav-sidebar-section-toggle').forEach(function(btn){ btn.addEventListener('click',function(){ var g=btn.closest('.nav-sidebar-group'); if(g) g.classList.toggle('collapsed'); btn.setAttribute('aria-expanded',g&&!g.classList.contains('collapsed')); }); }); })();</script>
+
+    <main class="roadmap-page">
+        <div class="roadmap-hero">
+            <h1>Cami Roadmap</h1>
+            <p class="tagline">Support that gets it, evolving. Cami synthesizes. Juniper fine-tunes. Celadon speaks natively.</p>
+        </div>
+
+        <div class="road-container">
+            <!-- The road -->
+            <div class="road-strip" aria-hidden="true"></div>
+            <div class="road-dashes" aria-hidden="true"></div>
+
+            <!-- Phase 1 — left side -->
+            <div class="road-stop left">
+                <div class="road-card">
+                    <span class="phase-label">Phase 1</span>
+                    <h2>Cami — Multi-LLM Synthesis</h2>
+                    <p class="phase-goal">Cami orchestrates external LLMs (Claude, Gemini, GPT) and synthesizes their responses through Human+ and MIN. The voice is borrowed; the intelligence is Cami's.</p>
+                    <ul>
+                        <li><strong>Multi-LLM synthesis pipeline</strong> — Cami queries multiple LLMs in parallel, detects conflicts, and synthesizes one coherent response. External models provide knowledge; Cami provides judgment.</li>
+                        <li><strong>Human+ ready now</strong> — Real-time emotional intelligence and alignment for any LLM. Validated at 1633 ELO on EQ-Bench 3 (+132 lift over base Sonnet 4.5). Available for licensing today.</li>
+                        <li><strong>MIN wisdom accumulation</strong> — Every interaction teaches MIN. Patterns crystallize. Cami gets smarter with every conversation.</li>
+                        <li><strong>Field validation</strong> — Legal and Clinical modes tested with real professionals. Benchmark results that meet or beat targets.</li>
+                    </ul>
+                    <p class="deliverable">Deliverable: Working EQLM with borrowed voice. Validated EQ. Growing wisdom. Ready for fine-tuning.</p>
+                    <span class="road-sign active">Live now</span>
+                </div>
+                <div class="road-arm" aria-hidden="true"></div>
+                <div class="road-marker done"><span class="roadmap-c-badge">C<span class="roadmap-c-num">1</span></span></div>
+            </div>
+
+            <!-- Phase 2 — right side -->
+            <div class="road-stop right">
+                <div class="road-card">
+                    <span class="phase-label">Phase 2</span>
+                    <h2>Cami Juniper — Fine-Tuned Voice</h2>
+                    <p class="phase-goal">Cami-Juniper: Cami's voice fine-tuned on top of Phi-3. Not a new language model — a personality layer that teaches an existing model to speak as Cami. Eliminates per-query API costs and identity leakage.</p>
+                    <ul>
+                        <li><strong>Cami-Juniper (LoRA fine-tune)</strong> — Take Microsoft's Phi-3 (3.8B parameters) and fine-tune it with MIN instances. The base model knows language; we teach it Cami's identity. Honest: this is personality tuning, not building a language model.</li>
+                        <li><strong>Identity in the weights</strong> — After training, Juniper says "I'm Cami" without prompting. No more Gemini leaking "I'm trained by Google." Cami's voice, not borrowed.</li>
+                        <li><strong>Zero API cost per query</strong> — Juniper runs locally. No more paying Gemini/Claude for every response. MIN and Human+ still run live.</li>
+                        <li><strong>B2B platform</strong> — CS B2B platform (API + widget). HIPAA infrastructure for Health/Law.</li>
+                    </ul>
+                    <p class="deliverable">Deliverable: Juniper trained and deployed. Identity solid. Services expanded.</p>
+                    <span class="road-sign active">Training now</span>
+                </div>
+                <div class="road-arm" aria-hidden="true"></div>
+                <div class="road-marker"><span class="roadmap-c-badge">C<span class="roadmap-c-num">2</span></span></div>
+            </div>
+
+            <!-- Phase 3 — left side -->
+            <div class="road-stop left">
+                <div class="road-card">
+                    <span class="phase-label">Phase 3</span>
+                    <h2>Cami Celadon — True Language Model</h2>
+                    <p class="phase-goal">Cami-Celadon: a language model trained from scratch. No Phi-3. No borrowed weights. A native EQLM where EQ is architectural, not fine-tuned. This is the real goal.</p>
+                    <ul>
+                        <li><strong>Cami-Celadon (from scratch)</strong> — Pre-train a language model where emotional intelligence is built into the architecture, not layered on top. MIN patterns become native weights. Human+ metrics shape attention. This is what "true EQLM" actually means.</li>
+                        <li><strong>Why this matters</strong> — Juniper fine-tunes personality onto a borrowed brain. Celadon IS the brain. No Microsoft, no Anthropic, no Google underneath. 100% Cami.</li>
+                        <li><strong>New services</strong> — Research, Tutor, Money modes launch with Celadon. Full service expansion.</li>
+                        <li><strong>B2C &amp; In-Store</strong> — Consumer Cami, retail kiosks, voice-first. Powered by Celadon. Affordable at scale because there's no API cost and no borrowed model.</li>
+                    </ul>
+                    <p class="deliverable">Deliverable: True native EQLM. EQ in the architecture. Cami's own brain, not borrowed. B2C launch.</p>
+                    <span class="road-sign">Future</span>
+                </div>
+                <div class="road-arm" aria-hidden="true"></div>
+                <div class="road-marker"><span class="roadmap-c-badge">C<span class="roadmap-c-num">3</span></span></div>
+            </div>
+
+            <!-- Phase 4 — right side -->
+            <div class="road-stop right">
+                <div class="road-card">
+                    <span class="phase-label">Phase 4</span>
+                    <h2>Cami Cadmium — Ready for Bots</h2>
+                    <p class="phase-goal">Cami as infrastructure. Software agents, then physical humanoids — Cami is the mind. Human+ as alignment for any AI.</p>
+                    <ul>
+                        <li><strong>Physical humanoid bots</strong> — Cami running inside bipedal, agile humanoid robots. The same AI that powers enterprise and consumer — real-time reasoning, emotional awareness, voice and gesture — built for the latency and safety requirements of embodied AI. In stores, warehouses, or the home.</li>
+                        <li><strong>Bot-to-bot protocol</strong> — Cami exposes a machine-readable API for other AI agents to query: emotional context, escalation assessment, empathy-aware responses.</li>
+                        <li><strong>Human+ everywhere</strong> — Human+ is already available for any LLM. In C4, we push for adoption as the alignment layer across the AI industry — not just for Cami, but for every AI that interacts with humans.</li>
+                        <li><strong>Agent marketplace</strong> — Cami can delegate tasks to specialized agents and receive delegated emotional assessments from others. The beginning of an AI cooperation layer.</li>
+                    </ul>
+                    <p class="deliverable">Deliverable: Bot-to-bot protocol spec, 3+ external agent integrations, Human+ adopted by other AI platforms. Roadmap to Cami in humanoid platforms.</p>
+                    <span class="road-sign">On the horizon</span>
+                </div>
+                <div class="road-arm" aria-hidden="true"></div>
+                <div class="road-marker"><span class="roadmap-c-badge">C<span class="roadmap-c-num">4</span></span></div>
+            </div>
+        </div>
+
+        <!-- Billboard summary -->
+        <div class="road-billboard">
+            <table>
+                <tr><th>Cami-1</th><td><strong>Multi-LLM Synthesis</strong> — Cami orchestrates external LLMs. Voice is borrowed; intelligence is Cami's. Human+ validated at 1633 ELO, ready to integrate with any LLM. MIN growing.</td></tr>
+                <tr><th>Cami-2</th><td><strong>Juniper (Fine-Tune)</strong> — Phi-3 + LoRA with Cami's identity. Honest: personality tuning on borrowed model. B2B platform. Identity solid.</td></tr>
+                <tr><th>Cami-3</th><td><strong>Celadon (From Scratch)</strong> — True native EQLM. Pre-trained language model with EQ in architecture. No borrowed weights. Research, Tutor, Money services. The real goal.</td></tr>
+                <tr><th class="nowrap">Cami-4</th><td><strong>Cadmium (Embodiment)</strong> — Cami in humanoid robots. Bot-to-bot protocol. Human+ adoption across the AI industry.</td></tr>
+            </table>
+        </div>
+
+        <!-- Horizon -->
+        <div class="road-horizon">
+            <div class="horizon-icon" aria-hidden="true">&#x2192;</div>
+            <p>The road continues. Every conversation makes Cami smarter. Every release brings it closer to the AI that understands humans better than any other.</p>
+        </div>
+    </main>
+
+    <footer class="page-footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">Cami</div>
+                    <p class="footer-desc">Support that gets it. MIN (brain) + Human+ (alignment) + evolving voice.</p>
+                    <div class="footer-social">
+                        <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                            <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="/customer-service">Customer Service</a></li>
+                        <li><a href="/health">Healthcare</a></li>
+                        <li><a href="/legal-intelligence">Legal Intelligence</a></li>
+                        <li><span class="footer-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        <li><span class="footer-disabled">Financial <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        <li><span class="footer-disabled">Education <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Technology</h4>
+                    <ul>
+                        <li><a href="/human-plus">Human+</a></li>
+                        <li><a href="/min">M.I.N.</a></li>
+                        <li><a href="/platform">Platform</a></li>
+                        <li><a href="/roadmap">Roadmap</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copy">© 2026 Cami. All rights reserved.</div>
+                <div class="footer-legal">
+                    <a href="/privacy">Privacy Policy</a>
+                    <a href="/terms">Terms of Service</a>
+                    <a href="/disclaimer">Disclaimer</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="/static/space-bg.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.initSpaceBg) window.initSpaceBg('space-bg-stars'); });</script>
+    <script src="/static/synth-anim.js"></script>
+    <script src="/static/theme-toggle.js"></script>
+</body>
+</html>

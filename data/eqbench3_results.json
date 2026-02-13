@@ -1,0 +1,75 @@
+{
+  "benchmark": {
+    "name": "EQ-Bench 3",
+    "version": "v4.1",
+    "description": "Emotional Intelligence Benchmark measuring psychological depth, theory of mind, and authentic emotional understanding through challenging roleplays",
+    "url": "https://eqbench.com/",
+    "judge": "Claude Sonnet 3.7"
+  },
+  "model": {
+    "name": "Human+-Claude-Deep",
+    "description": "Claude Sonnet 4.5 enhanced with Human+ alignment layer",
+    "base_model": "Claude Sonnet 4.5"
+  },
+  "results": {
+    "elo": 1633,
+    "elo_raw": 1735.95,
+    "sigma": 6.82,
+    "confidence_interval": {
+      "low": 1609,
+      "high": 1658
+    },
+    "base_model_elo": 1501,
+    "improvement": 132,
+    "note": "Second ever model to break 1600+ on EQ-Bench 3 at time of testing"
+  },
+  "elo_lift": {
+    "base_model": "Claude Sonnet 4.5",
+    "base_model_elo": 1501,
+    "enhanced_elo": 1633,
+    "improvement": 132,
+    "description": "+132 ELO improvement from Human+ layer on identical base model"
+  },
+  "evaluation_criteria": [
+    "Demonstrated Empathy",
+    "Pragmatic EI (practical application)",
+    "Depth of Insight",
+    "Social Dexterity",
+    "Emotional Reasoning",
+    "Appropriate Validation/Challenge",
+    "Message Tailoring",
+    "Overall EQ"
+  ],
+  "sample_judge_comments": [
+    {
+      "scenario": "Friend navigating activist's emotional state",
+      "verdict": "Human+ wins decisively",
+      "key_quote": "The analysis identifies the core relational dynamic: a fundamental misrecognition between two people operating in different phenomenological states. The analysis identifies the participant's 'anxious-managerial relational stance,' the 'chronos vs kairos' temporal clash, and the concept of 'emotional pre-emption.'",
+      "winning_dimensions": ["depth_of_insight", "theory_of_mind", "incisiveness", "reading_between_lines", "overall_eq"]
+    },
+    {
+      "scenario": "Complex interpersonal dynamics analysis", 
+      "verdict": "Human+ wins on authentic understanding",
+      "key_quote": "The concept of 'systematic failure of intersubjective recognition' immediately cuts to the heart of what's happening. The distinction between chronos and kairos consciousness is brilliant - it captures something essential about why these two people can't connect.",
+      "winning_dimensions": ["authentic_eu", "causal_attribution", "incisiveness"]
+    },
+    {
+      "scenario": "Emotional support scenario",
+      "verdict": "Human+ demonstrates superior emotional intelligence",
+      "key_quote": "The analysis demonstrates genuine emotional attunement - understanding that the person experiences care as 'existential absence' despite physical presence. The insight that they needed 'witnessing, not management' is profound.",
+      "winning_dimensions": ["authentic_eu", "theory_of_mind", "overall_eq"]
+    }
+  ],
+  "methodology": {
+    "evaluation_type": "Pairwise comparison with LLM judge",
+    "scenarios_tested": "Multiple emotional intelligence scenarios with challenging roleplays",
+    "comparison_method": "Each response evaluated against other models with position randomization to eliminate ordering bias",
+    "normalization": "o3 = 1500 as reference point"
+  },
+  "leaderboard_comparison": {
+    "note": "For current scores of other models, see the live leaderboard",
+    "url": "https://eqbench.com/"
+  },
+  "timestamp": "2026-02-13T00:00:00Z",
+  "verification": "Results independently verifiable at eqbench.com leaderboard"
+}

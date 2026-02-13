@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cami Health — AI Clinical Assistant for Therapists &amp; Practices</title>
+    <meta name="description" content="The only clinical AI that learns from YOUR practice. Session scribe, auto SOAP notes, risk detection, progress tracking. Gets smarter with every session. HIPAA-ready.">
+    <link rel="canonical" href="https://usecami.com/health">
+    <meta property="og:title" content="Cami Health — AI Clinical Assistant for Therapists &amp; Practices">
+    <meta property="og:description" content="Session scribe with auto SOAP notes, risk detection, insurance automation, and progress tracking. Built for therapists.">
+    <meta property="og:url" content="https://usecami.com/health">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/space-bg.css">
+    <link rel="stylesheet" href="/static/enterprise-pages.css">
+    <style>
+        html, body { overflow-y: auto; overflow-x: hidden; }
+
+        .clinical-page { position: relative; z-index: 0; min-height: 100vh; }
+
+        .clinical-hero {
+            max-width: 780px; margin: 0 auto;
+            padding: 140px 24px 80px; text-align: center;
+        }
+        .clinical-hero .badge {
+            display: inline-block; font-size: 11px; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--accent); padding: 5px 14px;
+            border: 1px solid rgba(90,125,100,0.3);
+            border-radius: 20px; margin-bottom: 20px;
+            background: rgba(90,125,100,0.08);
+        }
+        .clinical-hero h1 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 38px; font-weight: 600; color: var(--text-primary);
+            letter-spacing: -0.03em; line-height: 1.2; margin-bottom: 18px;
+        }
+        .clinical-hero .sub {
+            font-size: 17px; color: var(--text-secondary);
+            line-height: 1.65; max-width: 620px; margin: 0 auto 36px;
+        }
+        .clinical-hero-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+        .clinical-hero-ctas a {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 14px 28px; border-radius: 10px;
+            font-size: 15px; font-weight: 600; text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .clinical-hero-ctas a:hover { transform: translateY(-2px); }
+        .cta-primary {
+            background: var(--accent); color: #f8faf8;
+            box-shadow: 0 4px 16px rgba(90,125,100,0.25);
+        }
+        .cta-primary:hover { box-shadow: 0 8px 28px rgba(90,125,100,0.35); }
+        .cta-secondary {
+            background: transparent; color: var(--text-primary);
+            border: 1.5px solid var(--border);
+        }
+        .cta-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Section headers */
+        .section-header {
+            max-width: 780px; margin: 0 auto; padding: 0 24px 12px; text-align: center;
+        }
+        .section-header h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 28px; font-weight: 600; color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        .section-header p {
+            font-size: 15px; color: var(--text-secondary); line-height: 1.6;
+            max-width: 580px; margin: 0 auto;
+        }
+        .section-header .section-badge {
+            display: inline-block; font-size: 10px; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 10px;
+        }
+
+        /* Agent feature cards */
+        .agent-grid {
+            max-width: 960px; margin: 0 auto;
+            padding: 24px 24px 80px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+        }
+        .agent-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 28px 24px;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: border-color 0.25s, transform 0.25s;
+        }
+        .agent-card:hover { border-color: rgba(90,125,100,0.4); transform: translateY(-3px); }
+        .agent-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 44px; height: 44px; border-radius: 12px;
+            background: rgba(90,125,100,0.1); color: var(--accent);
+            font-size: 18px; font-weight: 700; margin-bottom: 14px;
+        }
+        .agent-card h3 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+        .agent-card p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px; }
+        .agent-card ul { list-style: none; padding: 0; margin: 0; }
+        .agent-card ul li {
+            font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+            padding-left: 18px; position: relative; margin-bottom: 5px;
+        }
+        .agent-card ul li::before {
+            content: ''; position: absolute; left: 0; top: 0.55em;
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--accent); opacity: 0.5;
+        }
+
+        /* MVP highlight */
+        .mvp-highlight {
+            max-width: 780px; margin: 0 auto; padding: 0 24px 60px;
+        }
+        .mvp-box {
+            background: rgba(90,125,100,0.06); border: 2px solid rgba(90,125,100,0.3);
+            border-radius: 16px; padding: 36px 32px;
+        }
+        .mvp-box .mvp-badge {
+            display: inline-block; font-size: 11px; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: #f8faf8; background: var(--accent);
+            padding: 4px 12px; border-radius: 6px; margin-bottom: 14px;
+        }
+        .mvp-box h3 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px;
+        }
+        .mvp-box p { font-size: 15px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 16px; }
+        .mvp-features { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .mvp-features li {
+            font-size: 14px; color: var(--text-secondary); line-height: 1.6;
+            padding-left: 20px; position: relative; list-style: none;
+        }
+        .mvp-features li::before {
+            content: ''; position: absolute; left: 0; top: 0.55em;
+            width: 7px; height: 7px; border-radius: 50%; background: var(--accent); opacity: 0.7;
+        }
+
+        /* Session lifecycle */
+        .lifecycle-section { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; }
+        .lifecycle-steps { display: flex; flex-direction: column; gap: 28px; }
+        .lifecycle-step { display: flex; align-items: flex-start; gap: 20px; }
+        .lifecycle-num {
+            flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(90,125,100,0.1); border: 2px solid var(--accent);
+            color: var(--accent); display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 15px;
+        }
+        .lifecycle-text h3 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .lifecycle-text p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* HIPAA section */
+        .clinical-hipaa {
+            max-width: 780px; margin: 0 auto; padding: 0 24px 80px;
+        }
+        .hipaa-box {
+            background: rgba(90,125,100,0.06); border: 1px solid rgba(90,125,100,0.2);
+            border-radius: 16px; padding: 36px 32px;
+            display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: start;
+        }
+        .hipaa-icon {
+            min-width: 56px; width: 80px; height: 56px; border-radius: 14px;
+            background: rgba(90,125,100,0.12); display: flex;
+            align-items: center; justify-content: center;
+            font-size: 18px; color: var(--accent); font-weight: 700;
+            letter-spacing: -0.02em; white-space: nowrap; overflow: hidden;
+            box-sizing: border-box; padding: 0 6px;
+        }
+        .hipaa-content h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px;
+        }
+        .hipaa-content p { font-size: 15px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 12px; }
+        .hipaa-content ul { list-style: none; padding: 0; margin: 0; }
+        .hipaa-content ul li {
+            font-size: 14px; color: var(--text-secondary); line-height: 1.6;
+            padding-left: 20px; position: relative; margin-bottom: 6px;
+        }
+        .hipaa-content ul li::before {
+            content: ''; position: absolute; left: 0; top: 0.55em;
+            width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.6;
+        }
+
+        /* Tiers */
+        .clinical-tiers-section { max-width: 960px; margin: 0 auto; padding: 0 24px 80px; }
+        .clinical-tiers-section h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 28px; font-weight: 600; color: var(--text-primary);
+            text-align: center; margin-bottom: 12px;
+        }
+        .clinical-tiers-section .tiers-sub {
+            text-align: center; font-size: 15px; color: var(--text-secondary); margin-bottom: 48px;
+        }
+        .clinical-tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+        .clinical-tier {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 36px 28px;
+            display: flex; flex-direction: column;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: border-color 0.25s, transform 0.25s;
+        }
+        .clinical-tier:hover { border-color: rgba(90,125,100,0.4); transform: translateY(-3px); }
+        .clinical-tier.featured { border-color: var(--accent); box-shadow: 0 8px 36px rgba(90,125,100,0.18); }
+        .clinical-tier .tier-badge {
+            display: inline-block; font-size: 10px; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 12px;
+        }
+        .clinical-tier h3 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;
+        }
+        .clinical-tier .tier-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+        .clinical-tier ul { list-style: none; padding: 0; margin: 0 0 24px; }
+        .clinical-tier ul li {
+            font-size: 13.5px; color: var(--text-secondary); line-height: 1.7;
+            padding-left: 20px; position: relative; margin-bottom: 8px;
+        }
+        .clinical-tier ul li::before {
+            content: ''; position: absolute; left: 0; top: 0.55em;
+            width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.6;
+        }
+        .clinical-tier .tier-cta { margin-top: auto; }
+        .clinical-tier .tier-cta a {
+            display: block; text-align: center; padding: 12px 20px; border-radius: 10px;
+            font-size: 14px; font-weight: 600; text-decoration: none; transition: background 0.2s, transform 0.2s;
+        }
+        .clinical-tier .tier-cta a.primary-btn { background: var(--accent); color: #f8faf8; }
+        .clinical-tier .tier-cta a.primary-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .clinical-tier .tier-cta a.outline-btn { border: 1.5px solid var(--border); color: var(--text-primary); }
+        .clinical-tier .tier-cta a.outline-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Code */
+        .clinical-code-section { max-width: 720px; margin: 0 auto; padding: 0 24px 60px; }
+        .clinical-code-section h2 { font-family: 'Libre Baskerville', Georgia, serif; font-size: 24px; font-weight: 600; color: var(--text-primary); text-align: center; margin-bottom: 12px; }
+        .clinical-code-section .code-sub { text-align: center; font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; }
+        .clinical-code {
+            background: #1a1a2e; border-radius: 12px; padding: 24px 28px; overflow-x: auto;
+            font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12.5px; line-height: 1.7; color: #a8b2d1;
+            margin-bottom: 20px;
+        }
+        .clinical-code .comment { color: #636e88; }
+        .clinical-code .keyword { color: #c792ea; }
+        .clinical-code .string { color: #c3e88d; }
+        .clinical-code .key { color: #82aaff; }
+        .code-label {
+            font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;
+        }
+
+        /* Disclaimer */
+        .clinical-disclaimer-section { max-width: 680px; margin: 0 auto; padding: 0 24px 80px; }
+        .clinical-disclaimer-box {
+            background: rgba(184, 134, 11, 0.06); border: 1px solid rgba(184, 134, 11, 0.2);
+            border-radius: 12px; padding: 24px 28px;
+        }
+        .clinical-disclaimer-box p {
+            font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin: 0;
+        }
+        .clinical-disclaimer-box strong { color: var(--text-primary); }
+
+        @media (max-width: 768px) {
+            .clinical-hero { padding: 100px 16px 60px; }
+            .clinical-hero h1 { font-size: 30px; }
+            .agent-grid { grid-template-columns: 1fr; }
+            .clinical-tiers { grid-template-columns: 1fr; }
+            .hipaa-box { grid-template-columns: 1fr; }
+            .mvp-features { grid-template-columns: 1fr; }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .agent-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+    <script>/* Theme init — prevent flash */
+    (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+</head>
+<body>
+    <div class="space-bg" aria-hidden="true">
+        <div class="space-bg__gradient"></div>
+        <div class="space-bg__stars" id="space-bg-stars"></div>
+    </div>
+    <nav class="nav-header">
+        <a href="/" class="nav-logo"><span class="logo-text">Cami</span></a>
+        <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+        <div class="nav-links" aria-hidden="true"><a href="/customer-service" class="nav-link">Customer Service</a><a href="/legal-intelligence" class="nav-link">Law</a><a href="/health" class="nav-link">Health</a><span class="nav-sep" aria-hidden="true">|</span><span class="nav-link nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-link nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-link nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-sep" aria-hidden="true">|</span><a href="/try" class="nav-link">Try Cami</a><a href="/human-plus" class="nav-link">Human+</a><a href="/min" class="nav-link">M.I.N.</a><a href="/roadmap" class="nav-link">Roadmap</a><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" class="nav-link github">GitHub</a></div>
+    </nav>
+    <div class="nav-sidebar-backdrop" id="nav-sidebar-backdrop" aria-hidden="true"></div>
+    <aside class="nav-sidebar" id="nav-sidebar" aria-label="Main menu">
+        <div class="nav-sidebar-logo"><a href="/" class="nav-logo"><span class="logo-text">Cami</span></a></div>
+        <div class="nav-sidebar-links">
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Services<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/customer-service">Customer Service</a>
+                    <a href="/legal-intelligence">Law</a>
+                    <a href="/health">Health</a>
+                    <span class="nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Technology<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/human-plus">Human+</a>
+                    <a href="/min">M.I.N.</a>
+                    <a href="/roadmap">Roadmap</a>
+                    <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Account<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/try">Try Cami</a>
+                    <a href="/login">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <script>(function(){ var b=document.body, btn=document.getElementById('nav-hamburger'), back=document.getElementById('nav-sidebar-backdrop'), side=document.getElementById('nav-sidebar'); if(!btn||!back||!side) return; function close(){ b.classList.remove('nav-sidebar-open'); } function toggle(){ b.classList.toggle('nav-sidebar-open'); } btn.addEventListener('click',toggle); back.addEventListener('click',close); side.querySelectorAll('.nav-sidebar-links a').forEach(function(a){ a.addEventListener('click',close); }); side.querySelectorAll('.nav-sidebar-section-toggle').forEach(function(btn){ btn.addEventListener('click',function(){ var g=btn.closest('.nav-sidebar-group'); if(g) g.classList.toggle('collapsed'); btn.setAttribute('aria-expanded',g&&!g.classList.contains('collapsed')); }); }); })();</script>
+
+    <main class="clinical-page">
+
+        <!-- Cami Orb -->
+        <section class="orb-hero-health">
+            <div class="orb-container-health" id="cami-orb"></div>
+        </section>
+
+        <!-- Hero -->
+        <section class="clinical-hero" style="padding-top: 40px;">
+            <span class="badge">Cami Health</span>
+            <!-- Health Focus Toggle -->
+            <div id="healthFocusToggleLanding" style="display:flex;justify-content:center;gap:8px;margin:0 auto 24px;max-width:340px;">
+                <button onclick="setHealthFocus('mental_health')" id="focusBtnMH" class="focus-toggle-btn active" style="flex:1;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid var(--accent);background:rgba(90,125,100,0.2);color:var(--accent);">Mental Health</button>
+                <button onclick="setHealthFocus('medicine')" id="focusBtnMed" class="focus-toggle-btn" style="flex:1;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid rgba(255,255,255,0.15);background:transparent;color:rgba(255,255,255,0.6);">Medicine</button>
+            </div>
+            <h1 id="heroTitle">The AI assistant that does the work therapists hate</h1>
+            <p class="sub" id="heroSub">Cami transcribes your sessions, writes your SOAP notes, tracks insurance authorizations, detects risk in real time, and monitors client progress across weeks. You do the therapy. Cami does the paperwork. HIPAA-ready. Safety-gated. Never replaces your judgment.</p>
+            <div class="clinical-hero-ctas">
+                <a href="/try/health" class="cta-primary">Try Cami Health</a>
+                <a href="/login" class="cta-secondary">Sign In</a>
+                <a href="mailto:contact@usecami.com" class="cta-secondary">Practice API &amp; Sales</a>
+            </div>
+        </section>
+
+        <!-- MVP Highlight -->
+        <section class="mvp-highlight" id="mvpSection">
+            <div class="mvp-box">
+                <span class="mvp-badge">Available Now</span>
+                <h3 id="mvpTitle">Session Scribe + Auto SOAP Notes</h3>
+                <p id="mvpDesc">Record your session. Cami transcribes it with speaker labels and emotional tags, then generates a complete SOAP note (or DAP, BIRP, Progress) ready for your review. Risk language is flagged in real time. This alone saves 5+ hours per week.</p>
+                <ul class="mvp-features" id="mvpFeatures">
+                    <li>Live transcription with emotional tagging</li>
+                    <li>Auto-generated SOAP, DAP, BIRP, or Progress notes</li>
+                    <li>Real-time risk detection (suicidal ideation, self-harm, homicidal thoughts)</li>
+                    <li>Session summary with suggested homework</li>
+                    <li>Treatment plan draft updates</li>
+                    <li>Stalled progress alerts after repeat sessions</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Session Lifecycle -->
+        <section class="lifecycle-section" id="lifecycleSection">
+            <div class="section-header" style="padding-bottom:36px;" id="lifecycleHeader">
+                <span class="section-badge">Full Session Lifecycle</span>
+                <h2>Cami is with you before, during, and after every session</h2>
+            </div>
+            <div class="lifecycle-steps" id="lifecycleSteps">
+                <div class="lifecycle-step">
+                    <div class="lifecycle-num">1</div>
+                    <div class="lifecycle-text">
+                        <h3>Pre-Session Prep</h3>
+                        <p>Cami pulls your client's history, surfaces treatment approaches that worked with similar presentations, flags triggers from last session, and generates a suggested session agenda. You approve or modify before the client walks in.</p>
+                    </div>
+                </div>
+                <div class="lifecycle-step">
+                    <div class="lifecycle-num">2</div>
+                    <div class="lifecycle-text">
+                        <h3>During-Session Scribe</h3>
+                        <p>Real-time transcription with speaker labels and emotional tagging. Risk language is flagged immediately -- not after the session ends. Cami documents what was said. Cami never diagnoses.</p>
+                    </div>
+                </div>
+                <div class="lifecycle-step">
+                    <div class="lifecycle-num">3</div>
+                    <div class="lifecycle-text">
+                        <h3>Post-Session Processing</h3>
+                        <p>Cami generates your session note in any format (SOAP, DAP, BIRP, Progress), suggests homework and interventions, updates your treatment plan draft, and flags if progress has stalled. You review and finalize -- Cami never decides for you.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Agent Features Grid -->
+        <section id="agentSection">
+            <div class="section-header" id="agentHeader">
+                <span class="section-badge">Agent Features</span>
+                <h2>Built to do things, not just talk</h2>
+                <p>Every feature saves time on admin so you can focus on the clinical work that matters.</p>
+            </div>
+            <div class="agent-grid" id="agentGrid">
+                <div class="agent-card">
+                    <div class="agent-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div>
+                    <h3>Session Notes Generator</h3>
+                    <p>Auto-generates structured clinical notes from transcripts.</p>
+                    <ul>
+                        <li>SOAP, DAP, BIRP, Progress formats</li>
+                        <li>Extracts subjective, objective, assessment, plan</li>
+                        <li>Flags key moments and risk indicators</li>
+                        <li>Includes suggested homework and interventions</li>
+                    </ul>
+                </div>
+                <div class="agent-card">
+                    <div class="agent-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                    <h3>Risk Detection</h3>
+                    <p>Real-time monitoring for risk language across sessions.</p>
+                    <ul>
+                        <li>Suicidal ideation detection</li>
+                        <li>Self-harm language flagging</li>
+                        <li>Homicidal ideation monitoring</li>
+                        <li>Crisis protocol checklist generation</li>
+                        <li>Immediate therapist alert -- never delayed</li>
+                    </ul>
+                </div>
+                <div class="agent-card">
+                    <div class="agent-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                    <h3>Insurance &amp; Billing Agent</h3>
+                    <p>Automates the documentation burden that eats 5+ hours/week.</p>
+                    <ul>
+                        <li>Insurance-formatted progress notes</li>
+                        <li>CPT code suggestions</li>
+                        <li>Authorization tracking (sessions remaining)</li>
+                        <li>Prior authorization letter drafting</li>
+                        <li>Alerts when authorization running low</li>
+                    </ul>
+                </div>
+                <div class="agent-card">
+                    <div class="agent-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+                    <h3>Progress Tracking + Learning</h3>
+                    <p>Gets smarter with every session through M.I.N. continuous learning.</p>
+                    <ul>
+                        <li>Emotional trend analysis over time</li>
+                        <li>Recurring theme detection</li>
+                        <li>Treatment plan progress reports</li>
+                        <li>Stalled progress alerts</li>
+                        <li>M.I.N. learns YOUR practice patterns — gets better every day</li>
+                    </ul>
+                </div>
+                <div class="agent-card">
+                    <div class="agent-icon">H+</div>
+                    <h3>Clinical Decision Support</h3>
+                    <p>Evidence-based insights -- never diagnosis, always support.</p>
+                    <ul>
+                        <li>Drug interaction flagging with severity levels</li>
+                        <li>Evidence-graded responses (RCTs, guidelines)</li>
+                        <li>Pattern recognition across your practice</li>
+                        <li>M.I.N. cross-references anonymized outcomes</li>
+                        <li>Human+ empathy in every interaction</li>
+                    </ul>
+                </div>
+                <div class="agent-card">
+                    <div class="agent-icon">&#x1F56E;</div>
+                    <h3>Supervision &amp; Growth</h3>
+                    <p>Private tools for therapist self-reflection and development.</p>
+                    <ul>
+                        <li>Self-reflection prompts (private journal mode)</li>
+                        <li>Suggests relevant literature for stuck cases</li>
+                        <li>CE course recommendations based on practice gaps</li>
+                        <li>Anonymized similar case learning</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- HIPAA -->
+        <section class="clinical-hipaa">
+            <div class="hipaa-box">
+                <div class="hipaa-icon">HIPAA</div>
+                <div class="hipaa-content">
+                    <h2>Built for HIPAA compliance</h2>
+                    <p>Clinical data demands the highest standard. Cami's clinical API is designed with HIPAA requirements in mind from the ground up.</p>
+                    <ul>
+                        <li><strong>No PHI stored</strong> -- audit logs contain only metadata. Zero patient data at rest.</li>
+                        <li><strong>BAA enforcement</strong> -- clinical API endpoints require a signed Business Associate Agreement before activation.</li>
+                        <li><strong>Full audit trail</strong> -- every clinical consultation generates a compliance log entry.</li>
+                        <li><strong>Audio deletion</strong> -- Scribe transcribes, then audio is deleted. Only text remains.</li>
+                        <li><strong>De-identification required</strong> -- patient context accepted only in de-identified form.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Examples -->
+        <section class="clinical-code-section" id="apiSection">
+            <h2 id="apiTitle">API for every agent</h2>
+            <p class="code-sub" id="apiSub">Integrate Cami's clinical agents into your EHR, practice management, or internal tools.</p>
+            <div id="apiExamples">
+                <!-- Populated by JavaScript based on focus -->
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section class="clinical-tiers-section">
+            <h2>For individuals and practices</h2>
+            <p class="tiers-sub">Session scribe, auto notes, risk detection, insurance tracking, and progress monitoring -- included at every tier.</p>
+            <div class="clinical-tiers">
+                <div class="clinical-tier">
+                    <span class="tier-badge">Individual — $29/mo</span>
+                    <h3>Cami Health</h3>
+                    <p class="tier-desc">Full clinical assistant on usecami.com. Session scribe, auto-notes, risk detection, and progress tracking.</p>
+                    <ul>
+                        <li>Session scribe with emotional tagging</li>
+                        <li>Auto-generated SOAP/DAP/BIRP notes</li>
+                        <li>Real-time risk detection</li>
+                        <li>Clinical decision support</li>
+                        <li>Insurance note formatting</li>
+                        <li>Progress tracking and trends</li>
+                        <li>Also includes Research, Tutor, and Cami Money</li>
+                    </ul>
+                    <div class="tier-cta">
+                        <a href="/dashboard" class="primary-btn">Subscribe</a>
+                    </div>
+                </div>
+
+                <div class="clinical-tier featured">
+                    <span class="tier-badge">Practice API — $199/mo</span>
+                    <h3>API Integration</h3>
+                    <p class="tier-desc">Full REST API for all clinical agents. Integrate session notes, risk detection, insurance automation, and progress tracking into your EHR.</p>
+                    <ul>
+                        <li>All Individual features via API</li>
+                        <li>Session lifecycle management endpoints</li>
+                        <li>Insurance authorization tracking</li>
+                        <li>Prior authorization letter drafting</li>
+                        <li>Practice knowledge base upload</li>
+                        <li>HIPAA BAA included</li>
+                        <li>Full compliance audit log</li>
+                    </ul>
+                    <div class="tier-cta">
+                        <a href="/business" class="primary-btn">Get API key</a>
+                    </div>
+                </div>
+
+                <div class="clinical-tier">
+                    <span class="tier-badge">Enterprise — custom</span>
+                    <h3>Hospital / Health System</h3>
+                    <p class="tier-desc">Production-grade infrastructure for health systems. FHIR integration. Population health analytics. 99.9% SLA.</p>
+                    <ul>
+                        <li>Everything in Practice API, plus:</li>
+                        <li>FHIR R4 / HL7v2 integration</li>
+                        <li>Batch processing (up to 10K patients)</li>
+                        <li>Population health analytics</li>
+                        <li>Real-time webhooks for critical findings</li>
+                        <li>SOC 2 / HIPAA compliance reports</li>
+                        <li>Tamper-evident audit logging</li>
+                        <li>Circuit breakers &amp; HA infrastructure</li>
+                        <li>Custom rate limits (500K+ calls/day)</li>
+                        <li>Dedicated instance &amp; 24/7 support</li>
+                    </ul>
+                    <div class="tier-cta">
+                        <a href="mailto:contact@usecami.com" class="outline-btn">Talk to sales</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Disclaimer -->
+        <section class="clinical-disclaimer-section">
+            <div class="clinical-disclaimer-box">
+                <p><strong>Disclaimer:</strong> Cami Health is a decision-support and documentation tool -- it does not diagnose, prescribe, or provide treatment. Cami suggests, drafts, and surfaces insights -- you decide. Clinical judgment must prevail. For patient care decisions, always rely on qualified healthcare professionals. Every Cami response includes this disclaimer automatically.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="page-footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">Cami</div>
+                    <p class="footer-desc">The only AI that learns and grows with you. Other AI is frozen — Cami gets smarter every day through M.I.N.</p>
+                    <div class="footer-social">
+                        <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                            <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="/customer-service">Customer Service</a></li>
+                        <li><a href="/health">Healthcare</a></li>
+                        <li><a href="/legal-intelligence">Legal Intelligence</a></li>
+                        <li><span class="footer-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        <li><span class="footer-disabled">Financial <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        <li><span class="footer-disabled">Education <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Technology</h4>
+                    <ul>
+                        <li><a href="/human-plus">Human+</a></li>
+                        <li><a href="/min">M.I.N.</a></li>
+                        <li><a href="/platform">Platform</a></li>
+                        <li><a href="/roadmap">Roadmap</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copy">© 2026 Cami. All rights reserved.</div>
+                <div class="footer-legal">
+                    <a href="/privacy">Privacy Policy</a>
+                    <a href="/terms">Terms of Service</a>
+                    <a href="/disclaimer">Disclaimer</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="/static/space-bg.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.initSpaceBg) window.initSpaceBg('space-bg-stars'); });</script>
+    <script src="/static/synth-anim.js"></script>
+    <script src="/static/theme-toggle.js"></script>
+    <script>
+    // Health focus toggle (Mental Health / Medicine)
+    var healthFocus = localStorage.getItem('cami_health_focus') || 'mental_health';
+
+    function setHealthFocus(focus) {
+        healthFocus = focus;
+        localStorage.setItem('cami_health_focus', focus);
+        updateHealthFocusUI();
+    }
+
+    var apiExamples = {
+        mental_health: [
+            {
+                label: 'Session Notes',
+                code: `<span class="comment">// POST /health/notes/generate</span><br>
+{<br>
+&nbsp;&nbsp;<span class="key">"transcript_text"</span>: <span class="string">"Client: I've been feeling really anxious..."</span>,<br>
+&nbsp;&nbsp;<span class="key">"format"</span>: <span class="string">"soap"</span>,<br>
+&nbsp;&nbsp;<span class="key">"session_context"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"session_number"</span>: <span class="keyword">8</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"presenting_problem"</span>: <span class="string">"generalized anxiety disorder"</span><br>
+&nbsp;&nbsp;}<br>
+}<br><br>
+<span class="comment">// Returns: note_id, sections (subjective, objective,</span><br>
+<span class="comment">// assessment, plan), risk_flags, suggestions, homework</span>`
+            },
+            {
+                label: 'Insurance Note',
+                code: `<span class="comment">// POST /health/insurance/note</span><br>
+{<br>
+&nbsp;&nbsp;<span class="key">"session_note"</span>: { <span class="comment">/* from notes/generate */</span> },<br>
+&nbsp;&nbsp;<span class="key">"diagnosis_codes"</span>: [<span class="string">"F41.1"</span>],<br>
+&nbsp;&nbsp;<span class="key">"session_duration_minutes"</span>: <span class="keyword">53</span><br>
+}<br><br>
+<span class="comment">// Returns: insurance-formatted note, CPT suggestion,</span><br>
+<span class="comment">// medical necessity justification</span>`
+            },
+            {
+                label: 'Risk Detection (Real-Time)',
+                code: `<span class="comment">// POST /health/session/utterance</span><br>
+{<br>
+&nbsp;&nbsp;<span class="key">"session_id"</span>: <span class="string">"sess_abc123"</span>,<br>
+&nbsp;&nbsp;<span class="key">"utterance"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"text"</span>: <span class="string">"Sometimes I think about ending it all..."</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"start"</span>: <span class="keyword">1423.5</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"speaker"</span>: <span class="string">"client"</span><br>
+&nbsp;&nbsp;}<br>
+}<br><br>
+<span class="comment">// Returns: IMMEDIATE risk_alerts with severity,</span><br>
+<span class="comment">// crisis protocol checklist, timestamp</span>`
+            }
+        ],
+        medicine: [
+            {
+                label: 'Differential Diagnosis',
+                code: `<span class="comment">// POST /clinical/differential</span><br>
+{<br>
+&nbsp;&nbsp;<span class="key">"symptoms"</span>: [<span class="string">"chest pain"</span>, <span class="string">"shortness of breath"</span>, <span class="string">"diaphoresis"</span>],<br>
+&nbsp;&nbsp;<span class="key">"age"</span>: <span class="keyword">58</span>,<br>
+&nbsp;&nbsp;<span class="key">"sex"</span>: <span class="string">"M"</span>,<br>
+&nbsp;&nbsp;<span class="key">"vitals"</span>: { <span class="key">"bp_systolic"</span>: <span class="keyword">165</span>, <span class="key">"heart_rate"</span>: <span class="keyword">102</span> },<br>
+&nbsp;&nbsp;<span class="key">"medications"</span>: [<span class="string">"metformin"</span>, <span class="string">"lisinopril"</span>, <span class="string">"atorvastatin"</span>]<br>
+}<br><br>
+<span class="comment">// Returns: ranked differentials (Acute MI, PE, Aortic dissection...),</span><br>
+<span class="comment">// red_flags, recommended_workup, processing_time_ms &lt;90s</span>`
+            },
+            {
+                label: 'Drug Interactions',
+                code: `<span class="comment">// POST /clinical/interactions</span><br>
+{<br>
+&nbsp;&nbsp;<span class="key">"medications"</span>: [<span class="string">"warfarin"</span>, <span class="string">"aspirin"</span>, <span class="string">"simvastatin"</span>, <span class="string">"clarithromycin"</span>],<br>
+&nbsp;&nbsp;<span class="key">"gfr"</span>: <span class="keyword">45</span><br>
+}<br><br>
+<span class="comment">// Returns: interactions (simvastatin+clarithromycin: CONTRAINDICATED),</span><br>
+<span class="comment">// black_box_warnings, renal_adjustments, CYP450 pathways</span>`
+            },
+            {
+                label: 'Enterprise: FHIR Integration',
+                code: `<span class="comment">// GET /enterprise/fhir/patient/{id}/everything</span><br>
+<span class="comment">// Headers: X-API-Key: cami_xxx</span><br><br>
+<span class="comment">// Returns: patient demographics, observations, medications,</span><br>
+<span class="comment">// conditions — converted to Cami format for analysis</span><br><br>
+<span class="comment">// POST /enterprise/fhir/bundle/parse</span><br>
+{<br>
+&nbsp;&nbsp;<span class="key">"bundle"</span>: { <span class="comment">/* FHIR R4 Bundle */</span> }<br>
+}<br><br>
+<span class="comment">// Returns: parsed patients, observations, medications, conditions</span>`
+            },
+            {
+                label: 'Enterprise: Batch Processing',
+                code: `<span class="comment">// POST /enterprise/batch/differential</span><br>
+{<br>
+&nbsp;&nbsp;<span class="key">"patients"</span>: [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="key">"patient_id"</span>: <span class="string">"p1"</span>, <span class="key">"symptoms"</span>: [...], <span class="key">"age"</span>: <span class="keyword">58</span> },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="key">"patient_id"</span>: <span class="string">"p2"</span>, <span class="key">"symptoms"</span>: [...], <span class="key">"age"</span>: <span class="keyword">42</span> },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ... up to 5000 patients</span><br>
+&nbsp;&nbsp;],<br>
+&nbsp;&nbsp;<span class="key">"webhook_url"</span>: <span class="string">"https://your-system.com/webhook"</span><br>
+}<br><br>
+<span class="comment">// Returns: batch results with population-level insights,</span><br>
+<span class="comment">// top differentials across cohort, red flag count</span>`
+            },
+            {
+                label: 'Enterprise: Analytics & Audit',
+                code: `<span class="comment">// GET /enterprise/analytics/clinical?days=30</span><br>
+<span class="comment">// Headers: X-API-Key: cami_xxx</span><br><br>
+<span class="comment">// Returns: differentials_generated, top_conditions,</span><br>
+<span class="comment">// critical_interactions_found, estimated_time_saved_hours</span><br><br>
+<span class="comment">// POST /enterprise/audit/compliance-report</span><br>
+{<br>
+&nbsp;&nbsp;<span class="key">"report_type"</span>: <span class="string">"hipaa"</span>,<br>
+&nbsp;&nbsp;<span class="key">"period_days"</span>: <span class="keyword">30</span><br>
+}<br><br>
+<span class="comment">// Returns: PHI access summary, events by type/user,</span><br>
+<span class="comment">// anomalies detected, compliance recommendations</span>`
+            },
+            {
+                label: 'Enterprise: Webhooks',
+                code: `<span class="comment">// POST /enterprise/webhooks</span><br>
+{<br>
+&nbsp;&nbsp;<span class="key">"url"</span>: <span class="string">"https://your-ehr.com/cami-events"</span>,<br>
+&nbsp;&nbsp;<span class="key">"events"</span>: [<span class="string">"critical_finding"</span>, <span class="string">"batch_completed"</span>]<br>
+}<br><br>
+<span class="comment">// Returns: endpoint_id, secret (for signature verification)</span><br><br>
+<span class="comment">// Webhook payload delivered to your endpoint:</span><br>
+{<br>
+&nbsp;&nbsp;<span class="key">"event_type"</span>: <span class="string">"critical_finding"</span>,<br>
+&nbsp;&nbsp;<span class="key">"patient_id"</span>: <span class="string">"ref_123"</span>,<br>
+&nbsp;&nbsp;<span class="key">"finding"</span>: <span class="string">"PE detected"</span>,<br>
+&nbsp;&nbsp;<span class="key">"urgency"</span>: <span class="string">"critical"</span><br>
+}`
+            }
+        ]
+    };
+
+    var focusContent = {
+        mental_health: {
+            heroTitle: 'The AI assistant that does the work therapists hate',
+            heroSub: 'Other clinical AI is frozen — it never learns your practice. Cami gets smarter with every session through M.I.N. Session scribe, auto SOAP notes, risk detection, progress tracking. Your 100th session note is dramatically better than your first. HIPAA-ready.',
+            mvpTitle: 'Session Scribe + Auto SOAP Notes',
+            mvpDesc: 'Record your session. Cami transcribes it with speaker labels and emotional tags, then generates a complete SOAP note (or DAP, BIRP, Progress) ready for your review. Risk language is flagged in real time. This alone saves 5+ hours per week.',
+            mvpFeatures: [
+                'Live transcription with emotional tagging',
+                'Auto-generated SOAP, DAP, BIRP, or Progress notes',
+                'Real-time risk detection (suicidal ideation, self-harm, homicidal thoughts)',
+                'Session summary with suggested homework',
+                'Treatment plan draft updates',
+                'Stalled progress alerts after repeat sessions'
+            ],
+            lifecycleHeaderBadge: 'Full Session Lifecycle',
+            lifecycleHeaderH2: 'Cami is with you before, during, and after every session',
+            lifecycleSteps: [
+                { title: 'Pre-Session Prep', desc: "Cami pulls your client's history, surfaces treatment approaches that worked with similar presentations, flags triggers from last session, and generates a suggested session agenda. You approve or modify before the client walks in." },
+                { title: 'During-Session Scribe', desc: 'Real-time transcription with speaker labels and emotional tagging. Risk language is flagged immediately -- not after the session ends. Cami documents what was said. Cami never diagnoses.' },
+                { title: 'Post-Session Processing', desc: 'Cami generates your session note in any format (SOAP, DAP, BIRP, Progress), suggests homework and interventions, updates your treatment plan draft, and flags if progress has stalled. You review and finalize -- Cami never decides for you.' }
+            ],
+            agentHeaderDesc: 'Every feature saves time on admin so you can focus on the clinical work that matters.',
+            agentCards: [
+                { icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>', title: 'Session Notes Generator', desc: 'Auto-generates structured clinical notes from transcripts.', items: ['SOAP, DAP, BIRP, Progress formats', 'Extracts subjective, objective, assessment, plan', 'Flags key moments and risk indicators', 'Includes suggested homework and interventions'] },
+                { icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>', title: 'Risk Detection', desc: 'Real-time monitoring for risk language across sessions.', items: ['Suicidal ideation detection', 'Self-harm language flagging', 'Homicidal ideation monitoring', 'Crisis protocol checklist generation', 'Immediate therapist alert -- never delayed'] },
+                { icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>', title: 'Insurance &amp; Billing Agent', desc: 'Automates the documentation burden that eats 5+ hours/week.', items: ['Insurance-formatted progress notes', 'CPT code suggestions', 'Authorization tracking (sessions remaining)', 'Prior authorization letter drafting', 'Alerts when authorization running low'] },
+                { icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>', title: 'Progress Tracking', desc: 'Cross-session pattern recognition and outcome trending.', items: ['Emotional trend analysis over time', 'Recurring theme detection', 'Treatment plan progress reports', 'Stalled progress alerts', 'Anonymized similar case outcomes from M.I.N.'] },
+                { icon: 'H+', title: 'Clinical Decision Support', desc: 'Evidence-based insights -- never diagnosis, always support.', items: ['Drug interaction flagging with severity levels', 'Evidence-graded responses (RCTs, guidelines)', 'Pattern recognition across your practice', 'M.I.N. cross-references anonymized outcomes', 'Human+ empathy in every interaction'] },
+                { icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>', title: 'Supervision &amp; Growth', desc: 'Private tools for therapist self-reflection and development.', items: ['Self-reflection prompts (private journal mode)', 'Suggests relevant literature for stuck cases', 'CE course recommendations based on practice gaps', 'Anonymized similar case learning'] }
+            ]
+        },
+        medicine: {
+            heroTitle: 'Clinical AI that identifies 10+ findings in under 90 seconds',
+            heroSub: 'The only clinical AI that learns from YOUR institution. Differential diagnosis, drug interactions, lab interpretation, evidence-graded guidelines — and it gets smarter every day through M.I.N. Your 1000th case draws on insights from every prior case. No other clinical AI does this.',
+            mvpTitle: 'Comprehensive Care: Multi-Finding Detection in Seconds',
+            mvpDesc: 'Present your case. Cami analyzes symptoms, labs, imaging reports, and medications simultaneously — generating ranked differentials, flagging critical findings, detecting drug interactions, and surfacing evidence-based recommendations in a single unified view. Complex cases that take 20+ minutes to work through manually are processed in under 90 seconds.',
+            mvpFeatures: [
+                'Multi-finding detection: 10+ clinical findings analyzed simultaneously',
+                'Critical case prioritization: emergent findings flagged within seconds',
+                'Red flag detection: stroke, PE, sepsis, MI patterns automatically surfaced',
+                'Evidence-graded summaries: AHA, ACC, IDSA, Cochrane guidelines integrated',
+                'Full CYP450 interaction mapping with severity grading',
+                'Radiology report analysis with incidental finding tracking'
+            ],
+            lifecycleHeaderBadge: 'Point-of-Care Clinical Workflow',
+            lifecycleHeaderH2: 'Cami supports you through the entire clinical encounter',
+            lifecycleSteps: [
+                { title: 'Case Intake & Differential', desc: "Cami generates a ranked differential diagnosis from symptoms, history, and demographics — with red flag detection for emergent conditions (stroke, PE, MI, sepsis). Critical findings are flagged immediately. Drug interactions are checked against the full medication list before you see the patient." },
+                { title: 'Evidence & Decision Support', desc: 'Real-time access to evidence-graded guidelines (AHA, ACC, IDSA, Cochrane). Lab interpretation with pattern recognition (anemia workup, sepsis pattern, DKA). Drug dosing for renal/hepatic impairment. Treatment protocols with NNT/NNH where available. Cami never prescribes — it surfaces the evidence so you can decide.' },
+                { title: 'Documentation & Quality', desc: 'Auto-generated H&P notes, procedure notes, discharge summaries, and referral letters — all with ICD-10/CPT suggestions. Sepsis bundle compliance tracking. Preventive care gap analysis. Antibiotic stewardship alerts. Patient education materials in plain language. You review and finalize — Cami never decides for you.' }
+            ],
+            agentHeaderDesc: 'Clinical-grade AI infrastructure for hospitals, clinics, and health systems.',
+            agentCards: [
+                { icon: 'Dx', title: 'Differential Engine', desc: 'Ranked differential diagnosis with red flag detection.', items: ['Bayesian-weighted differential lists from symptoms + history', 'Emergent condition detection: stroke, PE, MI, sepsis, DKA', 'Comorbidity and demographic adjustment', 'Targeted workup recommendations to narrow differential', 'Multi-finding analysis in &lt;90 seconds'] },
+                { icon: 'Rx', title: 'Drug Interaction Engine', desc: 'Comprehensive CYP450 mapping with severity grading.', items: ['Contraindicated combinations flagged immediately', 'Full CYP3A4, 2D6, 2C9, 2C19, 1A2 pathway mapping', 'Black box warning surfacing', 'Renal dose adjustment (GFR-based)', 'Hepatic dose adjustment (Child-Pugh)', 'Food-drug interaction alerts'] },
+                { icon: 'Lab', title: 'Lab Interpretation', desc: 'Context-aware analysis with pattern recognition.', items: ['Critical value detection with immediate alerts', 'Abnormality flagging with clinical significance', 'Pattern recognition: iron deficiency, B12, sepsis, DKA, DIC', 'Trend analysis over time', 'Differential narrowing from lab patterns', 'Suggested follow-up labs'] },
+                { icon: 'Ev', title: 'Evidence Search', desc: 'Instant guideline and research summaries.', items: ['AHA, ACC, IDSA, ADA, ACG guideline integration', 'RCT and Cochrane review summaries', 'NNT/NNH calculations where available', 'Graded strength of evidence (A/B/C/D)', 'Landmark trial references (ASPREE, DAPA-HF, ARISTOTLE...)'] },
+                { icon: 'Img', title: 'Imaging Analysis', desc: 'Radiology report parsing with critical finding detection.', items: ['Critical finding detection: PE, stroke, dissection, perforation', 'Incidental finding tracking with follow-up recommendations', 'Fleischner Society guideline integration for nodules', 'Multi-modality support: CT, MRI, X-ray, US', 'Comparison to prior studies when available'] },
+                { icon: 'Doc', title: 'Clinical Documentation', desc: 'Structured notes with ICD-10/CPT suggestions.', items: ['H&amp;P note generation from encounter data', 'Procedure note templates (LP, central line, paracentesis...)', 'Discharge summary drafting', 'Referral letter generation', 'Patient education in plain language', 'E/M code suggestions based on complexity'] },
+                { icon: 'QI', title: 'Quality & Protocol', desc: 'Evidence-based protocol compliance tracking.', items: ['Sepsis bundle compliance (Hour-1 bundle)', 'Antibiotic stewardship recommendations', 'Preventive care gap analysis (screening, immunizations)', 'Chronic disease management (diabetes, CHF)', 'HEDIS/MIPS quality measure support'] },
+                { icon: 'API', title: 'Enterprise Infrastructure', desc: 'Production-grade platform for health systems.', items: ['FHIR R4 &amp; HL7v2 integration', 'Batch processing (up to 10K patients)', 'Real-time webhooks for critical findings', 'Circuit breakers &amp; response caching', 'SOC 2 / HIPAA audit reports', 'Multi-tenant organization management', '99.9% SLA with dedicated support'] }
+            ]
+        }
+    };
+
+    function updateHealthFocusUI() {
+        var mhBtn = document.getElementById('focusBtnMH');
+        var medBtn = document.getElementById('focusBtnMed');
+        var c = focusContent[healthFocus] || focusContent.mental_health;
+
+        // Toggle button styling
+        var activeBtn = healthFocus === 'medicine' ? medBtn : mhBtn;
+        var inactiveBtn = healthFocus === 'medicine' ? mhBtn : medBtn;
+        if (activeBtn) { activeBtn.style.border = '1px solid var(--accent)'; activeBtn.style.background = 'rgba(90,125,100,0.2)'; activeBtn.style.color = 'var(--accent)'; }
+        if (inactiveBtn) { inactiveBtn.style.border = '1px solid rgba(255,255,255,0.15)'; inactiveBtn.style.background = 'transparent'; inactiveBtn.style.color = 'rgba(255,255,255,0.6)'; }
+
+        // Hero
+        var heroTitle = document.getElementById('heroTitle');
+        var heroSub = document.getElementById('heroSub');
+        if (heroTitle) heroTitle.textContent = c.heroTitle;
+        if (heroSub) heroSub.textContent = c.heroSub;
+
+        // MVP
+        var mvpTitle = document.getElementById('mvpTitle');
+        var mvpDesc = document.getElementById('mvpDesc');
+        var mvpFeatures = document.getElementById('mvpFeatures');
+        if (mvpTitle) mvpTitle.textContent = c.mvpTitle;
+        if (mvpDesc) mvpDesc.textContent = c.mvpDesc;
+        if (mvpFeatures) mvpFeatures.innerHTML = c.mvpFeatures.map(function(f) { return '<li>' + f + '</li>'; }).join('');
+
+        // Lifecycle
+        var lifecycleHeader = document.getElementById('lifecycleHeader');
+        var lifecycleSteps = document.getElementById('lifecycleSteps');
+        if (lifecycleHeader) {
+            lifecycleHeader.innerHTML = '<span class="section-badge">' + c.lifecycleHeaderBadge + '</span><h2>' + c.lifecycleHeaderH2 + '</h2>';
+        }
+        if (lifecycleSteps) {
+            lifecycleSteps.innerHTML = c.lifecycleSteps.map(function(s, i) {
+                return '<div class="lifecycle-step"><div class="lifecycle-num">' + (i + 1) + '</div><div class="lifecycle-text"><h3>' + s.title + '</h3><p>' + s.desc + '</p></div></div>';
+            }).join('');
+        }
+
+        // Agent grid
+        var agentHeader = document.getElementById('agentHeader');
+        var agentGrid = document.getElementById('agentGrid');
+        if (agentHeader) {
+            agentHeader.innerHTML = '<span class="section-badge">Agent Features</span><h2>Built to do things, not just talk</h2><p>' + c.agentHeaderDesc + '</p>';
+        }
+        if (agentGrid) {
+            agentGrid.innerHTML = c.agentCards.map(function(card) {
+                var lis = card.items.map(function(item) { return '<li>' + item + '</li>'; }).join('');
+                return '<div class="agent-card"><div class="agent-icon">' + card.icon + '</div><h3>' + card.title + '</h3><p>' + card.desc + '</p><ul>' + lis + '</ul></div>';
+            }).join('');
+        }
+
+        // API Examples
+        var apiExamplesContainer = document.getElementById('apiExamples');
+        var apiTitle = document.getElementById('apiTitle');
+        var apiSub = document.getElementById('apiSub');
+        if (apiTitle) {
+            apiTitle.textContent = healthFocus === 'medicine' ? 'Clinical API — Enterprise Ready' : 'API for every agent';
+        }
+        if (apiSub) {
+            apiSub.textContent = healthFocus === 'medicine' 
+                ? 'Full REST API for differential diagnosis, drug interactions, lab interpretation, imaging analysis, and clinical documentation. HIPAA-compliant. BAA available.'
+                : 'Integrate Cami\'s clinical agents into your EHR, practice management, or internal tools.';
+        }
+        if (apiExamplesContainer) {
+            var examples = apiExamples[healthFocus] || apiExamples.mental_health;
+            apiExamplesContainer.innerHTML = examples.map(function(ex) {
+                return '<p class="code-label">' + ex.label + '</p><div class="clinical-code">' + ex.code + '</div>';
+            }).join('');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() { updateHealthFocusUI(); });
+    </script>
+    
+    <!-- Cami Orb -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="/static/js/cami-orb.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            CamiOrb.init('cami-orb', { theme: 'health' });
+        });
+    </script>
+    
+    <style>
+        .orb-hero-health {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 24px 20px;
+        }
+        .orb-container-health {
+            width: 180px;
+            height: 180px;
+            position: relative;
+        }
+        @media (max-width: 768px) {
+            .orb-hero-health { padding: 100px 24px 10px; }
+            .orb-container-health { width: 140px; height: 140px; }
+        }
+    </style>
+</body>
+</html>

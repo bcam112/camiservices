@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cami Legal Intelligence — AI That Learns Your Practice</title>
+    <meta name="description" content="The only legal AI that learns YOUR firm's patterns. Document vault, contract analysis, workflow automation — and it gets smarter every day. Your 100th query is dramatically better than your first. No other legal AI does this.">
+    <link rel="canonical" href="https://usecami.com/legal-intelligence">
+    <meta property="og:title" content="Cami Legal Intelligence — Enterprise AI Platform for Law Firms">
+    <meta property="og:description" content="Legal AI that learns YOUR practice. Document vault, contract analysis, workflow automation, and Clio/MyCase/PracticePanther integrations.">
+    <meta property="og:url" content="https://usecami.com/legal-intelligence">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/space-bg.css">
+    <link rel="stylesheet" href="/static/enterprise-pages.css">
+    <style>
+        html, body { overflow-y: auto; overflow-x: hidden; }
+        .legal-page { position: relative; z-index: 0; min-height: 100vh; }
+
+        /* Hero Section */
+        .legal-hero {
+            max-width: 900px; margin: 0 auto;
+            padding: 140px 24px 60px; text-align: center;
+        }
+        .legal-hero .trust-badges {
+            display: flex; gap: 24px; justify-content: center;
+            flex-wrap: wrap; margin-bottom: 24px;
+        }
+        .trust-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+            color: var(--text-secondary); text-transform: uppercase;
+        }
+        .trust-badge svg { width: 14px; height: 14px; fill: var(--accent); }
+        .legal-hero .badge {
+            display: inline-block; font-size: 11px; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--accent); padding: 5px 14px;
+            border: 1px solid rgba(90,125,100,0.3);
+            border-radius: 20px; margin-bottom: 20px;
+            background: rgba(90,125,100,0.08);
+        }
+        .legal-hero h1 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 44px; font-weight: 600; color: var(--text-primary);
+            letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 20px;
+        }
+        .legal-hero .sub {
+            font-size: 18px; color: var(--text-secondary);
+            line-height: 1.7; max-width: 700px; margin: 0 auto 32px;
+        }
+        .hero-metrics {
+            display: flex; gap: 48px; justify-content: center;
+            flex-wrap: wrap; margin: 40px 0;
+            padding: 32px; background: rgba(90,125,100,0.04);
+            border-radius: 16px; border: 1px solid var(--border);
+        }
+        .hero-metric {
+            text-align: center;
+        }
+        .hero-metric .number {
+            font-size: 36px; font-weight: 700; color: var(--accent);
+            letter-spacing: -0.02em; line-height: 1;
+        }
+        .hero-metric .label {
+            font-size: 13px; color: var(--text-secondary);
+            margin-top: 6px; text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .legal-hero-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+        .legal-hero-ctas a {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 16px 32px; border-radius: 10px;
+            font-size: 15px; font-weight: 600; text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .legal-hero-ctas a:hover { transform: translateY(-2px); }
+        .cta-primary {
+            background: var(--accent); color: #f8faf8;
+            box-shadow: 0 4px 16px rgba(90,125,100,0.25);
+        }
+        .cta-primary:hover { box-shadow: 0 8px 28px rgba(90,125,100,0.35); }
+        .cta-secondary {
+            background: transparent; color: var(--text-primary);
+            border: 1.5px solid var(--border);
+        }
+        .cta-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Section headers */
+        .section-header {
+            max-width: 780px; margin: 0 auto; padding: 80px 24px 40px; text-align: center;
+        }
+        .section-header h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 32px; font-weight: 600; color: var(--text-primary);
+            margin-bottom: 14px; letter-spacing: -0.02em;
+        }
+        .section-header p {
+            font-size: 16px; color: var(--text-secondary); line-height: 1.7;
+            max-width: 600px; margin: 0 auto;
+        }
+        .section-header .section-badge {
+            display: inline-block; font-size: 10px; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 12px;
+        }
+
+        /* Enterprise Platform Cards */
+        .platform-grid {
+            max-width: 1100px; margin: 0 auto;
+            padding: 0 24px 80px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+        }
+        .platform-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 20px; padding: 36px 28px;
+            box-shadow: 0 4px 24px var(--shadow);
+            transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+            position: relative; overflow: hidden;
+        }
+        .platform-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 4px; background: linear-gradient(90deg, var(--accent), rgba(90,125,100,0.3));
+            opacity: 0; transition: opacity 0.25s;
+        }
+        .platform-card:hover { 
+            border-color: rgba(90,125,100,0.4); 
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px var(--shadow);
+        }
+        .platform-card:hover::before { opacity: 1; }
+        .platform-card.featured {
+            border-color: var(--accent);
+            box-shadow: 0 8px 36px rgba(90,125,100,0.15);
+        }
+        .platform-card.featured::before { opacity: 1; }
+        .platform-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 56px; height: 56px; border-radius: 14px;
+            background: rgba(90,125,100,0.1); color: var(--accent);
+            font-size: 22px; font-weight: 700; margin-bottom: 20px;
+        }
+        .platform-card .new-badge {
+            position: absolute; top: 20px; right: 20px;
+            font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; color: #fff;
+            background: var(--accent); padding: 4px 10px;
+            border-radius: 4px;
+        }
+        .platform-card h3 { 
+            font-size: 19px; font-weight: 600; color: var(--text-primary); 
+            margin-bottom: 10px; 
+        }
+        .platform-card .desc { 
+            font-size: 14px; color: var(--text-secondary); 
+            line-height: 1.65; margin-bottom: 20px; 
+        }
+        .platform-card ul { list-style: none; padding: 0; margin: 0; }
+        .platform-card ul li {
+            font-size: 13.5px; color: var(--text-secondary); line-height: 1.6;
+            padding-left: 20px; position: relative; margin-bottom: 8px;
+        }
+        .platform-card ul li::before {
+            content: '✓'; position: absolute; left: 0; top: 0;
+            color: var(--accent); font-size: 12px; font-weight: 700;
+        }
+
+        /* Integration Logos */
+        .integrations-section {
+            max-width: 900px; margin: 0 auto; padding: 60px 24px;
+            text-align: center;
+        }
+        .integrations-section h3 {
+            font-size: 14px; font-weight: 600; letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+        .integration-logos {
+            display: flex; gap: 48px; justify-content: center;
+            align-items: center; flex-wrap: wrap;
+        }
+        .integration-logo {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 8px; padding: 20px 32px; background: var(--card-bg);
+            border: 1px solid var(--border); border-radius: 12px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .integration-logo:hover { 
+            border-color: var(--accent); 
+            transform: translateY(-2px);
+        }
+        .integration-logo .logo-name {
+            font-size: 16px; font-weight: 600; color: var(--text-primary);
+        }
+        .integration-logo .logo-desc {
+            font-size: 11px; color: var(--text-secondary);
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+
+        /* Security Section */
+        .security-section {
+            max-width: 1000px; margin: 0 auto; padding: 80px 24px;
+        }
+        .security-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+        }
+        .security-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 28px 24px; text-align: center;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+        .security-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 48px; height: 48px; border-radius: 12px;
+            background: rgba(90,125,100,0.1); color: var(--accent);
+            font-size: 20px; margin-bottom: 16px;
+        }
+        .security-card h4 { 
+            font-size: 15px; font-weight: 600; color: var(--text-primary); 
+            margin-bottom: 6px; 
+        }
+        .security-card p { 
+            font-size: 13px; color: var(--text-secondary); line-height: 1.55; 
+        }
+
+        /* Workflow Section */
+        .workflow-section {
+            max-width: 900px; margin: 0 auto; padding: 0 24px 80px;
+        }
+        .workflow-box {
+            background: rgba(90,125,100,0.04); border: 2px solid rgba(90,125,100,0.2);
+            border-radius: 20px; padding: 48px 40px;
+        }
+        .workflow-box h3 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 26px; font-weight: 600; color: var(--text-primary);
+            margin-bottom: 12px; text-align: center;
+        }
+        .workflow-box .intro {
+            font-size: 15px; color: var(--text-secondary); line-height: 1.7;
+            text-align: center; max-width: 600px; margin: 0 auto 36px;
+        }
+        .workflow-templates {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+        }
+        .workflow-template {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 12px; padding: 20px 16px; text-align: center;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .workflow-template:hover { 
+            border-color: var(--accent); transform: translateY(-2px); 
+        }
+        .workflow-template .wf-icon {
+            font-size: 24px; margin-bottom: 8px;
+        }
+        .workflow-template h4 {
+            font-size: 13px; font-weight: 600; color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .workflow-template p {
+            font-size: 11px; color: var(--text-secondary); line-height: 1.5;
+        }
+
+        /* Core Differentiators */
+        .legal-diff {
+            max-width: 1000px; margin: 0 auto;
+            padding: 0 24px 80px;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+        }
+        .legal-diff-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 28px 24px; text-align: center;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: border-color 0.25s, transform 0.25s;
+        }
+        .legal-diff-card:hover { border-color: rgba(90,125,100,0.4); transform: translateY(-3px); }
+        .legal-diff-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 48px; height: 48px; border-radius: 12px;
+            background: rgba(90,125,100,0.1); color: var(--accent);
+            font-size: 20px; font-weight: 700; margin-bottom: 16px;
+        }
+        .legal-diff-card h3 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+        .legal-diff-card p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* Tiers */
+        .legal-tiers-section {
+            max-width: 1100px; margin: 0 auto; padding: 0 24px 80px;
+        }
+        .legal-tiers-section h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 32px; font-weight: 600; color: var(--text-primary);
+            text-align: center; margin-bottom: 14px;
+        }
+        .legal-tiers-section .tiers-sub {
+            text-align: center; font-size: 16px; color: var(--text-secondary); 
+            margin-bottom: 48px; max-width: 600px; margin-left: auto; margin-right: auto;
+        }
+        .legal-tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+        .legal-tier {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 20px; padding: 40px 32px;
+            display: flex; flex-direction: column;
+            box-shadow: 0 4px 24px var(--shadow);
+            transition: border-color 0.25s, transform 0.25s;
+            position: relative;
+        }
+        .legal-tier:hover { border-color: rgba(90,125,100,0.4); transform: translateY(-3px); }
+        .legal-tier.featured { 
+            border-color: var(--accent); 
+            box-shadow: 0 12px 48px rgba(90,125,100,0.2); 
+        }
+        .legal-tier.featured::before {
+            content: 'Most Popular';
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; color: #fff; background: var(--accent);
+            padding: 6px 16px; border-radius: 20px;
+        }
+        .legal-tier .tier-badge {
+            display: inline-block; font-size: 10px; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 8px;
+        }
+        .legal-tier .price {
+            font-size: 42px; font-weight: 700; color: var(--text-primary);
+            letter-spacing: -0.02em; margin-bottom: 4px;
+        }
+        .legal-tier .price span { font-size: 16px; font-weight: 500; color: var(--text-secondary); }
+        .legal-tier h3 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;
+        }
+        .legal-tier .tier-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px; }
+        .legal-tier ul { list-style: none; padding: 0; margin: 0 0 28px; }
+        .legal-tier ul li {
+            font-size: 14px; color: var(--text-secondary); line-height: 1.7;
+            padding-left: 24px; position: relative; margin-bottom: 10px;
+        }
+        .legal-tier ul li::before {
+            content: '✓'; position: absolute; left: 0; top: 0;
+            color: var(--accent); font-size: 13px; font-weight: 700;
+        }
+        .legal-tier .tier-cta { margin-top: auto; }
+        .legal-tier .tier-cta a {
+            display: block; text-align: center; padding: 14px 24px; border-radius: 10px;
+            font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.2s;
+        }
+        .legal-tier .tier-cta a.primary-btn { background: var(--accent); color: #f8faf8; }
+        .legal-tier .tier-cta a.primary-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .legal-tier .tier-cta a.outline-btn { border: 1.5px solid var(--border); color: var(--text-primary); }
+        .legal-tier .tier-cta a.outline-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* API Section */
+        .api-section {
+            max-width: 900px; margin: 0 auto; padding: 0 24px 60px;
+        }
+        .api-section h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 28px; font-weight: 600; color: var(--text-primary);
+            text-align: center; margin-bottom: 12px;
+        }
+        .api-section .api-sub {
+            text-align: center; font-size: 15px; color: var(--text-secondary);
+            margin-bottom: 36px; max-width: 500px; margin-left: auto; margin-right: auto;
+        }
+        .api-endpoints {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+        }
+        .api-endpoint {
+            background: #1a1a2e; border-radius: 12px; padding: 20px 24px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+        .api-endpoint .method {
+            font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+            color: #c3e88d; margin-bottom: 6px;
+        }
+        .api-endpoint .path {
+            font-size: 13px; color: #82aaff; margin-bottom: 8px;
+        }
+        .api-endpoint .desc {
+            font-size: 12px; color: #636e88;
+        }
+
+        /* Disclaimer */
+        .legal-disclaimer-section {
+            max-width: 700px; margin: 0 auto; padding: 0 24px 80px;
+        }
+        .legal-disclaimer-box {
+            background: rgba(184, 134, 11, 0.06); border: 1px solid rgba(184, 134, 11, 0.2);
+            border-radius: 12px; padding: 24px 28px;
+        }
+        .legal-disclaimer-box p {
+            font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin: 0;
+        }
+        .legal-disclaimer-box strong { color: var(--text-primary); }
+
+        /* CTA Section */
+        .cta-section {
+            max-width: 800px; margin: 0 auto; padding: 80px 24px;
+            text-align: center;
+        }
+        .cta-section h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 32px; font-weight: 600; color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+        .cta-section p {
+            font-size: 17px; color: var(--text-secondary); line-height: 1.7;
+            margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto;
+        }
+
+        @media (max-width: 768px) {
+            .legal-hero { padding: 100px 16px 60px; }
+            .legal-hero h1 { font-size: 32px; }
+            .hero-metrics { gap: 32px; }
+            .platform-grid, .legal-diff, .security-grid { grid-template-columns: 1fr; }
+            .legal-tiers { grid-template-columns: 1fr; }
+            .workflow-templates { grid-template-columns: repeat(2, 1fr); }
+            .api-endpoints { grid-template-columns: 1fr; }
+            .integration-logos { gap: 16px; }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .platform-grid { grid-template-columns: repeat(2, 1fr); }
+            .legal-diff, .security-grid { grid-template-columns: repeat(2, 1fr); }
+            .workflow-templates { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+    <script>/* Theme init — prevent flash */
+    (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+</head>
+<body>
+    <div class="space-bg" aria-hidden="true">
+        <div class="space-bg__gradient"></div>
+        <div class="space-bg__stars" id="space-bg-stars"></div>
+    </div>
+    <nav class="nav-header">
+        <a href="/" class="nav-logo"><span class="logo-text">Cami</span></a>
+        <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+        <div class="nav-links" aria-hidden="true"><a href="/customer-service" class="nav-link">Customer Service</a><a href="/legal-intelligence" class="nav-link">Law</a><a href="/health" class="nav-link">Health</a><span class="nav-sep" aria-hidden="true">|</span><span class="nav-link nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-link nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-link nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-sep" aria-hidden="true">|</span><a href="/try" class="nav-link">Try Cami</a><a href="/human-plus" class="nav-link">Human+</a><a href="/min" class="nav-link">M.I.N.</a><a href="/roadmap" class="nav-link">Roadmap</a><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" class="nav-link github">GitHub</a></div>
+    </nav>
+    <div class="nav-sidebar-backdrop" id="nav-sidebar-backdrop" aria-hidden="true"></div>
+    <aside class="nav-sidebar" id="nav-sidebar" aria-label="Main menu">
+        <div class="nav-sidebar-logo"><a href="/" class="nav-logo"><span class="logo-text">Cami</span></a></div>
+        <div class="nav-sidebar-links">
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Services<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/customer-service">Customer Service</a>
+                    <a href="/legal-intelligence">Law</a>
+                    <a href="/health">Health</a>
+                    <span class="nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Technology<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/human-plus">Human+</a>
+                    <a href="/min">M.I.N.</a>
+                    <a href="/roadmap">Roadmap</a>
+                    <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Account<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/try">Try Cami</a>
+                    <a href="/login">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <script>(function(){ var b=document.body, btn=document.getElementById('nav-hamburger'), back=document.getElementById('nav-sidebar-backdrop'), side=document.getElementById('nav-sidebar'); if(!btn||!back||!side) return; function close(){ b.classList.remove('nav-sidebar-open'); } function toggle(){ b.classList.toggle('nav-sidebar-open'); } btn.addEventListener('click',toggle); back.addEventListener('click',close); side.querySelectorAll('.nav-sidebar-links a').forEach(function(a){ a.addEventListener('click',close); }); side.querySelectorAll('.nav-sidebar-section-toggle').forEach(function(btn){ btn.addEventListener('click',function(){ var g=btn.closest('.nav-sidebar-group'); if(g) g.classList.toggle('collapsed'); btn.setAttribute('aria-expanded',g&&!g.classList.contains('collapsed')); }); }); })();</script>
+
+    <main class="legal-page">
+
+        <!-- Cami Orb -->
+        <section class="orb-hero-legal">
+            <div class="orb-container-legal" id="cami-orb"></div>
+        </section>
+
+        <!-- Hero -->
+        <section class="legal-hero" style="padding-top: 40px;">
+            <div class="trust-badges">
+                <span class="trust-badge">
+                    <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                    Enterprise Security
+                </span>
+                <span class="trust-badge">
+                    <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                    Encrypted Storage
+                </span>
+                <span class="trust-badge">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    Audit Trails
+                </span>
+            </div>
+            <span class="badge">Legal Intelligence</span>
+            <h1>The only legal AI that learns your firm</h1>
+            <p class="sub">Most legal AI is frozen after training — it never learns YOUR practice. Cami gets smarter every day through M.I.N. Your 100th research query is dramatically better than your first. Full platform: document vault, contract analysis, workflow automation, Clio/MyCase sync.</p>
+            
+
+            <div class="legal-hero-ctas">
+                <a href="/legal-dashboard" class="cta-primary">Open Dashboard</a>
+                <a href="mailto:enterprise@usecami.com" class="cta-secondary">Request Demo</a>
+            </div>
+        </section>
+
+        <!-- Platform Features -->
+        <section>
+            <div class="section-header">
+                <span class="section-badge">Full Platform</span>
+                <h2>Everything your firm needs</h2>
+                <p>From research to billing, document management to client collaboration. One unified platform that integrates with your existing tools.</p>
+            </div>
+            <div class="platform-grid">
+                <div class="platform-card featured">
+                    <div class="platform-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="12" cy="15" r="2"/></svg></div>
+                    <h3>Document Vault</h3>
+                    <p class="desc">Secure, AI-powered document management with automatic organization, OCR, and semantic search across your entire library.</p>
+                    <ul>
+                        <li>Drag-and-drop upload with auto-classification</li>
+                        <li>Full-text and semantic search</li>
+                        <li>Version control with audit trail</li>
+                        <li>Bulk AI analysis of document sets</li>
+                        <li>Secure encrypted storage</li>
+                    </ul>
+                </div>
+                <div class="platform-card featured">
+                    <div class="platform-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+                    <h3>Contract Analysis</h3>
+                    <p class="desc">AI-powered contract review that extracts key terms, identifies risks, tracks obligations, and generates redline comparisons.</p>
+                    <ul>
+                        <li>Auto-extract parties, dates, key terms</li>
+                        <li>Risk identification against standards</li>
+                        <li>Obligation tracking with deadlines</li>
+                        <li>Version comparison with impact analysis</li>
+                        <li>Due diligence checklist generation</li>
+                    </ul>
+                </div>
+                <div class="platform-card featured">
+                    <div class="platform-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+                    <h3>Workflow Engine</h3>
+                    <p class="desc">Automate complex legal workflows with conditional logic, approval gates, and pre-built templates for common tasks.</p>
+                    <ul>
+                        <li>Document translation workflows</li>
+                        <li>Contract redline summaries</li>
+                        <li>Due diligence automation</li>
+                        <li>Client alert generation</li>
+                        <li>Custom workflow builder</li>
+                    </ul>
+                </div>
+                <div class="platform-card">
+                    <div class="platform-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+                    <h3>Legal Research That Learns</h3>
+                    <p class="desc">Deep legal research that gets smarter from YOUR firm's queries. M.I.N. learns your jurisdictions, practice areas, and successful patterns.</p>
+                    <ul>
+                        <li>Multi-source case research</li>
+                        <li>IRAC analysis on any legal issue</li>
+                        <li>Citation extraction and formatting</li>
+                        <li>Strategic case strength assessment</li>
+                        <li>Continuous learning from your firm's work</li>
+                    </ul>
+                </div>
+                <div class="platform-card">
+                    <div class="platform-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg></div>
+                    <h3>Review Tables</h3>
+                    <p class="desc">Structured bulk document review with AI-powered extraction, cell-level verification, and export to CSV/Excel.</p>
+                    <ul>
+                        <li>Pre-built templates (M&A, privilege, discovery)</li>
+                        <li>AI extracts values into table cells</li>
+                        <li>Human verification workflow</li>
+                        <li>Bulk operations and assignment</li>
+                        <li>Export with verification status</li>
+                    </ul>
+                </div>
+                <div class="platform-card">
+                    <div class="platform-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                    <h3>Shared Spaces</h3>
+                    <p class="desc">Secure firm-client collaboration with role-based access, document sharing, comments, and activity tracking.</p>
+                    <ul>
+                        <li>Granular permission controls</li>
+                        <li>Comment threads on documents</li>
+                        <li>Real-time activity feed</li>
+                        <li>External client access (viewer/contributor)</li>
+                        <li>Full audit trail</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Integrations -->
+        <section class="integrations-section">
+            <h3>Native Practice Management Integrations</h3>
+            <div class="integration-logos">
+                <div class="integration-logo">
+                    <div class="logo-name">Clio</div>
+                    <div class="logo-desc">Bi-directional sync</div>
+                </div>
+                <div class="integration-logo">
+                    <div class="logo-name">MyCase</div>
+                    <div class="logo-desc">Bi-directional sync</div>
+                </div>
+                <div class="integration-logo">
+                    <div class="logo-name">PracticePanther</div>
+                    <div class="logo-desc">Bi-directional sync</div>
+                </div>
+            </div>
+            <p style="margin-top: 24px; font-size: 14px; color: var(--text-secondary);">
+                OAuth2 authentication. Sync matters, contacts, documents, time entries, and calendar events. Webhook support for real-time updates.
+            </p>
+        </section>
+
+        <!-- Workflow Templates -->
+        <section class="workflow-section">
+            <div class="workflow-box">
+                <h3>Pre-built Workflow Templates</h3>
+                <p class="intro">Start automating immediately with production-ready workflow templates. Customize or create your own.</p>
+                <div class="workflow-templates">
+                    <div class="workflow-template">
+                        <div class="wf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+                        <h4>Translation</h4>
+                        <p>Multi-language document translation with legal terminology</p>
+                    </div>
+                    <div class="workflow-template">
+                        <div class="wf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+                        <h4>Redline Summary</h4>
+                        <p>Compare versions and generate executive summaries</p>
+                    </div>
+                    <div class="workflow-template">
+                        <div class="wf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+                        <h4>Due Diligence</h4>
+                        <p>Automated M&A document review and risk assessment</p>
+                    </div>
+                    <div class="workflow-template">
+                        <div class="wf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                        <h4>Disclosure Drafting</h4>
+                        <p>Generate disclosure schedules from contracts</p>
+                    </div>
+                    <div class="workflow-template">
+                        <div class="wf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+                        <h4>Client Alerts</h4>
+                        <p>Monitor topics and generate client advisories</p>
+                    </div>
+                    <div class="workflow-template">
+                        <div class="wf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div>
+                        <h4>Proofreading</h4>
+                        <p>Multi-pass document proofreading with citations</p>
+                    </div>
+                    <div class="workflow-template">
+                        <div class="wf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+                        <h4>Deposition Prep</h4>
+                        <p>Generate question lists and witness outlines</p>
+                    </div>
+                    <div class="workflow-template">
+                        <div class="wf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+                        <h4>Settlement Analysis</h4>
+                        <p>Risk assessment and range recommendations</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Differentiators -->
+        <section class="legal-diff">
+            <div class="legal-diff-card">
+                <div class="legal-diff-icon">H+</div>
+                <h3>Bias Detection</h3>
+                <p>Human+ detects cognitive biases, absolutist language, and appeal to authority. Every response includes bias flags.</p>
+            </div>
+            <div class="legal-diff-card">
+                <div class="legal-diff-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+                <h3>Legal Foundation</h3>
+                <p>Built-in knowledge of FRCP, FRE, legal doctrines, landmark cases, and reasoning patterns. Real legal understanding.</p>
+            </div>
+            <div class="legal-diff-card">
+                <div class="legal-diff-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3C7.5 3 5.5 4.5 5 6.5 3.5 7 2.5 8.5 2.5 10.5c0 1.5.6 2.8 1.5 3.7-.3.8-.5 1.6-.5 2.5C3.5 19 5 20.5 7 21c1 .3 2.2 0 3-.5"/><path d="M14 3c2.5 0 4.5 1.5 5 3.5 1.5.5 2.5 2 2.5 4 0 1.5-.6 2.8-1.5 3.7.3.8.5 1.6.5 2.5 0 2.3-1.5 3.8-3.5 4.3-1 .3-2.2 0-3-.5"/><path d="M12 3v18"/></svg></div>
+                <h3>Gets Smarter Over Time</h3>
+                <p>Unlike frozen AI, M.I.N. learns your firm's work product, jurisdictions, and patterns. Your 100th query is dramatically better than your first. No other legal AI does this.</p>
+            </div>
+            <div class="legal-diff-card">
+                <div class="legal-diff-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+                <h3>Enterprise Security</h3>
+                <p>Enterprise-grade encryption, SSO, comprehensive audit trails, and optional on-premise deployment.</p>
+            </div>
+        </section>
+
+        <!-- Security Section -->
+        <section class="security-section">
+            <div class="section-header" style="padding-top: 0;">
+                <span class="section-badge">Security & Compliance</span>
+                <h2>Enterprise-grade security</h2>
+                <p>Built from the ground up with the security requirements of legal practice in mind.</p>
+            </div>
+            <div class="security-grid">
+                <div class="security-card">
+                    <div class="security-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+                    <h4>Encryption</h4>
+                    <p>AES-256 encryption at rest and in transit. Your data is never exposed.</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+                    <h4>Audit Trails</h4>
+                    <p>Complete audit log of every action. Who accessed what, when, and why.</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                    <h4>SSO & RBAC</h4>
+                    <p>Single sign-on with SAML/OIDC. Role-based access controls.</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+                    <h4>On-Premise</h4>
+                    <p>Deploy on your infrastructure. Full control for maximum security.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Section -->
+        <section class="api-section">
+            <h2>Full REST API</h2>
+            <p class="api-sub">Every feature available programmatically. Build custom integrations or extend your existing tools.</p>
+            <div class="api-endpoints">
+                <div class="api-endpoint">
+                    <div class="method">POST</div>
+                    <div class="path">/api/v1/vault/documents/upload</div>
+                    <div class="desc">Upload and auto-analyze documents</div>
+                </div>
+                <div class="api-endpoint">
+                    <div class="method">POST</div>
+                    <div class="path">/api/v1/contracts/analyze</div>
+                    <div class="desc">Full contract analysis with risk detection</div>
+                </div>
+                <div class="api-endpoint">
+                    <div class="method">POST</div>
+                    <div class="path">/api/v1/workflows/start</div>
+                    <div class="desc">Start automated workflow execution</div>
+                </div>
+                <div class="api-endpoint">
+                    <div class="method">POST</div>
+                    <div class="path">/api/v1/research/cases</div>
+                    <div class="desc">Legal research with citations</div>
+                </div>
+                <div class="api-endpoint">
+                    <div class="method">POST</div>
+                    <div class="path">/api/v1/review/tables</div>
+                    <div class="desc">Create review tables with AI extraction</div>
+                </div>
+                <div class="api-endpoint">
+                    <div class="method">POST</div>
+                    <div class="path">/api/v1/spaces</div>
+                    <div class="desc">Create shared collaboration spaces</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section class="legal-tiers-section">
+            <div class="section-header" style="padding-top: 0;">
+                <span class="section-badge">Pricing</span>
+                <h2>Plans for every firm</h2>
+                <p class="tiers-sub">From solo practitioners to AmLaw 100. All plans include research, drafting, and case management.</p>
+            </div>
+            <div class="legal-tiers">
+                <div class="legal-tier">
+                    <span class="tier-badge">Solo</span>
+                    <div class="price">$29<span>/mo</span></div>
+                    <h3>Individual</h3>
+                    <p class="tier-desc">Full legal assistant for solo practitioners. Research, drafting, deadlines, and case management.</p>
+                    <ul>
+                        <li>Legal research with case summaries</li>
+                        <li>Document drafting (motions, briefs, discovery)</li>
+                        <li>Deadline tracking with alerts</li>
+                        <li>Case intake and management</li>
+                        <li>Human+ bias detection</li>
+                        <li>5GB document storage</li>
+                    </ul>
+                    <div class="tier-cta">
+                        <a href="/dashboard" class="outline-btn">Get Started</a>
+                    </div>
+                </div>
+
+                <div class="legal-tier featured">
+                    <span class="tier-badge">Firm</span>
+                    <div class="price">$199<span>/mo</span></div>
+                    <h3>API + Teams</h3>
+                    <p class="tier-desc">Full platform with API access, team collaboration, and practice management integrations.</p>
+                    <ul>
+                        <li>Everything in Solo, plus:</li>
+                        <li>Full REST API access</li>
+                        <li>Document Vault (50GB)</li>
+                        <li>Contract Analysis</li>
+                        <li>Workflow Engine</li>
+                        <li>Review Tables</li>
+                        <li>Shared Spaces</li>
+                        <li>Clio, MyCase, PracticePanther sync</li>
+                        <li>5 user seats included</li>
+                    </ul>
+                    <div class="tier-cta">
+                        <a href="/legal-dashboard" class="primary-btn">Try Cami Legal</a>
+                    </div>
+                </div>
+
+                <div class="legal-tier">
+                    <span class="tier-badge">Enterprise</span>
+                    <div class="price">Custom</div>
+                    <h3>Dedicated</h3>
+                    <p class="tier-desc">For AmLaw firms and legal departments requiring maximum control and customization.</p>
+                    <ul>
+                        <li>Everything in Firm, plus:</li>
+                        <li>Unlimited storage</li>
+                        <li>Custom model fine-tuning</li>
+                        <li>Dedicated infrastructure</li>
+                        <li>On-premise deployment option</li>
+                        <li>SSO and comprehensive audit trails</li>
+                        <li>SLA with priority support</li>
+                        <li>Custom integrations</li>
+                    </ul>
+                    <div class="tier-cta">
+                        <a href="mailto:enterprise@usecami.com" class="outline-btn">Contact Sales</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <h2>Ready to transform your practice?</h2>
+            <p>Join firms already saving hours every day.</p>
+            <div class="legal-hero-ctas">
+                <a href="/legal-dashboard" class="cta-primary">Open Dashboard</a>
+                <a href="mailto:enterprise@usecami.com" class="cta-secondary">Schedule Demo</a>
+            </div>
+        </section>
+
+        <!-- Disclaimer -->
+        <section class="legal-disclaimer-section">
+            <div class="legal-disclaimer-box">
+                <p><strong>Important:</strong> Cami Legal Intelligence is a research and documentation assistant — it does not provide legal advice, representation, or counsel. All AI-generated content requires attorney review. Every citation is tagged for verification. Cami never files anything directly. For legal decisions, always consult a licensed attorney in the applicable jurisdiction.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="page-footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">Cami</div>
+                    <p class="footer-desc">The only AI that learns and grows with you. Other AI is frozen — Cami gets smarter every day through M.I.N.</p>
+                    <div class="footer-social">
+                        <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                            <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="/customer-service">Customer Service</a></li>
+                        <li><a href="/health">Healthcare</a></li>
+                        <li><a href="/legal-intelligence">Legal Intelligence</a></li>
+                        <li><span class="footer-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        <li><span class="footer-disabled">Financial <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        <li><span class="footer-disabled">Education <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Technology</h4>
+                    <ul>
+                        <li><a href="/human-plus">Human+</a></li>
+                        <li><a href="/min">M.I.N.</a></li>
+                        <li><a href="/platform">Platform</a></li>
+                        <li><a href="/roadmap">Roadmap</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copy">© 2026 Cami. All rights reserved.</div>
+                <div class="footer-legal">
+                    <a href="/privacy">Privacy Policy</a>
+                    <a href="/terms">Terms of Service</a>
+                    <a href="/disclaimer">Disclaimer</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="/static/space-bg.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.initSpaceBg) window.initSpaceBg('space-bg-stars'); });</script>
+    <script src="/static/synth-anim.js"></script>
+    <script src="/static/theme-toggle.js"></script>
+    
+    <!-- Cami Orb -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="/static/js/cami-orb.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            CamiOrb.init('cami-orb', { theme: 'legal' });
+        });
+    </script>
+    
+    <style>
+        .orb-hero-legal {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 24px 20px;
+        }
+        .orb-container-legal {
+            width: 180px;
+            height: 180px;
+            position: relative;
+        }
+        @media (max-width: 768px) {
+            .orb-hero-legal { padding: 100px 24px 10px; }
+            .orb-container-legal { width: 140px; height: 140px; }
+        }
+    </style>
+</body>
+</html>

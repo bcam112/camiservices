@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cami Tutor — AI That Teaches, Not Tells</title>
+    <meta name="description" content="AI tutor that guides with questions and scaffolding instead of handing over answers. Adaptive pacing, emotional awareness, and memory that learns how you learn.">
+    <link rel="canonical" href="https://usecami.com/tutor">
+    <meta property="og:title" content="Cami Tutor — AI That Teaches, Not Tells">
+    <meta property="og:description" content="AI tutor that guides with questions and scaffolding. Adaptive pacing, emotional awareness, and memory that learns how you learn.">
+    <meta property="og:url" content="https://usecami.com/tutor">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/space-bg.css">
+    <link rel="stylesheet" href="/static/enterprise-pages.css">
+    <style>
+        html, body { overflow-y: auto; overflow-x: hidden; }
+
+        .tutor-page { position: relative; z-index: 0; min-height: 100vh; }
+
+        .tutor-hero {
+            max-width: 780px; margin: 0 auto;
+            padding: 140px 24px 80px; text-align: center;
+        }
+        .tutor-hero .badge {
+            display: inline-block; font-size: 11px; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--accent); padding: 5px 14px;
+            border: 1px solid rgba(90,125,100,0.3);
+            border-radius: 20px; margin-bottom: 20px;
+            background: rgba(90,125,100,0.08);
+        }
+        .tutor-hero h1 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 38px; font-weight: 600; color: var(--text-primary);
+            letter-spacing: -0.03em; line-height: 1.2; margin-bottom: 18px;
+        }
+        .tutor-hero .sub {
+            font-size: 17px; color: var(--text-secondary);
+            line-height: 1.65; max-width: 580px; margin: 0 auto 36px;
+        }
+        .tutor-hero-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+        .tutor-hero-ctas a {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 14px 28px; border-radius: 10px;
+            font-size: 15px; font-weight: 600; text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .tutor-hero-ctas a:hover { transform: translateY(-2px); }
+        .cta-primary {
+            background: var(--accent); color: #f8faf8;
+            box-shadow: 0 4px 16px rgba(90,125,100,0.25);
+        }
+        .cta-primary:hover { box-shadow: 0 8px 28px rgba(90,125,100,0.35); }
+        .cta-secondary {
+            background: transparent; color: var(--text-primary);
+            border: 1.5px solid var(--border);
+        }
+        .cta-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Differentiators */
+        .tutor-diff {
+            max-width: 960px; margin: 0 auto;
+            padding: 0 24px 80px;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+        }
+        .tutor-diff-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 28px 24px; text-align: center;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: border-color 0.25s, transform 0.25s;
+        }
+        .tutor-diff-card:hover { border-color: rgba(90,125,100,0.4); transform: translateY(-3px); }
+        .tutor-diff-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 44px; height: 44px; border-radius: 12px;
+            background: rgba(90,125,100,0.1); color: var(--accent);
+            font-size: 18px; font-weight: 700; margin-bottom: 14px;
+        }
+        .tutor-diff-card h3 { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+        .tutor-diff-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.55; }
+
+        /* Paths */
+        .tutor-paths {
+            max-width: 780px; margin: 0 auto; padding: 0 24px 80px;
+        }
+        .tutor-paths h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 26px; font-weight: 600; color: var(--text-primary);
+            text-align: center; margin-bottom: 36px;
+        }
+        .tutor-paths-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px;
+        }
+        .tutor-path-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 32px 28px; text-align: center;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: border-color 0.25s, transform 0.25s;
+        }
+        .tutor-path-card:hover { border-color: rgba(90,125,100,0.4); transform: translateY(-3px); }
+        .tutor-path-card h3 { font-size: 17px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+        .tutor-path-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* Philosophy */
+        .tutor-philosophy {
+            max-width: 780px; margin: 0 auto; padding: 0 24px 80px;
+        }
+        .philosophy-box {
+            background: rgba(90,125,100,0.06); border: 1px solid rgba(90,125,100,0.2);
+            border-radius: 16px; padding: 36px 32px;
+            display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: start;
+        }
+        .philosophy-icon {
+            width: 56px; height: 56px; border-radius: 14px;
+            background: rgba(90,125,100,0.12); display: flex;
+            align-items: center; justify-content: center;
+            font-size: 24px; color: var(--accent); font-weight: 700;
+        }
+        .philosophy-content h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px;
+        }
+        .philosophy-content p { font-size: 15px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 12px; }
+        .philosophy-content ul { list-style: none; padding: 0; margin: 0; }
+        .philosophy-content ul li {
+            font-size: 14px; color: var(--text-secondary); line-height: 1.6;
+            padding-left: 20px; position: relative; margin-bottom: 6px;
+        }
+        .philosophy-content ul li::before {
+            content: ''; position: absolute; left: 0; top: 0.55em;
+            width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.6;
+        }
+
+        /* How it works */
+        .tutor-how { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; }
+        .tutor-how h2 { font-family: 'Libre Baskerville', Georgia, serif; font-size: 28px; font-weight: 600; color: var(--text-primary); text-align: center; margin-bottom: 48px; }
+        .tutor-steps { display: flex; flex-direction: column; gap: 32px; }
+        .tutor-step { display: flex; align-items: flex-start; gap: 20px; }
+        .tutor-step-num {
+            flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(90,125,100,0.1); border: 2px solid var(--accent);
+            color: var(--accent); display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 16px;
+        }
+        .tutor-step-text h3 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .tutor-step-text p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* Tiers */
+        .tutor-tiers-section { max-width: 960px; margin: 0 auto; padding: 0 24px 80px; }
+        .tutor-tiers-section h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 28px; font-weight: 600; color: var(--text-primary);
+            text-align: center; margin-bottom: 12px;
+        }
+        .tutor-tiers-section .tiers-sub {
+            text-align: center; font-size: 15px; color: var(--text-secondary); margin-bottom: 48px;
+        }
+        .tutor-tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+        .tutor-tier {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 36px 28px;
+            display: flex; flex-direction: column;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: border-color 0.25s, transform 0.25s;
+        }
+        .tutor-tier:hover { border-color: rgba(90,125,100,0.4); transform: translateY(-3px); }
+        .tutor-tier.featured { border-color: var(--accent); box-shadow: 0 8px 36px rgba(90,125,100,0.18); }
+        .tutor-tier .tier-badge {
+            display: inline-block; font-size: 10px; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 12px;
+        }
+        .tutor-tier h3 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;
+        }
+        .tutor-tier .tier-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+        .tutor-tier ul { list-style: none; padding: 0; margin: 0 0 24px; }
+        .tutor-tier ul li {
+            font-size: 13.5px; color: var(--text-secondary); line-height: 1.7;
+            padding-left: 20px; position: relative; margin-bottom: 8px;
+        }
+        .tutor-tier ul li::before {
+            content: ''; position: absolute; left: 0; top: 0.55em;
+            width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.6;
+        }
+        .tutor-tier .tier-cta { margin-top: auto; }
+        .tutor-tier .tier-cta a {
+            display: block; text-align: center; padding: 12px 20px; border-radius: 10px;
+            font-size: 14px; font-weight: 600; text-decoration: none; transition: background 0.2s, transform 0.2s;
+        }
+        .tutor-tier .tier-cta a.primary-btn { background: var(--accent); color: #f8faf8; }
+        .tutor-tier .tier-cta a.primary-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .tutor-tier .tier-cta a.outline-btn { border: 1.5px solid var(--border); color: var(--text-primary); }
+        .tutor-tier .tier-cta a.outline-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Code */
+        .tutor-code-section { max-width: 680px; margin: 0 auto; padding: 0 24px 60px; }
+        .tutor-code-section h2 { font-family: 'Libre Baskerville', Georgia, serif; font-size: 24px; font-weight: 600; color: var(--text-primary); text-align: center; margin-bottom: 28px; }
+        .tutor-code {
+            background: #1a1a2e; border-radius: 12px; padding: 24px 28px; overflow-x: auto;
+            font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.7; color: #a8b2d1;
+        }
+        .tutor-code .comment { color: #636e88; }
+        .tutor-code .string { color: #c3e88d; }
+        .tutor-code .key { color: #82aaff; }
+
+        @media (max-width: 768px) {
+            .tutor-hero { padding: 100px 16px 60px; }
+            .tutor-hero h1 { font-size: 30px; }
+            .tutor-diff { grid-template-columns: repeat(2, 1fr); }
+            .tutor-tiers, .tutor-paths-grid { grid-template-columns: 1fr; }
+            .philosophy-box { grid-template-columns: 1fr; }
+        }
+    </style>
+    <script>/* Theme init — prevent flash */
+    (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+</head>
+<body>
+    <div class="space-bg" aria-hidden="true">
+        <div class="space-bg__gradient"></div>
+        <div class="space-bg__stars" id="space-bg-stars"></div>
+    </div>
+    <nav class="nav-header">
+        <a href="/" class="nav-logo"><span class="logo-text">Cami</span></a>
+        <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+        <div class="nav-links" aria-hidden="true"><a href="/customer-service" class="nav-link">Customer Service</a><a href="/legal-intelligence" class="nav-link">Law</a><a href="/health" class="nav-link">Health</a><span class="nav-sep" aria-hidden="true">|</span><span class="nav-link nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-link nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-link nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-sep" aria-hidden="true">|</span><a href="/try" class="nav-link">Try Cami</a><a href="/human-plus" class="nav-link">Human+</a><a href="/min" class="nav-link">M.I.N.</a><a href="/roadmap" class="nav-link">Roadmap</a><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" class="nav-link github">GitHub</a></div>
+    </nav>
+    <div class="nav-sidebar-backdrop" id="nav-sidebar-backdrop" aria-hidden="true"></div>
+    <aside class="nav-sidebar" id="nav-sidebar" aria-label="Main menu">
+        <div class="nav-sidebar-logo"><a href="/" class="nav-logo"><span class="logo-text">Cami</span></a></div>
+        <div class="nav-sidebar-links">
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Services<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/customer-service">Customer Service</a>
+                    <a href="/legal-intelligence">Law</a>
+                    <a href="/health">Health</a>
+                    <span class="nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Technology<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/human-plus">Human+</a>
+                    <a href="/min">M.I.N.</a>
+                    <a href="/roadmap">Roadmap</a>
+                    <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Account<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/try">Try Cami</a>
+                    <a href="/login">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <script>(function(){ var b=document.body, btn=document.getElementById('nav-hamburger'), back=document.getElementById('nav-sidebar-backdrop'), side=document.getElementById('nav-sidebar'); if(!btn||!back||!side) return; function close(){ b.classList.remove('nav-sidebar-open'); } function toggle(){ b.classList.toggle('nav-sidebar-open'); } btn.addEventListener('click',toggle); back.addEventListener('click',close); side.querySelectorAll('.nav-sidebar-links a').forEach(function(a){ a.addEventListener('click',close); }); side.querySelectorAll('.nav-sidebar-section-toggle').forEach(function(btn){ btn.addEventListener('click',function(){ var g=btn.closest('.nav-sidebar-group'); if(g) g.classList.toggle('collapsed'); btn.setAttribute('aria-expanded',g&&!g.classList.contains('collapsed')); }); }); })();</script>
+
+    <main class="tutor-page">
+
+        <div class="tutor-coming" style="max-width:680px;margin:100px auto 0;padding:14px 24px;background:rgba(90,125,100,0.1);border:1px solid rgba(90,125,100,0.25);border-radius:10px;text-align:center;font-size:13px;color:var(--text-secondary);">
+            <strong style="color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;font-size:11px;">Coming in Cami-2</strong> — Tutor mode is in active development. Sign up to be notified when it launches.
+        </div>
+
+        <section class="tutor-hero">
+            <span class="badge">Adaptive Tutor</span>
+            <h1>The AI tutor that makes you think before it gives you the answer</h1>
+            <p class="sub">Cami teaches through questions, scaffolding, and structure -- not by handing over solutions. Human+ reads your energy and pace. M.I.N. remembers how you learn best. Ask for the full answer whenever you're ready; Cami respects both the learning and the learner.</p>
+            <div class="tutor-hero-ctas">
+                <a href="/login" class="cta-primary">Join the waitlist</a>
+                <a href="/login" class="cta-secondary">Sign In</a>
+            </div>
+        </section>
+
+        <section class="tutor-paths">
+            <h2>Two ways to use Cami for learning</h2>
+            <div class="tutor-paths-grid">
+                <div class="tutor-path-card">
+                    <div class="tutor-diff-icon" style="margin-bottom:14px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div>
+                    <h3>Chat directly on Cami</h3>
+                    <p>Sign in at usecami.com and select Tutor mode. Bring your homework, essay, or topic. Cami guides you through it with questions and structure -- no code, no setup, just learning.</p>
+                    <div class="tier-cta" style="margin-top:18px;">
+                        <a href="/login" class="outline-btn">Coming in Cami-2</a>
+                    </div>
+                </div>
+                <div class="tutor-path-card">
+                    <div class="tutor-diff-icon" style="margin-bottom:14px;">{&thinsp;}</div>
+                    <h3>Integrate via API</h3>
+                    <p>Build Cami's tutoring engine into your LMS, student portal, or ed-tech product. Upload your curriculum, embed the widget, or call the REST API for scaffolded instruction.</p>
+                    <div class="tier-cta" style="margin-top:18px;">
+                        <a href="/login" class="outline-btn">Coming in Cami-2</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tutor-diff">
+            <div class="tutor-diff-card">
+                <div class="tutor-diff-icon">?</div>
+                <h3>Scaffolding First</h3>
+                <p>Cami asks questions, offers outlines, and nudges you toward the next step. The full answer comes when you're ready for it -- not before.</p>
+            </div>
+            <div class="tutor-diff-card">
+                <div class="tutor-diff-icon">H+</div>
+                <h3>Reads Your Pace</h3>
+                <p>Human+ detects frustration, confusion, and engagement. If you're stuck, Cami gives more. If you're flowing, Cami steps back. Teaching calibrated to the moment.</p>
+            </div>
+            <div class="tutor-diff-card">
+                <div class="tutor-diff-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3C7.5 3 5.5 4.5 5 6.5 3.5 7 2.5 8.5 2.5 10.5c0 1.5.6 2.8 1.5 3.7-.3.8-.5 1.6-.5 2.5C3.5 19 5 20.5 7 21c1 .3 2.2 0 3-.5"/><path d="M14 3c2.5 0 4.5 1.5 5 3.5 1.5.5 2.5 2 2.5 4 0 1.5-.6 2.8-1.5 3.7.3.8.5 1.6.5 2.5 0 2.3-1.5 3.8-3.5 4.3-1 .3-2.2 0-3-.5"/><path d="M12 3v18"/></svg></div>
+                <h3>Learns How You Learn</h3>
+                <p>M.I.N. tracks which scaffolding works for you -- visual frameworks, Socratic questions, step-by-step breakdowns. It adapts across sessions.</p>
+            </div>
+            <div class="tutor-diff-card">
+                <div class="tutor-diff-icon">4+</div>
+                <h3>Multi-Model Depth</h3>
+                <p>For complex topics, Cami pulls from multiple LLMs to ensure accuracy and completeness. You get the combined knowledge, not one model's blind spots.</p>
+            </div>
+        </section>
+
+        <section class="tutor-philosophy">
+            <div class="philosophy-box">
+                <div class="philosophy-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+                <div class="philosophy-content">
+                    <h2>Teaching, not telling</h2>
+                    <p>Most AI tools give you the answer immediately. Cami Tutor is built on a different principle: the learning happens in the thinking, not in the reading. Cami scaffolds first, answers second.</p>
+                    <ul>
+                        <li><strong>First response = guidance</strong> -- Cami asks a clarifying question, suggests an outline, or offers one piece of the puzzle. Not the whole solution.</li>
+                        <li><strong>Second ask = the answer</strong> -- say "just give me the answer" or "I'm ready" and Cami delivers the full response immediately. No gatekeeping.</li>
+                        <li><strong>Emotional awareness</strong> -- Human+ reads when you're frustrated, confused, or bored. If scaffolding isn't helping, Cami pivots to a more direct approach.</li>
+                        <li><strong>Session memory</strong> -- M.I.N. remembers your learning style, preferred pacing, and which subjects need more scaffolding. Every session is better than the last.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="tutor-how">
+            <h2>How a tutoring session works</h2>
+            <div class="tutor-steps">
+                <div class="tutor-step">
+                    <div class="tutor-step-num">1</div>
+                    <div class="tutor-step-text">
+                        <h3>Bring your question or assignment</h3>
+                        <p>Paste your homework problem, essay prompt, topic you're studying, or anything you're trying to learn. Cami works across every subject.</p>
+                    </div>
+                </div>
+                <div class="tutor-step">
+                    <div class="tutor-step-num">2</div>
+                    <div class="tutor-step-text">
+                        <h3>Cami scaffolds -- not solves</h3>
+                        <p>Instead of the full answer, Cami responds with a guiding question, an outline, a key concept, or a worked example of a similar (not identical) problem. You stay in the driver's seat.</p>
+                    </div>
+                </div>
+                <div class="tutor-step">
+                    <div class="tutor-step-num">3</div>
+                    <div class="tutor-step-text">
+                        <h3>You engage and Cami adapts</h3>
+                        <p>As you respond, Human+ reads your energy. Confused? More structure. Flowing? Less hand-holding. Frustrated? Cami pivots to a direct explanation. The pacing is yours.</p>
+                    </div>
+                </div>
+                <div class="tutor-step">
+                    <div class="tutor-step-num">4</div>
+                    <div class="tutor-step-text">
+                        <h3>Ask for the full answer anytime</h3>
+                        <p>Say "just tell me" or "give me the answer" and Cami delivers immediately. No judgment, no lock-out. The scaffolding is a tool, not a wall.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tutor-tiers-section">
+            <h2>API tiers for education</h2>
+            <p class="tiers-sub">For schools, ed-tech companies, and learning platforms integrating Cami's tutoring engine.</p>
+            <div class="tutor-tiers">
+                <div class="tutor-tier">
+                    <span class="tier-badge">Individual / Tutor</span>
+                    <h3>Starter API</h3>
+                    <p class="tier-desc">Call <code>POST /api/v1/tutor/session</code> from your tools. Scaffolded, adaptive instruction in a single endpoint.</p>
+                    <ul>
+                        <li>Scaffolding-first responses</li>
+                        <li>Human+ emotional pacing</li>
+                        <li>M.I.N. learner memory</li>
+                        <li>Multi-LLM synthesis for accuracy</li>
+                        <li>Curriculum knowledge base (upload your materials)</li>
+                    </ul>
+                    <div class="tier-cta">
+                        <a href="/login" class="outline-btn">Coming in Cami-2</a>
+                    </div>
+                </div>
+
+                <div class="tutor-tier featured">
+                    <span class="tier-badge">School / Learning Platform</span>
+                    <h3>Professional</h3>
+                    <p class="tier-desc">Embed Cami in your LMS or student portal. Multi-student support, shared curriculum, progress tracking.</p>
+                    <ul>
+                        <li>Everything in Starter, plus:</li>
+                        <li>Embeddable tutor widget (your brand)</li>
+                        <li>Multi-student &amp; multi-teacher support</li>
+                        <li>Shared curriculum knowledge base</li>
+                        <li>Session history &amp; learning analytics</li>
+                        <li>Scribe integration (lecture transcription)</li>
+                    </ul>
+                    <div class="tier-cta">
+                        <a href="/login" class="outline-btn">Coming in Cami-2</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tutor-code-section">
+            <h2>One call to adaptive tutoring</h2>
+            <div class="tutor-code">
+                <span class="comment">// POST /api/v1/tutor/session</span><br>
+                {<br>
+                &nbsp;&nbsp;<span class="key">"message"</span>: <span class="string">"I need to write a 5-paragraph essay on the causes of WWI. I don't know where to start."</span>,<br>
+                &nbsp;&nbsp;<span class="key">"scaffolding"</span>: <span class="string">"guided"</span> <span class="comment">// or "direct" for full answer</span><br>
+                }<br><br>
+                <span class="comment">// Response includes:</span><br>
+                <span class="comment">// "response", "scaffolding_type", "learner_state", "next_steps",</span><br>
+                <span class="comment">// "confidence", "session_id"</span>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="page-footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">Cami</div>
+                    <p class="footer-desc">The AI platform that learns and grows with you. Knowledge from LLMs, memory from M.I.N., consciousness from Human+.</p>
+                    <div class="footer-social">
+                        <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                            <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="/customer-service">Customer Service</a></li>
+                        <li><a href="/health">Healthcare</a></li>
+                        <li><a href="/legal-intelligence">Legal Intelligence</a></li>
+                        <li><span class="footer-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        <li><span class="footer-disabled">Financial <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        <li><span class="footer-disabled">Education <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Technology</h4>
+                    <ul>
+                        <li><a href="/human-plus">Human+</a></li>
+                        <li><a href="/min">M.I.N.</a></li>
+                        <li><a href="/platform">Platform</a></li>
+                        <li><a href="/roadmap">Roadmap</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copy">&copy; 2026 Cami. All rights reserved.</div>
+                <div class="footer-legal">
+                    <a href="/privacy">Privacy Policy</a>
+                    <a href="/terms">Terms of Service</a>
+                    <a href="/disclaimer">Disclaimer</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="/static/space-bg.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.initSpaceBg) window.initSpaceBg('space-bg-stars'); });</script>
+    <script src="/static/synth-anim.js"></script>
+    <script src="/static/theme-toggle.js"></script>
+</body>
+</html>

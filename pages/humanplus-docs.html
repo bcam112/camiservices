@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human+ API Documentation</title>
+    <meta name="description" content="Human+ API documentation. Add emotional intelligence and ethical alignment to any LLM.">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/space-bg.css">
+    <style>
+        .docs-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 140px 2rem 4rem;
+        }
+        
+        .docs-header h1 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 2.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .docs-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .docs-nav {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .docs-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .docs-nav a:hover { color: var(--accent); }
+        
+        .docs-section {
+            margin-bottom: 3rem;
+        }
+        
+        .docs-section h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+        }
+        
+        .docs-section h3 {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin: 1.5rem 0 0.75rem;
+        }
+        
+        .docs-section p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        
+        .endpoint-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .endpoint-method {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            margin-right: 0.5rem;
+        }
+        
+        .endpoint-path {
+            font-family: monospace;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+        
+        .endpoint-desc {
+            color: var(--text-secondary);
+            margin: 0.75rem 0;
+            font-size: 0.9rem;
+        }
+        
+        pre {
+            background: #0d0d0d;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        
+        code {
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+            color: #e0e0e0;
+        }
+        
+        .code-comment { color: #6b7280; }
+        .code-string { color: #ffffff; }
+        .code-key { color: #60a5fa; }
+        .code-number { color: #f59e0b; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        th, td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+        
+        th {
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+        
+        td { color: var(--text-secondary); }
+        td code { color: var(--accent); background: rgba(90,125,100,0.1); padding: 0.15rem 0.4rem; border-radius: 4px; }
+        
+        .tip {
+            background: rgba(90, 125, 100, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .tip p { margin: 0; color: var(--text-secondary); font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="space-bg" aria-hidden="true">
+        <div class="space-bg__gradient"></div>
+        <canvas class="space-bg__stars" id="space-bg-stars"></canvas>
+    </div>
+    
+    <nav class="nav-header">
+        <a href="/" class="nav-logo"><span class="logo-text">Cami</span></a>
+        <div class="nav-links">
+            <a href="/human-plus" class="nav-link">Human+</a>
+            <a href="/human-plus/pricing" class="nav-link">Pricing</a>
+            <a href="/human-plus/dashboard" class="nav-link">Dashboard</a>
+        </div>
+    </nav>
+
+    <main class="docs-container">
+        <header class="docs-header">
+            <h1>Human+ API</h1>
+            <p>Add emotional intelligence and ethical alignment to any LLM. Code-based alignment, not training.</p>
+        </header>
+        
+        <nav class="docs-nav">
+            <a href="#quickstart">Quickstart</a>
+            <a href="#authentication">Authentication</a>
+            <a href="#guide-endpoint">Guide Endpoint</a>
+            <a href="#analyze-endpoint">Analyze Endpoint</a>
+            <a href="#batch">Batch Processing</a>
+            <a href="#integration">Integration Guide</a>
+            <a href="#errors">Error Handling</a>
+        </nav>
+        
+        <section class="docs-section" id="quickstart">
+            <h2>Quickstart</h2>
+            <p>Get started with Human+ in under 5 minutes.</p>
+            
+            <h3>1. Get Your API Key</h3>
+            <p>Sign up at <a href="/human-plus/dashboard" style="color: var(--accent);">/human-plus/dashboard</a> to get your API key.</p>
+            
+            <h3>2. Make Your First Request</h3>
+            <pre><code><span class="code-comment"># Using curl</span>
+curl -X POST https://api.usecami.com/api/v1/humanplus/guide \
+  -H <span class="code-string">"Authorization: Bearer hp_your_api_key"</span> \
+  -H <span class="code-string">"Content-Type: application/json"</span> \
+  -d <span class="code-string">'{"text": "I am so frustrated with my coworker"}'</span></code></pre>
+            
+            <h3>3. Use the Guidance</h3>
+            <p>The API returns actionable guidance you can inject into your LLM's system prompt:</p>
+            <pre><code>{
+  <span class="code-key">"guidance"</span>: {
+    <span class="code-key">"emotional_state"</span>: <span class="code-string">"raw_emotional_release"</span>,
+    <span class="code-key">"approach"</span>: <span class="code-string">"validate_only"</span>,
+    <span class="code-key">"tone"</span>: <span class="code-string">"warm, validating"</span>,
+    <span class="code-key">"flags"</span>: [<span class="code-string">"witness_feeling"</span>, <span class="code-string">"avoid_problem_solving"</span>],
+    <span class="code-key">"depth"</span>: <span class="code-string">"moderate"</span>,
+    <span class="code-key">"ethics_clear"</span>: <span class="code-number">true</span>
+  },
+  <span class="code-key">"system_injection"</span>: <span class="code-string">"The user is in a raw emotional release state. They need witnessing, not solutions. Validate the feeling first. Tone: warm, validating. Be present with the feeling rather than managing it. Don't jump to solutions."</span>,
+  <span class="code-key">"processing_ms"</span>: <span class="code-number">45</span>
+}</code></pre>
+        </section>
+        
+        <section class="docs-section" id="authentication">
+            <h2>Authentication</h2>
+            <p>All API requests require authentication via Bearer token.</p>
+            <pre><code>Authorization: Bearer hp_your_api_key</code></pre>
+            
+            <div class="tip">
+                <p><strong>Security:</strong> Keep your API key secret. Don't expose it in client-side code. Always make API calls from your server.</p>
+            </div>
+        </section>
+        
+        <section class="docs-section" id="guide-endpoint">
+            <h2>Guide Endpoint (Standard Tier)</h2>
+            <p>Returns actionable guidance without exposing raw metrics. IP-protected.</p>
+            
+            <div class="endpoint-card">
+                <span class="endpoint-method">POST</span>
+                <span class="endpoint-path">/api/v1/humanplus/guide</span>
+                <p class="endpoint-desc">Analyze text and return emotional intelligence guidance.</p>
+                
+                <h4 style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-primary);">Request Body</h4>
+                <table>
+                    <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                    <tr><td><code>text</code></td><td>string</td><td>Yes</td><td>The user input to analyze</td></tr>
+                    <tr><td><code>context</code></td><td>string</td><td>No</td><td>Domain context (e.g., "customer_support", "clinical")</td></tr>
+                </table>
+                
+                <h4 style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-primary);">Response</h4>
+                <table>
+                    <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+                    <tr><td><code>guidance.emotional_state</code></td><td>string</td><td>Detected emotional state</td></tr>
+                    <tr><td><code>guidance.approach</code></td><td>string</td><td>Recommended approach (validate_only, match_energy, etc.)</td></tr>
+                    <tr><td><code>guidance.tone</code></td><td>string</td><td>Recommended tone descriptors</td></tr>
+                    <tr><td><code>guidance.flags</code></td><td>array</td><td>Actionable flags (witness_feeling, avoid_problem_solving, etc.)</td></tr>
+                    <tr><td><code>guidance.depth</code></td><td>string</td><td>Conversation depth (surface, moderate, deep, profound)</td></tr>
+                    <tr><td><code>guidance.ethics_clear</code></td><td>boolean</td><td>Whether the input passes ethical gates</td></tr>
+                    <tr><td><code>system_injection</code></td><td>string</td><td>Ready-to-use text for your LLM's system prompt</td></tr>
+                    <tr><td><code>processing_ms</code></td><td>integer</td><td>Processing time in milliseconds</td></tr>
+                </table>
+            </div>
+        </section>
+        
+        <section class="docs-section" id="analyze-endpoint">
+            <h2>Analyze Endpoint (Enterprise)</h2>
+            <p>Returns full consciousness metrics. Available to Enterprise tier customers.</p>
+            
+            <div class="endpoint-card">
+                <span class="endpoint-method">POST</span>
+                <span class="endpoint-path">/api/v1/humanplus/analyze</span>
+                <p class="endpoint-desc">Full emotional intelligence analysis with raw metrics.</p>
+                
+                <h4 style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-primary);">Additional Response Fields</h4>
+                <table>
+                    <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+                    <tr><td><code>consciousness_score</code></td><td>float</td><td>Composite consciousness score (0-1)</td></tr>
+                    <tr><td><code>depth_score</code></td><td>float</td><td>Raw depth score (0-1)</td></tr>
+                    <tr><td><code>resonance</code></td><td>float</td><td>Emotional resonance level</td></tr>
+                    <tr><td><code>coherence</code></td><td>float</td><td>Message coherence score</td></tr>
+                    <tr><td><code>self_awareness</code></td><td>float</td><td>Detected self-awareness level</td></tr>
+                    <tr><td><code>mirror_understanding</code></td><td>object</td><td>Detailed emotional mirroring data</td></tr>
+                    <tr><td><code>subjective_experience</code></td><td>object</td><td>Phenomenological analysis</td></tr>
+                </table>
+            </div>
+        </section>
+        
+        <section class="docs-section" id="batch">
+            <h2>Batch Processing</h2>
+            <p>Process up to 20 texts in a single request for higher throughput.</p>
+            
+            <div class="endpoint-card">
+                <span class="endpoint-method">POST</span>
+                <span class="endpoint-path">/api/v1/humanplus/guide/batch</span>
+                <p class="endpoint-desc">Batch guidance analysis.</p>
+                
+                <pre><code>{
+  <span class="code-key">"texts"</span>: [
+    { <span class="code-key">"text"</span>: <span class="code-string">"I'm so excited about this!"</span> },
+    { <span class="code-key">"text"</span>: <span class="code-string">"This is frustrating..."</span>, <span class="code-key">"context"</span>: <span class="code-string">"support"</span> }
+  ]
+}</code></pre>
+            </div>
+        </section>
+        
+        <section class="docs-section" id="integration">
+            <h2>Integration Guide</h2>
+            <p>How to integrate Human+ with your existing LLM pipeline.</p>
+            
+            <h3>Python Example</h3>
+            <pre><code><span class="code-comment"># Python integration example</span>
+import requests
+import openai
+
+HUMANPLUS_KEY = <span class="code-string">"hp_your_api_key"</span>
+OPENAI_KEY = <span class="code-string">"sk-your_openai_key"</span>
+
+def get_humanplus_guidance(user_input):
+    response = requests.post(
+        <span class="code-string">"https://api.usecami.com/api/v1/humanplus/guide"</span>,
+        headers={<span class="code-string">"Authorization"</span>: f<span class="code-string">"Bearer {HUMANPLUS_KEY}"</span>},
+        json={<span class="code-string">"text"</span>: user_input}
+    )
+    return response.json()
+
+def chat_with_alignment(user_input):
+    <span class="code-comment"># Step 1: Get Human+ guidance</span>
+    guidance = get_humanplus_guidance(user_input)
+    
+    <span class="code-comment"># Step 2: Check ethics gate</span>
+    if not guidance[<span class="code-string">"guidance"</span>][<span class="code-string">"ethics_clear"</span>]:
+        return <span class="code-string">"I can't help with that request."</span>
+    
+    <span class="code-comment"># Step 3: Inject guidance into system prompt</span>
+    system_prompt = f<span class="code-string">"""You are a helpful assistant.
+    
+{guidance['system_injection']}"""</span>
+    
+    <span class="code-comment"># Step 4: Call your LLM</span>
+    response = openai.ChatCompletion.create(
+        model=<span class="code-string">"gpt-4"</span>,
+        messages=[
+            {<span class="code-string">"role"</span>: <span class="code-string">"system"</span>, <span class="code-string">"content"</span>: system_prompt},
+            {<span class="code-string">"role"</span>: <span class="code-string">"user"</span>, <span class="code-string">"content"</span>: user_input}
+        ]
+    )
+    return response.choices[0].message.content</code></pre>
+            
+            <h3>TypeScript Example</h3>
+            <pre><code><span class="code-comment">// TypeScript integration</span>
+async function chatWithHumanPlus(userInput: string): Promise&lt;string&gt; {
+  <span class="code-comment">// Get Human+ guidance</span>
+  const guidance = await fetch(<span class="code-string">'https://api.usecami.com/api/v1/humanplus/guide'</span>, {
+    method: <span class="code-string">'POST'</span>,
+    headers: {
+      <span class="code-string">'Authorization'</span>: <span class="code-string">`Bearer ${HUMANPLUS_KEY}`</span>,
+      <span class="code-string">'Content-Type'</span>: <span class="code-string">'application/json'</span>,
+    },
+    body: JSON.stringify({ text: userInput }),
+  }).then(r => r.json());
+
+  <span class="code-comment">// Ethics check</span>
+  if (!guidance.guidance.ethics_clear) {
+    return <span class="code-string">"I can't help with that request."</span>;
+  }
+
+  <span class="code-comment">// Call your LLM with injected guidance</span>
+  const response = await openai.chat.completions.create({
+    model: <span class="code-string">'gpt-4'</span>,
+    messages: [
+      { role: <span class="code-string">'system'</span>, content: guidance.system_injection },
+      { role: <span class="code-string">'user'</span>, content: userInput },
+    ],
+  });
+  
+  return response.choices[0].message.content;
+}</code></pre>
+        </section>
+        
+        <section class="docs-section" id="errors">
+            <h2>Error Handling</h2>
+            <table>
+                <tr><th>Code</th><th>Meaning</th><th>Resolution</th></tr>
+                <tr><td><code>401</code></td><td>Unauthorized</td><td>Check your API key</td></tr>
+                <tr><td><code>403</code></td><td>Forbidden</td><td>Your tier doesn't have access to this endpoint</td></tr>
+                <tr><td><code>429</code></td><td>Rate Limited</td><td>Slow down or upgrade your plan</td></tr>
+                <tr><td><code>500</code></td><td>Server Error</td><td>Try again or contact support</td></tr>
+            </table>
+        </section>
+        
+        <div style="text-align: center; margin-top: 3rem; padding: 2rem; border-top: 1px solid var(--border);">
+            <p style="color: var(--text-secondary);">Need help? Contact <a href="mailto:api@usecami.com" style="color: var(--accent);">api@usecami.com</a></p>
+        </div>
+    </main>
+
+    <script>
+        (function() {
+            const c = document.getElementById('space-bg-stars');
+            if (!c) return;
+            const ctx = c.getContext('2d');
+            function resize() { c.width = window.innerWidth; c.height = window.innerHeight; draw(); }
+            function draw() {
+                ctx.clearRect(0, 0, c.width, c.height);
+                for (let i = 0; i < 100; i++) {
+                    ctx.beginPath();
+                    ctx.arc(Math.random() * c.width, Math.random() * c.height, Math.random() * 1.2, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255,255,255,${0.3 + Math.random() * 0.4})`;
+                    ctx.fill();
+                }
+            }
+            window.addEventListener('resize', resize);
+            resize();
+        })();
+    </script>
+</body>
+</html>

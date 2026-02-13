@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human+ Admin | Customer Management</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/space-bg.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 140px 2rem 4rem;
+        }
+        
+        .admin-header {
+            margin-bottom: 2rem;
+        }
+        
+        .admin-header h1 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .admin-login {
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        
+        .admin-login h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 8px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .btn-secondary {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+        
+        .stat-card .value {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .stat-card .label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        /* Table */
+        .admin-table {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .admin-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .admin-table th {
+            text-align: left;
+            padding: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .admin-table td {
+            padding: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .admin-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .tier-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .tier-badge.free { background: rgba(107,114,128,0.2); color: #9ca3af; }
+        .tier-badge.startup { background: rgba(59,130,246,0.2); color: #60a5fa; }
+        .tier-badge.growth { background: rgba(139,92,246,0.2); color: #a78bfa; }
+        .tier-badge.enterprise { background: rgba(90,125,100,0.2); color: var(--accent); }
+        
+        .status-active { color: #ffffff; }
+        .status-inactive { color: #ef4444; }
+        
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-content h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .hidden { display: none !important; }
+        
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="space-bg" aria-hidden="true">
+        <div class="space-bg__gradient"></div>
+        <canvas class="space-bg__stars" id="space-bg-stars"></canvas>
+    </div>
+    
+    <nav class="nav-header">
+        <a href="/" class="nav-logo"><span class="logo-text">Cami</span></a>
+        <div class="nav-links">
+            <a href="/human-plus" class="nav-link">Human+</a>
+        </div>
+    </nav>
+
+    <main class="admin-container">
+        <!-- Login -->
+        <div id="login-section">
+            <div class="admin-login">
+                <h2>Admin Login</h2>
+                <form onsubmit="adminLogin(event)">
+                    <div class="form-group">
+                        <label>Admin Secret</label>
+                        <input type="password" id="admin-secret" class="form-input" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Login</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Dashboard -->
+        <div id="dashboard-section" class="hidden">
+            <header class="admin-header">
+                <h1>Human+ Admin</h1>
+                <p style="color: var(--text-secondary);">Manage customers, API keys, and usage</p>
+            </header>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="value" id="stat-total">0</div>
+                    <div class="label">Total Customers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="stat-active">0</div>
+                    <div class="label">Active</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="stat-paid">0</div>
+                    <div class="label">Paid Plans</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="stat-mrr">$0</div>
+                    <div class="label">MRR</div>
+                </div>
+            </div>
+            
+            <div class="toolbar">
+                <h2 style="font-size: 1.25rem; color: var(--text-primary); margin: 0;">Customers</h2>
+                <button class="btn-secondary" onclick="showCreateModal()">+ Add Customer</button>
+            </div>
+            
+            <div class="admin-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Contact</th>
+                            <th>Email</th>
+                            <th>Tier</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customers-table">
+                        <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Create Customer Modal -->
+        <div id="create-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Add Customer</h2>
+                <form onsubmit="createCustomer(event)">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="new-email" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Company Name</label>
+                        <input type="text" id="new-company" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Name</label>
+                        <input type="text" id="new-contact" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tier</label>
+                        <select id="new-tier" class="form-input">
+                            <option value="free">Free</option>
+                            <option value="startup">Startup ($500/mo)</option>
+                            <option value="growth">Growth ($2,000/mo)</option>
+                            <option value="enterprise">Enterprise (Custom)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="new-notes" class="form-input" rows="3"></textarea>
+                    </div>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button type="button" class="btn-secondary" style="flex: 1;" onclick="hideCreateModal()">Cancel</button>
+                        <button type="submit" class="btn-primary" style="flex: 1;">Create</button>
+                    </div>
+                </form>
+                <div id="new-customer-result" class="hidden" style="margin-top: 1rem; padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                    <p style="color: var(--accent); font-weight: 500; margin-bottom: 0.5rem;">Customer Created!</p>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.5rem;">API Key (show once):</p>
+                    <code id="new-api-key" style="display: block; padding: 0.5rem; background: var(--card-bg); border-radius: 4px; word-break: break-all; color: var(--accent);"></code>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Edit Customer Modal -->
+        <div id="edit-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Edit Customer</h2>
+                <form onsubmit="updateCustomer(event)">
+                    <input type="hidden" id="edit-id">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="edit-email" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Company Name</label>
+                        <input type="text" id="edit-company" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Name</label>
+                        <input type="text" id="edit-contact" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tier</label>
+                        <select id="edit-tier" class="form-input">
+                            <option value="free">Free</option>
+                            <option value="startup">Startup ($500/mo)</option>
+                            <option value="growth">Growth ($2,000/mo)</option>
+                            <option value="enterprise">Enterprise (Custom)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="edit-active" class="form-input">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Full Metrics Access</label>
+                        <select id="edit-metrics" class="form-input">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="edit-notes" class="form-input" rows="3"></textarea>
+                    </div>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button type="button" class="btn-secondary" style="flex: 1;" onclick="hideEditModal()">Cancel</button>
+                        <button type="submit" class="btn-primary" style="flex: 1;">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Space background
+        (function() {
+            const c = document.getElementById('space-bg-stars');
+            if (!c) return;
+            const ctx = c.getContext('2d');
+            function resize() { c.width = window.innerWidth; c.height = window.innerHeight; draw(); }
+            function draw() {
+                ctx.clearRect(0, 0, c.width, c.height);
+                for (let i = 0; i < 100; i++) {
+                    ctx.beginPath();
+                    ctx.arc(Math.random() * c.width, Math.random() * c.height, Math.random() * 1.2, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255,255,255,${0.3 + Math.random() * 0.4})`;
+                    ctx.fill();
+                }
+            }
+            window.addEventListener('resize', resize);
+            resize();
+        })();
+        
+        let adminSecret = '';
+        let customers = [];
+        
+        const tierPrices = { free: 0, startup: 500, growth: 2000, enterprise: 0 };
+        
+        // Auto-login if secret is stored
+        (function() {
+            const stored = localStorage.getItem('hp_admin_secret');
+            if (stored) {
+                adminSecret = stored;
+                document.getElementById('admin-secret').value = stored;
+                loadCustomers();
+            }
+        })();
+        
+        function adminLogin(e) {
+            e.preventDefault();
+            adminSecret = document.getElementById('admin-secret').value;
+            // Store for cross-page access (main admin dashboard)
+            localStorage.setItem('hp_admin_secret', adminSecret);
+            loadCustomers();
+        }
+        
+        async function loadCustomers() {
+            try {
+                const res = await fetch('/api/v1/licensing/admin/customers', {
+                    headers: { 'X-Admin-Secret': adminSecret },
+                });
+                
+                if (!res.ok) {
+                    alert('Invalid admin secret');
+                    return;
+                }
+                
+                const data = await res.json();
+                customers = data.customers;
+                
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('dashboard-section').classList.remove('hidden');
+                
+                renderStats();
+                renderTable();
+            } catch (e) {
+                alert('Failed to load: ' + e.message);
+            }
+        }
+        
+        function renderStats() {
+            const active = customers.filter(c => c.is_active);
+            const paid = customers.filter(c => ['startup', 'growth', 'enterprise'].includes(c.tier));
+            const mrr = customers.reduce((sum, c) => sum + (tierPrices[c.tier] || 0), 0);
+            
+            document.getElementById('stat-total').textContent = customers.length;
+            document.getElementById('stat-active').textContent = active.length;
+            document.getElementById('stat-paid').textContent = paid.length;
+            document.getElementById('stat-mrr').textContent = '$' + mrr.toLocaleString();
+        }
+        
+        function renderTable() {
+            const tbody = document.getElementById('customers-table');
+            
+            if (!customers.length) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No customers yet</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = customers.map(c => `
+                <tr>
+                    <td style="color: var(--text-primary); font-weight: 500;">${escapeHtml(c.company_name)}</td>
+                    <td>${escapeHtml(c.contact_name)}</td>
+                    <td>${escapeHtml(c.email)}</td>
+                    <td><span class="tier-badge ${c.tier}">${c.tier}</span></td>
+                    <td class="${c.is_active ? 'status-active' : 'status-inactive'}">${c.is_active ? 'Active' : 'Inactive'}</td>
+                    <td>${new Date(c.created_at).toLocaleDateString()}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-secondary" onclick="editCustomer('${c.id}')">Edit</button>
+                            <button class="btn-secondary" onclick="viewUsage('${c.id}')">Usage</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function showCreateModal() {
+            document.getElementById('create-modal').classList.remove('hidden');
+            document.getElementById('new-customer-result').classList.add('hidden');
+        }
+        
+        function hideCreateModal() {
+            document.getElementById('create-modal').classList.add('hidden');
+        }
+        
+        async function createCustomer(e) {
+            e.preventDefault();
+            
+            const data = {
+                email: document.getElementById('new-email').value,
+                company_name: document.getElementById('new-company').value,
+                contact_name: document.getElementById('new-contact').value,
+                tier: document.getElementById('new-tier').value,
+                notes: document.getElementById('new-notes').value,
+            };
+            
+            try {
+                const res = await fetch('/api/v1/licensing/admin/customers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Admin-Secret': adminSecret,
+                    },
+                    body: JSON.stringify(data),
+                });
+                
+                const result = await res.json();
+                if (res.ok) {
+                    document.getElementById('new-api-key').textContent = result.api_key;
+                    document.getElementById('new-customer-result').classList.remove('hidden');
+                    loadCustomers();
+                } else {
+                    alert(result.error || 'Failed to create customer');
+                }
+            } catch (e) {
+                alert('Failed: ' + e.message);
+            }
+        }
+        
+        function editCustomer(id) {
+            const c = customers.find(x => x.id === id);
+            if (!c) return;
+            
+            document.getElementById('edit-id').value = c.id;
+            document.getElementById('edit-email').value = c.email;
+            document.getElementById('edit-company').value = c.company_name;
+            document.getElementById('edit-contact').value = c.contact_name;
+            document.getElementById('edit-tier').value = c.tier;
+            document.getElementById('edit-active').value = c.is_active ? '1' : '0';
+            document.getElementById('edit-metrics').value = c.full_metrics_access ? '1' : '0';
+            document.getElementById('edit-notes').value = c.notes || '';
+            
+            document.getElementById('edit-modal').classList.remove('hidden');
+        }
+        
+        function hideEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+        }
+        
+        async function updateCustomer(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('edit-id').value;
+            const data = {
+                email: document.getElementById('edit-email').value,
+                company_name: document.getElementById('edit-company').value,
+                contact_name: document.getElementById('edit-contact').value,
+                tier: document.getElementById('edit-tier').value,
+                is_active: document.getElementById('edit-active').value === '1',
+                full_metrics_access: document.getElementById('edit-metrics').value === '1',
+                notes: document.getElementById('edit-notes').value,
+            };
+            
+            try {
+                const res = await fetch(`/api/v1/licensing/admin/customers/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Admin-Secret': adminSecret,
+                    },
+                    body: JSON.stringify(data),
+                });
+                
+                if (res.ok) {
+                    hideEditModal();
+                    loadCustomers();
+                } else {
+                    const result = await res.json();
+                    alert(result.error || 'Failed to update');
+                }
+            } catch (e) {
+                alert('Failed: ' + e.message);
+            }
+        }
+        
+        async function viewUsage(id) {
+            try {
+                const res = await fetch(`/api/v1/licensing/admin/usage/${id}`, {
+                    headers: { 'X-Admin-Secret': adminSecret },
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    alert(`Usage for ${data.customer.company_name}:\n\nThis month: ${data.usage.total_calls} calls\nSuccessful: ${data.usage.successful_calls}\nFailed: ${data.usage.failed_calls}`);
+                }
+            } catch (e) {
+                alert('Failed to load usage');
+            }
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>

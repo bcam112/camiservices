@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cami Research — Multi-LLM Synthesis With Conflict Resolution &amp; Bias Detection</title>
+    <meta name="description" content="AI research assistant that queries multiple LLMs in parallel, detects where they disagree, and synthesizes one clear answer with bias flags and source transparency.">
+    <link rel="canonical" href="https://usecami.com/research">
+    <meta property="og:title" content="Cami Research — Multi-LLM Synthesis With Conflict Resolution">
+    <meta property="og:description" content="AI research assistant that queries multiple LLMs, detects disagreement, and synthesizes one clear answer with bias detection.">
+    <meta property="og:url" content="https://usecami.com/research">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/space-bg.css">
+    <link rel="stylesheet" href="/static/enterprise-pages.css">
+    <style>
+        html, body { overflow-y: auto; overflow-x: hidden; }
+
+        .research-page { position: relative; z-index: 0; min-height: 100vh; }
+
+        .research-hero {
+            max-width: 780px; margin: 0 auto;
+            padding: 140px 24px 80px; text-align: center;
+        }
+        .research-hero .badge {
+            display: inline-block; font-size: 11px; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--accent); padding: 5px 14px;
+            border: 1px solid rgba(90,125,100,0.3);
+            border-radius: 20px; margin-bottom: 20px;
+            background: rgba(90,125,100,0.08);
+        }
+        .research-hero h1 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 38px; font-weight: 600; color: var(--text-primary);
+            letter-spacing: -0.03em; line-height: 1.2; margin-bottom: 18px;
+        }
+        .research-hero .sub {
+            font-size: 17px; color: var(--text-secondary);
+            line-height: 1.65; max-width: 580px; margin: 0 auto 36px;
+        }
+        .research-hero-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+        .research-hero-ctas a {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 14px 28px; border-radius: 10px;
+            font-size: 15px; font-weight: 600; text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .research-hero-ctas a:hover { transform: translateY(-2px); }
+        .cta-primary {
+            background: var(--accent); color: #f8faf8;
+            box-shadow: 0 4px 16px rgba(90,125,100,0.25);
+        }
+        .cta-primary:hover { box-shadow: 0 8px 28px rgba(90,125,100,0.35); }
+        .cta-secondary {
+            background: transparent; color: var(--text-primary);
+            border: 1.5px solid var(--border);
+        }
+        .cta-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Differentiators */
+        .research-diff {
+            max-width: 960px; margin: 0 auto;
+            padding: 0 24px 80px;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+        }
+        .research-diff-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 28px 24px; text-align: center;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: border-color 0.25s, transform 0.25s;
+        }
+        .research-diff-card:hover { border-color: rgba(90,125,100,0.4); transform: translateY(-3px); }
+        .research-diff-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 44px; height: 44px; border-radius: 12px;
+            background: rgba(90,125,100,0.1); color: var(--accent);
+            font-size: 18px; font-weight: 700; margin-bottom: 14px;
+        }
+        .research-diff-card h3 { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+        .research-diff-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.55; }
+
+        /* Paths */
+        .research-paths {
+            max-width: 780px; margin: 0 auto; padding: 0 24px 80px;
+        }
+        .research-paths h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 26px; font-weight: 600; color: var(--text-primary);
+            text-align: center; margin-bottom: 36px;
+        }
+        .research-paths-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px;
+        }
+        .research-path-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 32px 28px; text-align: center;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: border-color 0.25s, transform 0.25s;
+        }
+        .research-path-card:hover { border-color: rgba(90,125,100,0.4); transform: translateY(-3px); }
+        .research-path-card h3 { font-size: 17px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+        .research-path-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* How it works */
+        .research-how { max-width: 780px; margin: 0 auto; padding: 0 24px 80px; }
+        .research-how h2 { font-family: 'Libre Baskerville', Georgia, serif; font-size: 28px; font-weight: 600; color: var(--text-primary); text-align: center; margin-bottom: 48px; }
+        .research-steps { display: flex; flex-direction: column; gap: 32px; }
+        .research-step { display: flex; align-items: flex-start; gap: 20px; }
+        .research-step-num {
+            flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(90,125,100,0.1); border: 2px solid var(--accent);
+            color: var(--accent); display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 16px;
+        }
+        .research-step-text h3 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .research-step-text p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* Tiers */
+        .research-tiers-section { max-width: 960px; margin: 0 auto; padding: 0 24px 80px; }
+        .research-tiers-section h2 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 28px; font-weight: 600; color: var(--text-primary);
+            text-align: center; margin-bottom: 12px;
+        }
+        .research-tiers-section .tiers-sub {
+            text-align: center; font-size: 15px; color: var(--text-secondary); margin-bottom: 48px;
+        }
+        .research-tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+        .research-tier {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 36px 28px;
+            display: flex; flex-direction: column;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: border-color 0.25s, transform 0.25s;
+        }
+        .research-tier:hover { border-color: rgba(90,125,100,0.4); transform: translateY(-3px); }
+        .research-tier.featured { border-color: var(--accent); box-shadow: 0 8px 36px rgba(90,125,100,0.18); }
+        .research-tier .tier-badge {
+            display: inline-block; font-size: 10px; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 12px;
+        }
+        .research-tier h3 {
+            font-family: 'Libre Baskerville', Georgia, serif;
+            font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;
+        }
+        .research-tier .tier-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+        .research-tier ul { list-style: none; padding: 0; margin: 0 0 24px; }
+        .research-tier ul li {
+            font-size: 13.5px; color: var(--text-secondary); line-height: 1.7;
+            padding-left: 20px; position: relative; margin-bottom: 8px;
+        }
+        .research-tier ul li::before {
+            content: ''; position: absolute; left: 0; top: 0.55em;
+            width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.6;
+        }
+        .research-tier .tier-cta { margin-top: auto; }
+        .research-tier .tier-cta a {
+            display: block; text-align: center; padding: 12px 20px; border-radius: 10px;
+            font-size: 14px; font-weight: 600; text-decoration: none; transition: background 0.2s, transform 0.2s;
+        }
+        .research-tier .tier-cta a.primary-btn { background: var(--accent); color: #f8faf8; }
+        .research-tier .tier-cta a.primary-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .research-tier .tier-cta a.outline-btn { border: 1.5px solid var(--border); color: var(--text-primary); }
+        .research-tier .tier-cta a.outline-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Code */
+        .research-code-section { max-width: 680px; margin: 0 auto; padding: 0 24px 60px; }
+        .research-code-section h2 { font-family: 'Libre Baskerville', Georgia, serif; font-size: 24px; font-weight: 600; color: var(--text-primary); text-align: center; margin-bottom: 28px; }
+        .research-code {
+            background: #1a1a2e; border-radius: 12px; padding: 24px 28px; overflow-x: auto;
+            font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.7; color: #a8b2d1;
+        }
+        .research-code .comment { color: #636e88; }
+        .research-code .string { color: #c3e88d; }
+        .research-code .key { color: #82aaff; }
+
+        /* Disclaimer */
+        .research-disclaimer-section { max-width: 680px; margin: 0 auto; padding: 0 24px 80px; }
+        .research-disclaimer-box {
+            background: rgba(184, 134, 11, 0.06); border: 1px solid rgba(184, 134, 11, 0.2);
+            border-radius: 12px; padding: 24px 28px;
+        }
+        .research-disclaimer-box p {
+            font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin: 0;
+        }
+        .research-disclaimer-box strong { color: var(--text-primary); }
+
+        @media (max-width: 768px) {
+            .research-hero { padding: 100px 16px 60px; }
+            .research-hero h1 { font-size: 30px; }
+            .research-diff { grid-template-columns: repeat(2, 1fr); }
+            .research-tiers, .research-paths-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <script>/* Theme init — prevent flash */
+    (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+</head>
+<body>
+    <div class="space-bg" aria-hidden="true">
+        <div class="space-bg__gradient"></div>
+        <div class="space-bg__stars" id="space-bg-stars"></div>
+    </div>
+    <nav class="nav-header">
+        <a href="/" class="nav-logo"><span class="logo-text">Cami</span></a>
+        <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+        <div class="nav-links" aria-hidden="true"><a href="/customer-service" class="nav-link">Customer Service</a><a href="/legal-intelligence" class="nav-link">Law</a><a href="/health" class="nav-link">Health</a><span class="nav-sep" aria-hidden="true">|</span><span class="nav-link nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-link nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-link nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span><span class="nav-sep" aria-hidden="true">|</span><a href="/try" class="nav-link">Try Cami</a><a href="/human-plus" class="nav-link">Human+</a><a href="/min" class="nav-link">M.I.N.</a><a href="/roadmap" class="nav-link">Roadmap</a><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" class="nav-link github">GitHub</a></div>
+    </nav>
+    <div class="nav-sidebar-backdrop" id="nav-sidebar-backdrop" aria-hidden="true"></div>
+    <aside class="nav-sidebar" id="nav-sidebar" aria-label="Main menu">
+        <div class="nav-sidebar-logo"><a href="/" class="nav-logo"><span class="logo-text">Cami</span></a></div>
+        <div class="nav-sidebar-links">
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Services<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/customer-service">Customer Service</a>
+                    <a href="/legal-intelligence">Law</a>
+                    <a href="/health">Health</a>
+                    <span class="nav-link-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Money <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                    <span class="nav-link-disabled">Tutor <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Technology<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/human-plus">Human+</a>
+                    <a href="/min">M.I.N.</a>
+                    <a href="/roadmap">Roadmap</a>
+                    <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+            <div class="nav-sidebar-group collapsed">
+                <button type="button" class="nav-sidebar-section-toggle" aria-expanded="false">Account<span class="nav-sidebar-chevron" aria-hidden="true">&#9660;</span></button>
+                <div class="nav-sidebar-group-inner">
+                    <a href="/try">Try Cami</a>
+                    <a href="/login">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <script>(function(){ var b=document.body, btn=document.getElementById('nav-hamburger'), back=document.getElementById('nav-sidebar-backdrop'), side=document.getElementById('nav-sidebar'); if(!btn||!back||!side) return; function close(){ b.classList.remove('nav-sidebar-open'); } function toggle(){ b.classList.toggle('nav-sidebar-open'); } btn.addEventListener('click',toggle); back.addEventListener('click',close); side.querySelectorAll('.nav-sidebar-links a').forEach(function(a){ a.addEventListener('click',close); }); side.querySelectorAll('.nav-sidebar-section-toggle').forEach(function(btn){ btn.addEventListener('click',function(){ var g=btn.closest('.nav-sidebar-group'); if(g) g.classList.toggle('collapsed'); btn.setAttribute('aria-expanded',g&&!g.classList.contains('collapsed')); }); }); })();</script>
+
+    <main class="research-page">
+
+        <div class="research-coming" style="max-width:680px;margin:100px auto 0;padding:14px 24px;background:rgba(90,125,100,0.1);border:1px solid rgba(90,125,100,0.25);border-radius:10px;text-align:center;font-size:13px;color:var(--text-secondary);">
+            <strong style="color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;font-size:11px;">Coming in Cami-2</strong> — Research mode is in active development. Sign up to be notified when it launches.
+        </div>
+
+        <section class="research-hero">
+            <span class="badge">Research Intelligence</span>
+            <h1>AI research that thinks before it answers</h1>
+            <p class="sub">Cami queries GPT, Claude, Gemini, and Grok in parallel — but you always talk to Cami. The other LLMs are research tools. Cami synthesizes their perspectives, flags biases, surfaces conflicts, and gives you one thoughtful answer. <strong>Cami speaks. Always.</strong></p>
+            <div class="research-hero-ctas">
+                <a href="/login" class="cta-primary">Join the waitlist</a>
+                <a href="/login" class="cta-secondary">Sign In</a>
+            </div>
+        </section>
+
+        <section class="research-paths">
+            <h2>Two ways to use Cami for research</h2>
+            <div class="research-paths-grid">
+                <div class="research-path-card">
+                    <div class="research-diff-icon" style="margin-bottom:14px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div>
+                    <h3>Chat directly on Cami</h3>
+                    <p>Sign in at usecami.com and select Research mode. Ask any research question and get multi-model synthesis with conflict detection and bias flags in a full chat interface. No API, no code, no setup.</p>
+                    <div class="tier-cta" style="margin-top:18px;">
+                        <a href="/login" class="outline-btn">Coming in Cami-2</a>
+                    </div>
+                </div>
+                <div class="research-path-card">
+                    <div class="research-diff-icon" style="margin-bottom:14px;">{&thinsp;}</div>
+                    <h3>Integrate via API</h3>
+                    <p>Build Cami's research engine into your tools, internal wikis, or products. Upload domain-specific knowledge, embed the widget, or call the REST API for structured multi-model analysis.</p>
+                    <div class="tier-cta" style="margin-top:18px;">
+                        <a href="/login" class="outline-btn">Coming in Cami-2</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="research-diff">
+            <div class="research-diff-card">
+                <div class="research-diff-icon">4+</div>
+                <h3>Multi-LLM Synthesis</h3>
+                <p>Cami uses GPT, Claude, Gemini, and Grok as knowledge sources. But you always talk to Cami. One voice, one synthesis, with full transparency about where sources agreed or disagreed.</p>
+            </div>
+            <div class="research-diff-card">
+                <div class="research-diff-icon">H+</div>
+                <h3>Bias Detection</h3>
+                <p>Human+ scans every synthesized answer for cognitive biases -- confirmation bias, anchoring, appeal to authority. You see what the models missed about their own reasoning.</p>
+            </div>
+            <div class="research-diff-card">
+                <div class="research-diff-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3C7.5 3 5.5 4.5 5 6.5 3.5 7 2.5 8.5 2.5 10.5c0 1.5.6 2.8 1.5 3.7-.3.8-.5 1.6-.5 2.5C3.5 19 5 20.5 7 21c1 .3 2.2 0 3-.5"/><path d="M14 3c2.5 0 4.5 1.5 5 3.5 1.5.5 2.5 2 2.5 4 0 1.5-.6 2.8-1.5 3.7.3.8.5 1.6.5 2.5 0 2.3-1.5 3.8-3.5 4.3-1 .3-2.2 0-3-.5"/><path d="M12 3v18"/></svg></div>
+                <h3>Research Memory</h3>
+                <p>M.I.N. tracks your research threads, remembers prior findings, and connects dots across sessions. The more you research, the sharper context becomes.</p>
+            </div>
+            <div class="research-diff-card">
+                <div class="research-diff-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+                <h3>Novel Thinking</h3>
+                <p>Cami doesn't just retrieve -- it reasons. When models disagree, Cami synthesizes a novel position, surfaces the conflict, and explains why. Original analysis, not regurgitation.</p>
+            </div>
+        </section>
+
+        <section class="research-how">
+            <h2>How Cami Research works</h2>
+            <div class="research-steps">
+                <div class="research-step">
+                    <div class="research-step-num">1</div>
+                    <div class="research-step-text">
+                        <h3>You ask a question</h3>
+                        <p>Type anything -- a factual query, a comparison, a deep-dive topic, or a "what does the evidence say" question. Cami works in any domain.</p>
+                    </div>
+                </div>
+                <div class="research-step">
+                    <div class="research-step-num">2</div>
+                    <div class="research-step-text">
+                        <h3>Cami researches using multiple LLMs</h3>
+                        <p>When Cami needs more knowledge, Cami queries GPT, Claude, Gemini, and Grok in parallel. They're Cami's research tools — knowledge sources, not the answer.</p>
+                    </div>
+                </div>
+                <div class="research-step">
+                    <div class="research-step-num">3</div>
+                    <div class="research-step-text">
+                        <h3>Cami synthesizes — always Cami's voice</h3>
+                        <p>Cami compares the perspectives, identifies agreement and conflict, detects biases, and synthesizes one clear answer. The other LLMs contribute knowledge. Cami delivers the answer.</p>
+                    </div>
+                </div>
+                <div class="research-step">
+                    <div class="research-step-num">4</div>
+                    <div class="research-step-text">
+                        <h3>M.I.N. learns from the thread</h3>
+                        <p>Every research interaction deepens Cami's contextual memory for you. Follow-up questions benefit from prior findings, and Cami connects related threads automatically.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Novel Thinking highlight -->
+        <section style="max-width:780px;margin:0 auto;padding:0 24px 60px;">
+            <div style="background:linear-gradient(135deg,rgba(90,125,100,0.08),rgba(90,125,100,0.02));border:1px solid rgba(90,125,100,0.2);border-radius:16px;padding:32px 36px;position:relative;overflow:hidden;">
+                <div style="position:absolute;top:16px;right:20px;font-size:48px;opacity:0.06;font-weight:800;">N</div>
+                <h2 style="font-family:'Libre Baskerville',Georgia,serif;font-size:22px;font-weight:600;color:var(--text-primary);margin-bottom:14px;">Novel thinking, not retrieval</h2>
+                <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:16px;">Most AI research tools retrieve existing answers and stitch them together. Cami generates <strong style="color:var(--accent);">novel analysis</strong> by pitting multiple reasoning engines against each other, finding where they converge and where they conflict, and producing an original synthesis you won't find anywhere else.</p>
+                <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;margin:0;">When Cami spots a gap in existing knowledge, it doesn't hide it -- it tells you. When models disagree, Cami builds a reasoned position and shows its work. This is what separates an assistant that thinks from one that searches.</p>
+            </div>
+        </section>
+
+        <section class="research-tiers-section">
+            <h2>API tiers for research teams</h2>
+            <p class="tiers-sub">For teams integrating Cami into their research workflow.</p>
+            <div class="research-tiers">
+                <div class="research-tier">
+                    <span class="tier-badge">Individual / Small Team</span>
+                    <h3>Starter API</h3>
+                    <p class="tier-desc">Call <code>POST /api/v1/research/query</code> from your tools. Multi-model synthesis in a single endpoint.</p>
+                    <ul>
+                        <li>Multi-LLM parallel query &amp; synthesis</li>
+                        <li>Conflict detection in every response</li>
+                        <li>Human+ bias flags</li>
+                        <li>Confidence scoring</li>
+                        <li>Domain knowledge base (upload your docs)</li>
+                    </ul>
+                    <div class="tier-cta">
+                        <a href="/login" class="outline-btn">Coming in Cami-2</a>
+                    </div>
+                </div>
+
+                <div class="research-tier featured">
+                    <span class="tier-badge">Research Group / Lab</span>
+                    <h3>Professional</h3>
+                    <p class="tier-desc">Multi-user research environment with shared knowledge, conversation history, and embeddable widget.</p>
+                    <ul>
+                        <li>Everything in Starter, plus:</li>
+                        <li>Multi-user support with shared knowledge base</li>
+                        <li>Embeddable research widget</li>
+                        <li>Research history &amp; conversation threads</li>
+                        <li>Scribe integration (voice/video transcription)</li>
+                        <li>Priority support</li>
+                    </ul>
+                    <div class="tier-cta">
+                        <a href="/login" class="outline-btn">Coming in Cami-2</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="research-code-section">
+            <h2>One call to multi-model research</h2>
+            <div class="research-code">
+                <span class="comment">// POST /api/v1/research/query</span><br>
+                {<br>
+                &nbsp;&nbsp;<span class="key">"message"</span>: <span class="string">"What is the current scientific consensus on intermittent fasting and longevity?"</span>,<br>
+                &nbsp;&nbsp;<span class="key">"depth"</span>: <span class="string">"deep"</span> <span class="comment">// or "fast" for quick lookups</span><br>
+                }<br><br>
+                <span class="comment">// Response includes:</span><br>
+                <span class="comment">// "response", "models_queried", "conflicts_detected", "bias_flags",</span><br>
+                <span class="comment">// "confidence", "perspectives", "depth"</span>
+            </div>
+        </section>
+
+        <section class="research-disclaimer-section">
+            <div class="research-disclaimer-box">
+                <p><strong>Note:</strong> Cami Research synthesizes information from multiple AI models -- it is not a primary source. Always verify critical findings against original publications, datasets, and domain experts. Cami flags uncertainty and disagreement so you can decide where to dig deeper.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="page-footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">Cami</div>
+                    <p class="footer-desc">The AI platform that learns and grows with you. Knowledge from LLMs, memory from M.I.N., consciousness from Human+.</p>
+                    <div class="footer-social">
+                        <a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                            <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="/customer-service">Customer Service</a></li>
+                        <li><a href="/health">Healthcare</a></li>
+                        <li><a href="/legal-intelligence">Legal Intelligence</a></li>
+                        <li><span class="footer-disabled">Research <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        <li><span class="footer-disabled">Financial <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                        <li><span class="footer-disabled">Education <span class="nav-c3">C<span class="nav-c3-num">3</span></span></span></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Technology</h4>
+                    <ul>
+                        <li><a href="/human-plus">Human+</a></li>
+                        <li><a href="/min">M.I.N.</a></li>
+                        <li><a href="/platform">Platform</a></li>
+                        <li><a href="/roadmap">Roadmap</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="https://github.com/bcam112/camiservices" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copy">&copy; 2026 Cami. All rights reserved.</div>
+                <div class="footer-legal">
+                    <a href="/privacy">Privacy Policy</a>
+                    <a href="/terms">Terms of Service</a>
+                    <a href="/disclaimer">Disclaimer</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="/static/space-bg.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.initSpaceBg) window.initSpaceBg('space-bg-stars'); });</script>
+    <script src="/static/synth-anim.js"></script>
+    <script src="/static/theme-toggle.js"></script>
+</body>
+</html>

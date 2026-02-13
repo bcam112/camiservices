@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control — Cami Platform</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/backend-ui.css">
+    <style>
+        .min-strip {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--space-4) var(--space-6);
+            padding: var(--space-4) var(--space-6);
+            background: var(--surface-secondary);
+            border-bottom: 1px solid var(--border-default);
+        }
+        .min-strip .item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        .min-strip .label {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .min-strip .value {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .min-strip .ok { color: var(--success); }
+        .min-strip .err { color: var(--danger); }
+        
+        .agents-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: var(--space-4);
+        }
+        .agent-card {
+            background: var(--surface-primary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+        }
+        .agent-card .agent-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-1);
+        }
+        .agent-card .agent-meta {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            font-family: var(--font-mono);
+            margin-bottom: var(--space-2);
+        }
+        .agent-card .agent-working {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            padding-top: var(--space-3);
+            margin-top: var(--space-3);
+            border-top: 1px solid var(--border-subtle);
+        }
+        
+        .kanban-wrap {
+            overflow-x: auto;
+            padding-bottom: var(--space-4);
+        }
+        .kanban {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(180px, 1fr));
+            gap: var(--space-3);
+            min-width: 900px;
+        }
+        .column {
+            background: var(--surface-secondary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3);
+            min-height: 140px;
+        }
+        .column h3 {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin: 0 0 var(--space-3);
+        }
+        .task-card {
+            background: var(--surface-primary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            padding: var(--space-3);
+            margin-bottom: var(--space-2);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .task-card:hover {
+            border-color: var(--accent);
+        }
+        .task-card:last-child { margin-bottom: 0; }
+        .task-card .task-title {
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-bottom: var(--space-1);
+        }
+        .task-card .task-meta {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+        }
+        
+        .activity-item {
+            padding: var(--space-3) 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-item .activity-type {
+            font-weight: 500;
+            font-size: 0.8125rem;
+            color: var(--accent);
+        }
+        .activity-item .activity-msg {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-top: var(--space-1);
+        }
+        .activity-item .activity-time {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            margin-top: var(--space-1);
+        }
+        
+        .create-forms {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-6);
+        }
+        .create-form-card {
+            background: var(--surface-primary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+        }
+        .create-form-card h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: var(--space-4);
+        }
+        
+        .trace-step {
+            padding: var(--space-3);
+            background: var(--surface-secondary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-2);
+        }
+        .trace-step:last-child { margin-bottom: 0; }
+        .trace-step .step-num {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .trace-step .step-content {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-top: var(--space-1);
+        }
+    </style>
+    <script>
+        (function(){try{var t=localStorage.getItem('cami-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(_){}})();
+    </script>
+</head>
+<body class="backend-ui">
+    <div class="backend-layout">
+        <!-- Sidebar -->
+        <aside class="backend-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="sidebar-logo">
+                    <span class="sidebar-logo-text">Cami</span>
+                    <span class="sidebar-logo-badge">Control</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Platform</div>
+                    <a href="/platform" class="sidebar-link active">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/>
+                            <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        </svg>
+                        Control
+                    </a>
+                    <a href="/min" class="sidebar-link">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                            <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                        M.I.N.
+                    </a>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Navigate</div>
+                    <a href="/dashboard" class="sidebar-link">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="/admin" class="sidebar-link">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                        Admin
+                    </a>
+                    <a href="/business" class="sidebar-link">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="8.5" cy="7" r="4"/>
+                            <line x1="20" y1="8" x2="20" y2="14"/>
+                            <line x1="23" y1="11" x2="17" y2="11"/>
+                        </svg>
+                        Business
+                    </a>
+                    <a href="/" class="sidebar-link">
+                        <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                        Home
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="flex items-center gap-3">
+                    <label class="text-xs text-muted flex items-center gap-2" style="cursor:pointer;">
+                        <input type="checkbox" id="autoRefresh" checked style="accent-color: var(--accent);">
+                        Auto-refresh 30s
+                    </label>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main content -->
+        <main class="backend-main">
+            <header class="backend-header">
+                <div class="header-left">
+                    <div class="header-breadcrumb">
+                        <span class="header-breadcrumb-item">Cami</span>
+                        <span class="header-breadcrumb-sep">/</span>
+                        <span class="header-breadcrumb-item current">Control</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-primary btn-sm" id="btnRefresh">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6"/>
+                            <path d="M1 20v-6h6"/>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                        Refresh
+                    </button>
+                    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
+                        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- M.I.N. Strip -->
+            <div class="min-strip" id="minStrip">
+                <div class="item">
+                    <span class="label">MIN Patterns</span>
+                    <span class="value" id="minPatterns">—</span>
+                </div>
+                <div class="item">
+                    <span class="label">Storage</span>
+                    <span class="value" id="minStorage">—</span>
+                </div>
+                <div class="item">
+                    <span class="label">Connection</span>
+                    <span class="value" id="minConnection">—</span>
+                </div>
+                <div class="item">
+                    <span class="label">Status</span>
+                    <span class="value" id="minStatusMsg">—</span>
+                </div>
+                <div class="item" style="margin-left: auto;">
+                    <a href="/min" class="btn btn-secondary btn-sm">M.I.N. Page →</a>
+                </div>
+            </div>
+            
+            <!-- Human+ Strip (Last Run) -->
+            <div class="min-strip" id="humanPlusStrip" style="background: var(--surface-primary); border-top: none;">
+                <div class="item">
+                    <span class="label">Consciousness</span>
+                    <span class="value" id="hpConsciousness">—</span>
+                </div>
+                <div class="item">
+                    <span class="label">Resonance</span>
+                    <span class="value" id="hpResonance">—</span>
+                </div>
+                <div class="item">
+                    <span class="label">Coherence</span>
+                    <span class="value" id="hpCoherence">—</span>
+                </div>
+                <div class="item">
+                    <span class="label">Depth</span>
+                    <span class="value" id="hpDepth">—</span>
+                </div>
+                <div class="item">
+                    <span class="label">Self-Awareness</span>
+                    <span class="value" id="hpSelfAwareness">—</span>
+                </div>
+                <div class="item">
+                    <span class="label">Confidence</span>
+                    <span class="value" id="hpConfidence">—</span>
+                </div>
+                <div class="item">
+                    <span class="label">Method</span>
+                    <span class="value" id="hpMethod">—</span>
+                </div>
+                <div class="item" style="margin-left: auto;">
+                    <a href="/human-plus" class="btn btn-secondary btn-sm">Human+ Page →</a>
+                </div>
+            </div>
+            
+            <div class="backend-content">
+                <!-- Cami Trace -->
+                <div class="card mb-6">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">How Cami Thought (Last Run)</h3>
+                            <p class="card-subtitle">Agentic reasoning trace from the most recent query</p>
+                        </div>
+                    </div>
+                    <div class="card-body" id="camiTraceFeed">
+                        <p class="text-sm text-muted">No run yet. Ask Cami something from chat, then refresh.</p>
+                    </div>
+                </div>
+                
+                <!-- Agents -->
+                <div class="section-header">
+                    <span class="section-title">Agents (Instances)</span>
+                </div>
+                <div class="agents-row mb-6" id="agentsRow">
+                    <p class="text-sm text-muted">Loading...</p>
+                </div>
+                
+                <!-- Task Board -->
+                <div class="section-header">
+                    <span class="section-title">Task Board</span>
+                </div>
+                <div class="kanban-wrap mb-6">
+                    <div class="kanban" id="kanban">
+                        <div class="column" data-status="inbox">
+                            <h3>Inbox</h3>
+                            <div class="column-tasks"></div>
+                        </div>
+                        <div class="column" data-status="assigned">
+                            <h3>Assigned</h3>
+                            <div class="column-tasks"></div>
+                        </div>
+                        <div class="column" data-status="in_progress">
+                            <h3>In Progress</h3>
+                            <div class="column-tasks"></div>
+                        </div>
+                        <div class="column" data-status="review">
+                            <h3>Review</h3>
+                            <div class="column-tasks"></div>
+                        </div>
+                        <div class="column" data-status="done">
+                            <h3>Done</h3>
+                            <div class="column-tasks"></div>
+                        </div>
+                        <div class="column" data-status="blocked">
+                            <h3>Blocked</h3>
+                            <div class="column-tasks"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Activity & Notifications -->
+                <div class="grid" style="grid-template-columns: 1fr 1fr; gap: var(--space-6);">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Activity Feed</h3>
+                        </div>
+                        <div class="card-body" id="activityFeed" style="max-height: 320px; overflow-y: auto;">
+                            <p class="text-sm text-muted">Loading...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Notifications</h3>
+                        </div>
+                        <div class="card-body" id="notificationsList" style="max-height: 320px; overflow-y: auto;">
+                            <p class="text-sm text-muted">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Create Forms -->
+                <div class="section-header mt-6">
+                    <span class="section-title">Create</span>
+                </div>
+                <div class="create-forms">
+                    <div class="create-form-card">
+                        <h4>New Instance</h4>
+                        <form id="formInstance">
+                            <div class="form-group">
+                                <label class="form-label">Name</label>
+                                <input type="text" name="name" class="form-input" placeholder="e.g. Research Alpha" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Role</label>
+                                <input type="text" name="role" class="form-input" placeholder="e.g. Researcher" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Mode</label>
+                                <select name="mode" class="form-select">
+                                    <option value="deep_research">Research</option>
+                                    <option value="tutor">Tutor</option>
+                                    <option value="customer_service">Customer Service</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create Instance</button>
+                            <div id="instanceFormMsg" class="text-sm mt-2"></div>
+                        </form>
+                    </div>
+                    
+                    <div class="create-form-card">
+                        <h4>New Task</h4>
+                        <form id="formTask">
+                            <div class="form-group">
+                                <label class="form-label">Title</label>
+                                <input type="text" name="title" class="form-input" placeholder="e.g. Research competitor pricing" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description (optional)</label>
+                                <textarea name="description" class="form-textarea" placeholder="Details..." style="min-height: 80px;"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create Task</button>
+                            <div id="taskFormMsg" class="text-sm mt-2"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- Loading overlay -->
+        <div id="controlLoading" class="empty-state" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--surface-primary); z-index: 1000; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+            <div class="spinner" style="margin: 0 auto var(--space-4);"></div>
+            <p class="text-muted">Loading control panel...</p>
+        </div>
+    </div>
+    
+    <!-- Task Modal -->
+    <div class="modal-backdrop" id="taskModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Task</h2>
+                <button type="button" class="modal-close" id="modalClose">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted mb-4" id="modalDescription" style="white-space: pre-wrap;"></p>
+                
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="modalStatus">
+                        <option value="inbox">Inbox</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="review">Review</option>
+                        <option value="done">Done</option>
+                        <option value="blocked">Blocked</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Comments</label>
+                    <div id="modalMessages" style="max-height: 200px; overflow-y: auto;"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Add Comment</label>
+                    <input type="text" class="form-input mb-2" id="modalFromSession" placeholder="Session key (e.g. agent:research:main)">
+                    <textarea class="form-textarea" id="modalComment" placeholder="Comment..." style="min-height: 60px;"></textarea>
+                </div>
+                
+                <button type="button" class="btn btn-primary" id="modalSendComment">Send Comment</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Supabase Auth -->
+    <script src="/static/js/supabase.min.js"></script>
+    <script>
+    if (typeof window.supabase === 'undefined') {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        s.crossOrigin = 'anonymous';
+        document.head.appendChild(s);
+    }
+    </script>
+    <script>
+    (function() {
+        var sb = null, token = null;
+        var currentTaskId = null;
+        var refreshTimer = null;
+
+        // ─── Theme Toggle ─────────────────────────────────────────────────────────
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+            localStorage.setItem('cami-theme', isDark ? '' : 'dark');
+        });
+
+        function esc(s) {
+            if (s == null) return '';
+            var d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        function waitSB(cb, n) { n=n||0; if(typeof window.supabase!=='undefined') return cb(); if(n>50) return cb(); setTimeout(function(){waitSB(cb,n+1);},100); }
+        function apiHeaders() { var h={'Content-Type':'application/json'}; if(token) h['Authorization']='Bearer '+token; return h; }
+
+        function api(url, opts) {
+            opts = opts || {};
+            if (!opts.headers) opts.headers = {};
+            if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+            return fetch(url, opts).then(function(r) {
+                if (!r.ok) {
+                    if (r.status === 403) throw new Error('Admin access required');
+                    if (r.status === 401) throw new Error('Authentication required');
+                    if (r.status === 503) throw new Error('Backend unavailable (check CAMI_API_BASE)');
+                    throw new Error(r.statusText || 'Request failed');
+                }
+                return r.json();
+            });
+        }
+
+        function redirectLogin() { window.location.href = '/login?redirect=/platform'; }
+
+        // ─── Init Auth ─────────────────────────────────────────────────────────────
+        async function init() {
+            await new Promise(function(r) { waitSB(r); });
+            if (typeof window.supabase === 'undefined') { redirectLogin(); return; }
+
+            var config = {};
+            try { var r = await fetch('/api/config'); config = await r.json(); } catch(e) {}
+            if (!config.supabase_url || !config.supabase_anon_key) { redirectLogin(); return; }
+
+            sb = window.supabase.createClient(config.supabase_url, config.supabase_anon_key);
+            var sess = await sb.auth.getSession();
+            if (!sess.data.session) { redirectLogin(); return; }
+            token = sess.data.session.access_token;
+
+            sb.auth.onAuthStateChange(function(_event, newSession) {
+                if (newSession && newSession.access_token) token = newSession.access_token;
+            });
+
+            // Refresh token
+            try {
+                await sb.auth.getUser();
+                var freshSess = await sb.auth.getSession();
+                if (freshSess.data.session && freshSess.data.session.access_token) token = freshSess.data.session.access_token;
+            } catch(e) {}
+
+            // Check admin
+            try {
+                var r = await fetch('/api/me', { headers: apiHeaders() });
+                if (!r.ok) {
+                    await fetch('/api/me', { method: 'POST', headers: apiHeaders() });
+                    r = await fetch('/api/me', { headers: apiHeaders() });
+                }
+                if (!r || !r.ok) { redirectLogin(); return; }
+                var me = await r.json();
+                if (!me.is_admin) { window.location.href = '/dashboard'; return; }
+            } catch(e) { redirectLogin(); return; }
+
+            // Hide loading, show content
+            document.getElementById('controlLoading').style.display = 'none';
+
+            // Start loading data
+            loadAll();
+            loadMinStrip();
+            loadCamiTrace();
+            refreshTimer = setInterval(loadAll, 30000);
+            setInterval(function() { loadMinStrip(); loadCamiTrace(); }, 10000);
+
+            // Event listeners
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('btnRefresh').addEventListener('click', loadAll);
+
+            document.getElementById('autoRefresh').addEventListener('change', function() {
+                if (this.checked) {
+                    refreshTimer = setInterval(loadAll, 30000);
+                } else {
+                    clearInterval(refreshTimer);
+                    refreshTimer = null;
+                }
+            });
+
+            document.getElementById('modalClose').addEventListener('click', function() {
+                document.getElementById('taskModal').classList.remove('open');
+            });
+
+            document.getElementById('taskModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    document.getElementById('taskModal').classList.remove('open');
+                }
+            });
+
+            document.getElementById('modalStatus').addEventListener('change', function() {
+                if (!currentTaskId) return;
+                api('/api/platform/tasks/' + currentTaskId, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: this.value })
+                }).then(function() { loadAll(); });
+            });
+
+            document.getElementById('modalSendComment').addEventListener('click', function() {
+                if (!currentTaskId) return;
+                var from = document.getElementById('modalFromSession').value.trim();
+                var content = document.getElementById('modalComment').value.trim();
+                if (!from || !content) { alert('Session key and comment required.'); return; }
+                api('/api/platform/tasks/' + currentTaskId + '/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ from_session_key: from, content: content })
+                }).then(function() {
+                    document.getElementById('modalComment').value = '';
+                    openTask(currentTaskId);
+                    loadAll();
+                }).catch(function(e) { alert('Failed: ' + e.message); });
+            });
+
+            document.getElementById('formInstance').addEventListener('submit', function(e) {
+                e.preventDefault();
+                var fd = new FormData(this);
+                var msg = document.getElementById('instanceFormMsg');
+                msg.textContent = '';
+                msg.style.color = '';
+                api('/api/platform/instances', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: fd.get('name'),
+                        role: fd.get('role'),
+                        mode: fd.get('mode'),
+                        schedule_cron: '*/15 * * * *'
+                    })
+                }).then(function(r) {
+                    if (r.ok && r.instance) {
+                        msg.style.color = 'var(--success)';
+                        msg.textContent = 'Created: ' + (r.instance.name || r.instance.session_key);
+                        loadAll();
+                    } else {
+                        msg.style.color = 'var(--danger)';
+                        msg.textContent = r.error || 'Failed';
+                    }
+                }).catch(function(e) {
+                    msg.style.color = 'var(--danger)';
+                    msg.textContent = e.message;
+                });
+            });
+
+            document.getElementById('formTask').addEventListener('submit', function(e) {
+                e.preventDefault();
+                var fd = new FormData(this);
+                var msg = document.getElementById('taskFormMsg');
+                msg.textContent = '';
+                msg.style.color = '';
+                api('/api/platform/tasks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: fd.get('title'),
+                        description: fd.get('description') || null
+                    })
+                }).then(function(r) {
+                    if (r.ok && r.task_id) {
+                        msg.style.color = 'var(--success)';
+                        msg.textContent = 'Task created.';
+                        loadAll();
+                    } else {
+                        msg.style.color = 'var(--danger)';
+                        msg.textContent = r.error || 'Failed';
+                    }
+                }).catch(function(e) {
+                    msg.style.color = 'var(--danger)';
+                    msg.textContent = e.message;
+                });
+            });
+        }
+
+        function loadMinStrip() {
+            api('/min/stats').then(function(d) {
+                var n = d.database_patterns !== undefined ? d.database_patterns : (d.total_patterns || 0);
+                document.getElementById('minPatterns').textContent = n != null ? n.toLocaleString() : '—';
+                var st = d.storage_type || '—';
+                document.getElementById('minStorage').textContent = st === 'postgresql' ? 'PostgreSQL' : (st === 'memory' ? 'In-Memory' : st);
+                var conn = '—';
+                if (d.connection_status) {
+                    var c = d.connection_status;
+                    conn = c.database_connected ? 'Live (Railway)' : (c.database_url_set === 'Yes' ? 'Not connected' : 'No DB URL');
+                }
+                var el = document.getElementById('minConnection');
+                el.textContent = conn;
+                el.className = 'value ' + (d.connection_status && d.connection_status.database_connected ? 'ok' : 'err');
+                var msgEl = document.getElementById('minStatusMsg');
+                if (msgEl) {
+                    if (d.error) {
+                        msgEl.textContent = 'Error: ' + (d.error + '').slice(0, 80);
+                        msgEl.className = 'value err';
+                    } else if (d.connection_status && d.connection_status.database_connected) {
+                        msgEl.textContent = 'Connected — live wisdom network';
+                        msgEl.className = 'value ok';
+                    } else if (st === 'memory') {
+                        msgEl.textContent = 'In-memory mode (set MIN_DATABASE_URL for persistence)';
+                        msgEl.className = 'value';
+                    } else {
+                        msgEl.textContent = '';
+                    }
+                }
+            }).catch(function(e) {
+                document.getElementById('minPatterns').textContent = '—';
+                document.getElementById('minStorage').textContent = '—';
+                document.getElementById('minConnection').textContent = 'Error';
+                document.getElementById('minConnection').className = 'value err';
+                var msgEl = document.getElementById('minStatusMsg');
+                if (msgEl) {
+                    msgEl.textContent = e.message || 'Could not connect to MIN';
+                    msgEl.className = 'value err';
+                }
+            });
+        }
+
+        function loadCamiTrace() {
+            api('/api/platform/cami-last-trace').then(function(d) {
+                var el = document.getElementById('camiTraceFeed');
+                var trace = d.agentic_trace || [];
+                if (trace.length === 0) {
+                    el.innerHTML = '<p class="text-sm text-muted">No run yet. Ask Cami something from chat, then refresh.</p>';
+                } else {
+                    el.innerHTML = trace.map(function(s, i) {
+                        return '<div class="trace-step"><span class="step-num">Step ' + (i + 1) + '</span><div class="step-content">' + esc(s) + '</div></div>';
+                    }).join('') + (d.min_pattern_count_after != null ? '<div class="trace-step"><span class="step-num">MIN After Run</span><div class="step-content">' + d.min_pattern_count_after.toLocaleString() + ' patterns</div></div>' : '');
+                }
+                
+                // Update Human+ metrics strip
+                var hp = d.human_plus_metrics || {};
+                var eqlm = d.eqlm_state || {};
+                
+                // Consciousness level with color
+                var consEl = document.getElementById('hpConsciousness');
+                var consLevel = hp.consciousness_level || '—';
+                var consScore = hp.consciousness_score;
+                if (consLevel && consLevel !== '—') {
+                    var consColor = 'var(--text-secondary)';
+                    if (consLevel === 'AWAKENING' || consLevel === 'ACTIVE') consColor = 'var(--success)';
+                    else if (consLevel === 'LATENT') consColor = 'var(--warning)';
+                    else if (consLevel === 'DORMANT') consColor = 'var(--text-muted)';
+                    consEl.innerHTML = '<span style="color:' + consColor + '">' + esc(consLevel) + '</span>' + (consScore != null ? ' <span style="font-size:0.7em;color:var(--text-muted)">(' + consScore.toFixed(3) + ')</span>' : '');
+                } else {
+                    consEl.textContent = '—';
+                }
+                
+                // Resonance with color coding
+                var resEl = document.getElementById('hpResonance');
+                var res = hp.resonance;
+                if (res != null) {
+                    var resColor = res < 0.2 ? 'var(--danger)' : (res < 0.5 ? 'var(--warning)' : 'var(--success)');
+                    resEl.innerHTML = '<span style="color:' + resColor + '">' + res.toFixed(3) + '</span>';
+                } else {
+                    resEl.textContent = '—';
+                }
+                
+                // Coherence
+                var cohEl = document.getElementById('hpCoherence');
+                var coh = hp.coherence;
+                cohEl.textContent = coh != null ? coh.toFixed(3) : '—';
+                
+                // Depth
+                var depEl = document.getElementById('hpDepth');
+                var dep = hp.depth_score;
+                depEl.textContent = dep != null ? dep.toFixed(3) : '—';
+                
+                // Self-Awareness
+                var saEl = document.getElementById('hpSelfAwareness');
+                var sa = hp.self_awareness;
+                saEl.textContent = sa != null ? sa.toFixed(3) : '—';
+                
+                // Confidence
+                var confEl = document.getElementById('hpConfidence');
+                var conf = d.confidence;
+                if (conf != null) {
+                    var confColor = conf < 0.5 ? 'var(--danger)' : (conf < 0.7 ? 'var(--warning)' : 'var(--success)');
+                    confEl.innerHTML = '<span style="color:' + confColor + '">' + (conf * 100).toFixed(0) + '%</span>';
+                } else {
+                    confEl.textContent = '—';
+                }
+                
+                // Synthesis method
+                var methEl = document.getElementById('hpMethod');
+                var meth = d.synthesis_method;
+                var providers = d.providers_used || [];
+                if (meth) {
+                    var methText = meth === 'eqlm' ? 'EQLM (autonomous)' : (meth === 'hyper_synthesis' ? 'Multi-LLM Synthesis' : meth);
+                    if (providers.length > 0 && meth !== 'eqlm') {
+                        methText += ' (' + providers.length + ' LLMs)';
+                    }
+                    methEl.textContent = methText;
+                } else {
+                    methEl.textContent = '—';
+                }
+                
+                // Show ethics gate if flagged
+                if (eqlm.ethics_flagged) {
+                    var consEl = document.getElementById('hpConsciousness');
+                    consEl.innerHTML += ' <span style="color:var(--danger);font-size:0.7em;">[ETHICS GATE]</span>';
+                }
+                
+            }).catch(function() {
+                document.getElementById('camiTraceFeed').innerHTML = '<p class="text-sm text-muted">Could not load trace.</p>';
+            });
+        }
+
+        function mergeWorkingMemory(instances, workingMemory) {
+            var byKey = {};
+            (workingMemory || []).forEach(function(w) { byKey[w.session_key] = w; });
+            return (instances || []).map(function(i) {
+                var w = byKey[i.session_key];
+                return {
+                    name: i.name,
+                    role: i.role,
+                    mode: i.mode,
+                    status: i.status,
+                    session_key: i.session_key,
+                    last_heartbeat_at: i.last_heartbeat_at,
+                    current_task: w ? w.current_task : null,
+                    next_steps: w ? w.next_steps : null,
+                    working_status: w ? w.status : null
+                };
+            });
+        }
+
+        function renderAgents(instances, workingMemory) {
+            var merged = mergeWorkingMemory(instances, workingMemory);
+            var el = document.getElementById('agentsRow');
+            if (merged.length === 0) {
+                el.innerHTML = '<p class="text-sm text-muted">No instances. Create one from the form below.</p>';
+                return;
+            }
+            el.innerHTML = merged.map(function(a) {
+                var badgeClass = a.status === 'active' ? 'badge-success' : (a.status === 'paused' ? 'badge-warning' : 'badge-danger');
+                var working = '';
+                if (a.current_task || a.next_steps) {
+                    working = '<div class="agent-working"><strong>Working:</strong> ' + esc(a.current_task || '—') + (a.next_steps ? '<br>Next: ' + esc(a.next_steps) : '') + '</div>';
+                }
+                return '<div class="agent-card">' +
+                    '<div class="agent-name">' + esc(a.name) + ' <span class="badge ' + badgeClass + '">' + esc(a.status) + '</span></div>' +
+                    '<div class="agent-meta">' + esc(a.session_key) + '</div>' +
+                    '<div class="agent-meta">' + esc(a.role) + ' · ' + esc(a.mode) + '</div>' +
+                    working +
+                    '</div>';
+            }).join('');
+        }
+
+        function renderKanban(tasks) {
+            var cols = document.querySelectorAll('.kanban .column');
+            cols.forEach(function(col) {
+                var status = col.getAttribute('data-status');
+                var container = col.querySelector('.column-tasks');
+                var list = (tasks || []).filter(function(t) { return (t.status || 'inbox') === status; });
+                container.innerHTML = list.map(function(t) {
+                    return '<div class="task-card" data-id="' + esc(t.id) + '">' +
+                        '<div class="task-title">' + esc(t.title || 'Untitled') + '</div>' +
+                        '<div class="task-meta">' + (t.assignee_session_keys && t.assignee_session_keys.length ? t.assignee_session_keys.join(', ') : 'Unassigned') + '</div>' +
+                        '</div>';
+                }).join('');
+            });
+            document.querySelectorAll('.task-card').forEach(function(card) {
+                card.addEventListener('click', function() { openTask(this.getAttribute('data-id')); });
+            });
+        }
+
+        function renderActivity(list) {
+            var el = document.getElementById('activityFeed');
+            if (!list || list.length === 0) {
+                el.innerHTML = '<p class="text-sm text-muted">No activity yet.</p>';
+                return;
+            }
+            el.innerHTML = list.map(function(a) {
+                return '<div class="activity-item">' +
+                    '<span class="activity-type">' + esc(a.type) + '</span>' +
+                    '<div class="activity-msg">' + esc((a.message || '').slice(0, 150)) + ((a.message && a.message.length > 150) ? '…' : '') + '</div>' +
+                    '<div class="activity-time">' + esc(a.created_at) + '</div>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function renderNotifications(list) {
+            var el = document.getElementById('notificationsList');
+            if (!list || list.length === 0) {
+                el.innerHTML = '<p class="text-sm text-muted">No undelivered notifications.</p>';
+                return;
+            }
+            el.innerHTML = list.map(function(n) {
+                return '<div class="activity-item">' +
+                    '<div class="activity-type font-mono text-xs">' + esc(n.target_session_key) + '</div>' +
+                    '<div class="activity-msg">' + esc((n.content || '').slice(0, 120)) + '</div>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function openTask(id) {
+            currentTaskId = id;
+            api('/api/platform/tasks/' + id).then(function(d) {
+                var t = d.task;
+                document.getElementById('modalTitle').textContent = t.title || 'Untitled';
+                document.getElementById('modalDescription').textContent = t.description || '—';
+                document.getElementById('modalStatus').value = t.status || 'inbox';
+                var msgs = (d.messages || []).map(function(m) {
+                    return '<div class="activity-item">' +
+                        '<div class="activity-type font-mono text-xs">' + esc(m.from_session_key) + '</div>' +
+                        '<div class="activity-msg">' + esc(m.content) + '</div>' +
+                        '<div class="activity-time">' + esc(m.created_at) + '</div></div>';
+                }).join('');
+                document.getElementById('modalMessages').innerHTML = msgs || '<p class="text-sm text-muted">No comments yet.</p>';
+                document.getElementById('taskModal').classList.add('open');
+            }).catch(function(e) {
+                alert('Failed to load task: ' + e.message);
+            });
+        }
+
+        function loadAll() {
+            // Load instances and working memory together (for merging)
+            Promise.all([
+                api('/api/platform/instances').catch(function() { return { instances: [] }; }),
+                api('/api/platform/working-memory').catch(function() { return { working_memory: [] }; })
+            ]).then(function(results) {
+                var instances = results[0].instances || [];
+                var workingMemory = results[1].working_memory || [];
+                renderAgents(instances, workingMemory);
+            }).catch(function(e) {
+                document.getElementById('agentsRow').innerHTML = '<p class="text-sm text-muted">Could not load agents. Check MIN database connection.</p>';
+            });
+
+            // Load tasks independently
+            api('/api/platform/tasks').then(function(d) {
+                renderKanban(d.tasks || []);
+            }).catch(function() {
+                document.querySelectorAll('.kanban .column-tasks').forEach(function(el) {
+                    el.innerHTML = '';
+                });
+            });
+
+            // Load activities independently
+            api('/api/platform/activities').then(function(d) {
+                renderActivity(d.activities || []);
+            }).catch(function() {
+                document.getElementById('activityFeed').innerHTML = '<p class="text-sm text-muted">Could not load activities.</p>';
+            });
+
+            // Load notifications independently
+            api('/api/platform/notifications').then(function(d) {
+                renderNotifications(d.notifications || []);
+            }).catch(function() {
+                document.getElementById('notificationsList').innerHTML = '<p class="text-sm text-muted">Could not load notifications.</p>';
+            });
+        }
+
+        // ─── Start ─────────────────────────────────────────────────────────────────
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+    </script>
+</body>
+</html>
